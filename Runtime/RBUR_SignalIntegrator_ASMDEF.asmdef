@@ -1,0 +1,21 @@
+{
+    "name": "RBUR_SignalIntegrator_ASMDEF",
+    "rootNamespace": "RBUR_SignalIntegrator",
+    "references": [
+        "GUID:6b028180e99825e469ef5f1e3f2318f3",
+        "GUID:99835874ee819da44948776e0df4ff1d",
+        "GUID:84265b35cca3905448e623ef3903f0ff",
+        "GUID:3c1bc1267eab5884ebe7f232c09ee0d9",
+        "GUID:583382a2633f52b43b24e17b8ce11fb8",
+        "GUID:3b6ca86666fe69a42a8c281450fba643"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
