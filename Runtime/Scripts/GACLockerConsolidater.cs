@@ -7,21 +7,43 @@ using VRC.Udon;
 
 namespace RBUR_SignalIntegrator
 {
-    public class GACLockerConsolidater : UdonSharpBehaviour
+    public class GACLockerConsolidater : AbstractLockerConsolidater
     {
-        [HideInInspector] public bool[] RecievedBools;
+        [HideInInspector] public float[] RecievedLockPosition;
         public Controller_Base target;
 
         bool locked = true;
-        public void perform(int index, bool sent)
+
+        //Return: Success?
+        public override bool tryLocking(int index, bool lockState)
         {
-            RecievedBools[index] = sent;
-            locked = false;
-            foreach (bool anRcvd in RecievedBools)
+            base.tryLocking(index, lockState);
+
+            float lockAngle = float.NaN;
+            int checkingIndex = 0;
+            bool lockFault = false;
+            foreach (bool anRcvd in RecievedLockState)
             {
                 locked |= anRcvd;
+                if (anRcvd)
+                {
+                    if (float.IsNaN(lockAngle)) lockAngle = RecievedLockPosition[checkingIndex];
+                    else if(lockAngle != RecievedLockPosition[checkingIndex]) lockFault = true;
+                }
+
+                checkingIndex++;
             }
-            target.locked = locked;
+            if (lockFault)
+            {
+                locked = false;
+            }
+            if (locked)
+            {
+                target.locked = locked;
+                if (!float.IsNaN(lockAngle)) target.SetPosition(lockAngle);
+            }
+
+            return !lockFault;
         }
     }
 }
