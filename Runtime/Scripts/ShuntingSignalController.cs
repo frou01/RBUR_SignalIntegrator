@@ -18,7 +18,7 @@ namespace RBUR_SignalIntegrator
 
         private void updateAnimator()
         {
-            animator.SetBool(signalPramName, isOpen);
+            animator.SetBool(signalPramName, isRouteOpen());
         }
     }
 

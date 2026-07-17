@@ -25,15 +25,29 @@ public class Interlock_BuildProcess : IProcessSceneWithReport
 
     public void OnProcessScene(Scene scene, BuildReport report)
     {
-        Debug.Log("InterlockLink PreProcess");
+        Debug.Log("InterlockLink Start Process");
         foreach (GameObject obj in scene.GetRootGameObjects())
         {
-            foreach (RouteChecker RouteChecker in obj.GetComponentsInChildren<RouteChecker>(true))
+            foreach (RouteChecker routeChecker in obj.GetComponentsInChildren<RouteChecker>(true))
             {
-                RouteChecker.SetupCallback();
+                routeChecker.SetupCallback();
             }
+
+            foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
+            {
+                interlocking.SetupLocker();
+            }
+            foreach (InterlockStateLinker stateLinker in obj.GetComponentsInChildren<InterlockStateLinker>(true))
+            {
+                stateLinker.SetupLocker();
+            }
+            foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
+            {
+                routeLocker.SetupLocker();
+            }
+            //TODO stateLinker,routeLockerからInterlockingへの参照を張る
         }
-        Debug.Log("InterlockLink Process");
+        Debug.Log("InterlockLink Process End");
 
     }
 

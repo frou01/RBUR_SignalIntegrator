@@ -8,10 +8,9 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteChecker : UdonSharpBehaviour
     {
-        [SerializeField] AbstractPointSetter[] TargetPoints;
-        [SerializeField] Rail_Script[] TargetRoute;
+        [SerializeField] protected AbstractPointSetter[] TargetPoints;
+        [SerializeField] protected Rail_Script[] TargetRoute;
 
-        public bool isOpen;
 
         public void SetupCallback()
         {
@@ -23,7 +22,7 @@ namespace RBUR_SignalIntegrator
                 setter.callbackUdons = newArray;
             }
         }
-        void Start()
+        public virtual void Start()
         {
             SetupCallback();
             PointUpdate();
@@ -31,7 +30,10 @@ namespace RBUR_SignalIntegrator
 
         public virtual void PointUpdate()//Call via AbstractPointSetter.callbackUdons
         {
-            isOpen = true;
+        }
+        public virtual bool isRouteOpen()
+        {
+            bool isOpen = true;
 
             int count = 0;
             foreach (AbstractPointSetter setter in TargetPoints)
@@ -43,6 +45,7 @@ namespace RBUR_SignalIntegrator
                 }
                 count++;
             }
+            return isOpen;
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         void OnDrawGizmosSelected()

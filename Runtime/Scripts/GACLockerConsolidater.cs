@@ -9,30 +9,23 @@ namespace RBUR_SignalIntegrator
 {
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {
-        [HideInInspector] public float[] RecievedLockPosition;
+        [HideInInspector][SerializeField] protected float[] SettedLockPosition;
+        [SerializeField] protected float[] lockPositions;
         public Controller_Base target;
 
-        bool locked = true;
 
         //Return: Success?
-        public override bool tryLocking(int index, bool lockState)
+        public override bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector, out int triedIndex)
         {
-            base.tryLocking(index, lockState);
+            base.tryUpdateLocking(triedFrom, lockState, lockPositionSelector,out triedIndex);
 
-            float lockAngle = float.NaN;
-            int checkingIndex = 0;
-            bool lockFault = false;
-            foreach (bool anRcvd in RecievedLockState)
-            {
-                locked |= anRcvd;
-                if (anRcvd)
-                {
-                    if (float.IsNaN(lockAngle)) lockAngle = RecievedLockPosition[checkingIndex];
-                    else if(lockAngle != RecievedLockPosition[checkingIndex]) lockFault = true;
-                }
+            SettedLockPosition[triedIndex] = lockPositions[lockPositionSelector];
 
-                checkingIndex++;
-            }
+            bool locked = isLocked();
+            bool lockFault;
+            float lockAngle;
+            GetLockAngle_And_CheckFault(out lockFault,out lockAngle);
+
             if (lockFault)
             {
                 locked = false;
@@ -44,6 +37,32 @@ namespace RBUR_SignalIntegrator
             }
 
             return !lockFault;
+        }
+        public override bool AddNewLocker(UdonSharpBehaviour triedFrom)
+        {
+            if(!base.AddNewLocker(triedFrom))return false;
+
+            bool[] newSettedLockPosition = new bool[SettedLockPosition.Length + 1];
+            SettedLockPosition.CopyTo(newSettedLockPosition, 0);
+            newSettedLockPosition[SettedLockPosition.Length] = false;
+            return true;
+        }
+
+        private void GetLockAngle_And_CheckFault(out bool lockFault,out float lockAngle)
+        {
+            lockFault = false;
+            lockAngle = float.NaN;
+            int checkingIndex = 0;
+            foreach (bool lockedState in SettedLockStates)
+            {
+                if (lockedState)
+                {
+                    if (float.IsNaN(lockAngle)) lockAngle = SettedLockPosition[checkingIndex];
+                    else if (lockAngle != SettedLockPosition[checkingIndex]) lockFault = true;
+                }
+
+                checkingIndex++;
+            }
         }
     }
 }
