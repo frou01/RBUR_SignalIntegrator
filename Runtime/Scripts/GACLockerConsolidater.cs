@@ -9,8 +9,9 @@ namespace RBUR_SignalIntegrator
 {
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {
-        [HideInInspector][SerializeField] protected float[] SettedLockPosition;
+        [HideInInspector][SerializeField] protected int[] SettedLockPosition;
         [SerializeField] protected float[] lockPositions;
+        [SerializeField] protected int failSafePosition;
         public Controller_Base target;
 
 
@@ -19,7 +20,7 @@ namespace RBUR_SignalIntegrator
         {
             base.tryUpdateLocking(triedFrom, lockState, lockPositionSelector,out triedIndex);
 
-            SettedLockPosition[triedIndex] = lockPositions[lockPositionSelector];
+            SettedLockPosition[triedIndex] = lockPositionSelector;
 
             bool locked = isLocked();
             bool lockFault;
@@ -57,12 +58,36 @@ namespace RBUR_SignalIntegrator
             {
                 if (lockedState)
                 {
-                    if (float.IsNaN(lockAngle)) lockAngle = SettedLockPosition[checkingIndex];
-                    else if (lockAngle != SettedLockPosition[checkingIndex]) lockFault = true;
+                    if (float.IsNaN(lockAngle)) lockAngle = lockPositions[SettedLockPosition[checkingIndex]];
+                    else if (lockAngle != lockPositions[SettedLockPosition[checkingIndex]]) lockFault = true;
                 }
 
                 checkingIndex++;
             }
+        }
+
+        //Return: Controller positon (On Analog controller, return nearest lock point)
+        public override int GetCurrentPosition()
+        {
+            //TODO もっとも近い固定位置を返す
+            return -1;
+        }
+        public override void SetToFailSafePosition()
+        {
+            target.SetPosition(lockPositions[failSafePosition]);
+            int idx = 0;
+            foreach (bool lockedState in SettedLockStates)
+            {
+                SettedLockStates[idx] = false;
+                SettedLockPosition[idx] = failSafePosition;
+
+                idx++;
+            }
+        }
+
+        public override bool isControlerOwner()
+        {
+            return Networking.IsOwner(target.gameObject);
         }
     }
 }
