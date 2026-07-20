@@ -9,7 +9,7 @@ namespace RBUR_SignalIntegrator
     public class RouteChecker : UdonSharpBehaviour
     {
         [SerializeField] protected AbstractPointSetter[] TargetPoints;
-        [SerializeField] protected Rail_Script[] TargetRoute;
+        [SerializeField] protected int[] TargetRoute;
 
 
         public void SetupCallback()
@@ -35,31 +35,39 @@ namespace RBUR_SignalIntegrator
         {
             bool isOpen = true;
 
-            int count = 0;
+            int idx = 0;
             foreach (AbstractPointSetter setter in TargetPoints)
             {
-                if (TargetRoute[count] != setter.get_current_To())
+                if (TargetRoute[idx] != setter.get_current_To_Index())
                 {
                     isOpen = false;
                     break;
                 }
-                count++;
+                idx++;
             }
             return isOpen;
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         void OnDrawGizmosSelected()
         {
-            int count = 0;
+            int point_idx = 0;
+            int route_idx;
             if (TargetPoints != null)
             {
                 foreach (AbstractPointSetter setter in TargetPoints)
                 {
-                    Gizmos.color = new Color(0f, 1f, 0f, 1f);
+                    route_idx = 0;
+                    Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
                     setter.DrawGizmo_From();
-                    Gizmos.color = new Color(0f, 1f, 1f, 1f);
-                    setter.DrawGizmo_To(TargetRoute[count]);
-                    count++;
+
+                    foreach(Rail_Script route in setter.getRoutes())
+                    {
+                        if(route_idx == TargetRoute[point_idx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
+                        else Gizmos.color = new Color(1f, 0f, 0f, 1f);
+                        setter.DrawGizmo_To(route);
+                        route_idx++;
+                    }
+                    point_idx++;
                 }
             }
         }
