@@ -12,7 +12,7 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] protected int[] SettedLockPosition;
         [SerializeField] protected float[] lockPositions;
         [SerializeField] protected int failSafePosition;
-        public Controller_Base target;
+        [SerializeField] protected Controller_Base target;
 
 
         //Return: Success?
@@ -69,8 +69,19 @@ namespace RBUR_SignalIntegrator
         //Return: Controller positon (On Analog controller, return nearest lock point)
         public override int GetCurrentPosition()
         {
-            //TODO もっとも近い固定位置を返す
-            return -1;
+            float controllerPos = target.controllerPosition;
+            float diffhistr = float.MaxValue;
+            int res = -1;
+            for (int idx = 0;idx < lockPositions.Length; idx++)
+            {
+                float diff = Mathf.Abs(lockPositions[idx] - controllerPos);
+                if (diff < diffhistr)
+                {
+                    diffhistr = diff;
+                    res = idx;
+                }
+            }
+            return res;
         }
         public override void SetToFailSafePosition()
         {
