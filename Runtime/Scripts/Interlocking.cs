@@ -13,11 +13,11 @@ namespace RBUR_SignalIntegrator
         //TODO 同期デッドロック防止：両否決
 
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
-        [SerializeField] InterlockStateLinker[] interlockStates;//進路以外の進行要件を取得
+        [SerializeField] InterlockStateLinker[] interlockStates;//進路以外の進行要件
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
         [SerializeField] int SignalClosePosition;
         [SerializeField] int[] SignalOpenPositions;
-        public bool FailSafeCalled;
+        [HideInInspector]public bool FailSafeCalled;
 
 
         public void UpdateInterlock()//called by Controller Pickup Event
@@ -30,7 +30,7 @@ namespace RBUR_SignalIntegrator
             }
 
 
-            if (!canOpenSignal && TargetSignalLocker.isControlerOwner())
+            if (!canOpenSignal)
             {
                 bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this,true, SignalClosePosition);
                 if (!LockSuccess)
@@ -46,18 +46,31 @@ namespace RBUR_SignalIntegrator
 
 
 
-            if(TargetSignalLocker.isControlerOwner() )//TODO 信号が警戒以上であるか取得する
+            if(TargetSignalLocker.isControlerOwner())
             {
-                bool LockSuccess = true;
-                foreach (InterlockStateLinker interlockState in interlockStates)
+                bool isOpen = false;
+                int currentSignalPos = TargetSignalLocker.GetCurrentPosition();
+                foreach (int OpenPosition in SignalOpenPositions)
                 {
-                    LockSuccess &= interlockState.UpdateLock(true);
+                    if (currentSignalPos == OpenPosition)
+                    {
+                        isOpen = true;
+                        break;
+                    }
                 }
-                LockSuccess &= interlock_Route.UpdateLockRoute(true);
-                if (!LockSuccess)
+                if (isOpen)
                 {
-                    Debug.LogError("inconsistency Interlocking. Reset All Signals");
-                    this.RelayFailSafe();
+                    bool LockSuccess = true;
+                    foreach (InterlockStateLinker interlockState in interlockStates)
+                    {
+                        LockSuccess &= interlockState.UpdateLock(true);
+                    }
+                    LockSuccess &= interlock_Route.UpdateLockRoute(true);
+                    if (!LockSuccess)
+                    {
+                        Debug.LogError("inconsistency Interlocking. Reset All Signals");
+                        this.RelayFailSafe();
+                    }
                 }
             }
         }
