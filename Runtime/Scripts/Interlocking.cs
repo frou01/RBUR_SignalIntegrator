@@ -15,9 +15,17 @@ namespace RBUR_SignalIntegrator
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
         [SerializeField] InterlockStateLinker[] interlockStates;//進路以外の進行要件
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
-        [SerializeField] int SignalClosePosition;
-        [SerializeField] int[] SignalOpenPositions;
+        [SerializeField] int SignalClosePositionIndex;
+        [SerializeField] int[] SignalOpenPositionIndex;
         [HideInInspector]public bool FailSafeCalled;
+        public RouteLocker GetRouteLocker()
+        {
+            return interlock_Route;
+        }
+        public InterlockStateLinker[] GetInterlockStateLinker()
+        {
+            return interlockStates;
+        }
 
 
         public void UpdateInterlock()//called by Controller Pickup Event
@@ -32,7 +40,7 @@ namespace RBUR_SignalIntegrator
 
             if (!canOpenSignal)
             {
-                bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this,true, SignalClosePosition);
+                bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this,true, SignalClosePositionIndex);
                 if (!LockSuccess)
                 {
                     Debug.LogError("Interlock Preset Error. Route/SignalState/ControllerLockPositon Settings is inconsistency.");
@@ -50,7 +58,7 @@ namespace RBUR_SignalIntegrator
             {
                 bool isOpen = false;
                 int currentSignalPos = TargetSignalLocker.GetCurrentPosition();
-                foreach (int OpenPosition in SignalOpenPositions)
+                foreach (int OpenPosition in SignalOpenPositionIndex)
                 {
                     if (currentSignalPos == OpenPosition)
                     {

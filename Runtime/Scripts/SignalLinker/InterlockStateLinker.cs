@@ -7,18 +7,33 @@ namespace RBUR_SignalIntegrator
 {
     public class InterlockStateLinker : UdonSharpBehaviour
     {
-        [SerializeField] AbstractLockerConsolidater locker;
-        [SerializeField] int MeetPosition;
-        [HideInInspector][SerializeField] Interlocking interlocking;
+        [SerializeField] protected AbstractLockerConsolidater locker;
+        [SerializeField] protected int[] MeetPositionIndex;
+        [HideInInspector][SerializeField] protected Interlocking interlocking;
+        public void setParentInterlock(Interlocking val)
+        {
+            interlocking = val;
+        }
         public virtual bool Check()
         {
-            return locker.GetCurrentPosition() == MeetPosition;
+            foreach(int meet in MeetPositionIndex)
+            {
+                if (locker.GetCurrentPosition() == meet) return true;
+            }
+            return false;
         }
 
         //return: Sucess?
         public virtual bool UpdateLock(bool isLocking)
         {
-            return locker.tryUpdateLocking(this, isLocking, MeetPosition);
+            if (Check())
+            {
+                return locker.tryUpdateLocking(this, isLocking, locker.GetCurrentPosition());
+            }
+            else
+            {
+                return locker.tryUpdateLocking(this, isLocking, MeetPositionIndex[0]);
+            }
         }
         public void RelayFailSafe()
         {

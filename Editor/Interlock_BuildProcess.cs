@@ -45,6 +45,14 @@ namespace RBUR_SignalIntegrator_Editor
                     routeLocker.SetupLocker();
                 }
                 //TODO stateLinker,routeLockerからInterlockingへの参照を張る
+                foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
+                {
+                    interlocking.GetRouteLocker().setParentInterlock(interlocking);
+                    foreach (InterlockStateLinker stateLinker in interlocking.GetInterlockStateLinker())
+                    {
+                        stateLinker.setParentInterlock(interlocking);
+                    }
+                }
             }
             Debug.Log("InterlockLink Process End");
 

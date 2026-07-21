@@ -7,9 +7,15 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteLocker : RouteChecker
     {
-        [HideInInspector][SerializeField] AbstractLockerConsolidater[] lockers;
-        [HideInInspector][SerializeField] int[] lockPositions;
-        [HideInInspector][SerializeField] Interlocking interlocking; 
+        [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] lockers;
+        [HideInInspector][SerializeField] protected int[] lockPositions;
+        [HideInInspector][SerializeField] protected Interlocking interlocking;
+
+        public void setParentInterlock(Interlocking val)
+        {
+            interlocking = val;
+        }
+
         public override void Start()
         {
             base.Start();
