@@ -11,6 +11,10 @@ namespace RBUR_SignalIntegrator
         [SerializeField] protected AbstractPointSetter[] TargetPoints;
         [SerializeField] protected int[] TargetRoute;
 
+        public AbstractPointSetter[] GetTargetPoints()
+        {
+            return TargetPoints;
+        }
 
         public void SetupCallback()
         {

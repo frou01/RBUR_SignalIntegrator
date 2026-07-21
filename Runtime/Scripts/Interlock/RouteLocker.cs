@@ -8,8 +8,18 @@ namespace RBUR_SignalIntegrator
     public class RouteLocker : RouteChecker
     {
         [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] lockers;
-        [HideInInspector][SerializeField] protected int[] lockPositions;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
+
+        public AbstractLockerConsolidater[] Locker_GTST
+        {
+            get
+            {
+                return lockers;
+            }
+            set {
+                lockers = value;
+            }
+        }
 
         public void setParentInterlock(Interlocking val)
         {
@@ -27,7 +37,7 @@ namespace RBUR_SignalIntegrator
             {
                 foreach (AbstractLockerConsolidater locker in lockers)
                 {
-                    locker.tryUpdateLocking(this,false,0);
+                    locker.tryUpdateLocking(this,false,-1);
                 }
                 return true;
             }
@@ -37,9 +47,10 @@ namespace RBUR_SignalIntegrator
 
                 bool result = true;
 
+                int idx = 0;
                 foreach (AbstractLockerConsolidater locker in lockers)
                 {
-                    result &= locker.tryUpdateLocking(this, true, locker.GetCurrentPosition());
+                    result &= locker.tryUpdateLocking(this, true, TargetRoute[idx]);
                 }
 
                 return result;
