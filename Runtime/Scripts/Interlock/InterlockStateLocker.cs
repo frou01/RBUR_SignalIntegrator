@@ -5,7 +5,7 @@ using VRC.Udon;
 
 namespace RBUR_SignalIntegrator
 {
-    public class InterlockStateLinker : UdonSharpBehaviour
+    public class InterlockStateLocker : UdonSharpBehaviour
     {
         [SerializeField] protected AbstractLockerConsolidater locker;
         [SerializeField] protected int[] MeetPositionIndex;

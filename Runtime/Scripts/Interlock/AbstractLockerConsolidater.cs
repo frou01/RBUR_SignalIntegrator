@@ -48,10 +48,13 @@ namespace RBUR_SignalIntegrator
             UdonSharpBehaviour[] newLockingScripts = new UdonSharpBehaviour[lockingScripts.Length+1];
             lockingScripts.CopyTo(newLockingScripts, 0);
             newLockingScripts[lockingScripts.Length] = triedFrom;
+            lockingScripts = newLockingScripts;
 
             bool[] newSettedLockStates = new bool[SettedLockStates.Length + 1];
             SettedLockStates.CopyTo(newSettedLockStates, 0);
             newSettedLockStates[SettedLockStates.Length] = false;
+            SettedLockStates = newSettedLockStates;
+
             return true;
         }
 

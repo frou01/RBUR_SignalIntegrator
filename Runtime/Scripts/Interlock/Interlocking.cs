@@ -13,7 +13,7 @@ namespace RBUR_SignalIntegrator
         //TODO 同期デッドロック防止：両否決
 
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
-        [SerializeField] InterlockStateLinker[] interlockStates;//進路以外の進行要件
+        [SerializeField] InterlockStateLocker[] interlockStates;//進路以外の進行要件
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
         [SerializeField] int SignalClosePositionIndex;
         [SerializeField] int[] SignalOpenPositionIndex;
@@ -22,17 +22,20 @@ namespace RBUR_SignalIntegrator
         {
             return interlock_Route;
         }
-        public InterlockStateLinker[] GetInterlockStateLinker()
+        public InterlockStateLocker[] GetInterlockStateLinker()
         {
             return interlockStates;
         }
-
+        public AbstractLockerConsolidater GetTargetSignalLocker()
+        {
+            return TargetSignalLocker;
+        }
 
         public void UpdateInterlock()//called by Controller Pickup Event
         {
             FailSafeCalled = false;
             bool canOpenSignal = interlock_Route.isRouteOpen();
-            foreach(InterlockStateLinker interlockState in interlockStates)
+            foreach(InterlockStateLocker interlockState in interlockStates)
             {
                 canOpenSignal &= interlockState.Check();
             }
@@ -43,9 +46,9 @@ namespace RBUR_SignalIntegrator
                 bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this,true, SignalClosePositionIndex);
                 if (!LockSuccess)
                 {
-                    Debug.LogError("Interlock Preset Error. Route/SignalState/ControllerLockPositon Settings is inconsistency.");
+                    Debug.LogError("Interlock Preset Error. Cannot lock in closed signal. Route/SignalState/ControllerLockPositon Settings is inconsistency.",this.gameObject);
                 }
-                foreach(InterlockStateLinker interlockState in interlockStates)
+                foreach(InterlockStateLocker interlockState in interlockStates)
                 {
                     interlockState.UpdateLock(false);
                 }
@@ -69,14 +72,14 @@ namespace RBUR_SignalIntegrator
                 if (isOpen)
                 {
                     bool LockSuccess = true;
-                    foreach (InterlockStateLinker interlockState in interlockStates)
+                    foreach (InterlockStateLocker interlockState in interlockStates)
                     {
                         LockSuccess &= interlockState.UpdateLock(true);
                     }
                     LockSuccess &= interlock_Route.UpdateLockRoute(true);
                     if (!LockSuccess)
                     {
-                        Debug.LogError("inconsistency Interlocking. Reset All Signals");
+                        Debug.LogError("inconsistency Interlocking. Reset All Signals", this.gameObject);
                         this.RelayFailSafe();
                     }
                 }
@@ -90,7 +93,7 @@ namespace RBUR_SignalIntegrator
                 FailSafeCalled = true;
                 if(TargetSignalLocker.isControlerOwner()) TargetSignalLocker.SetToFailSafePosition();
                 TargetSignalLocker.RelayFailSafe();
-                foreach (InterlockStateLinker interlockState in interlockStates)
+                foreach (InterlockStateLocker interlockState in interlockStates)
                 {
                     interlockState.RelayFailSafe();
                 }

@@ -23,8 +23,27 @@ namespace RBUR_SignalIntegrator
 
         public bool UpdateLockRoute(bool State)
         {
-            if (!isRouteOpen()) return false;
-            return true;
+            if (!State)
+            {
+                foreach (AbstractLockerConsolidater locker in lockers)
+                {
+                    locker.tryUpdateLocking(this,false,0);
+                }
+                return true;
+            }
+            else
+            {
+                if (!isRouteOpen()) return false;
+
+                bool result = true;
+
+                foreach (AbstractLockerConsolidater locker in lockers)
+                {
+                    result &= locker.tryUpdateLocking(this, true, locker.GetCurrentPosition());
+                }
+
+                return result;
+            }
         }
 
         public void SetupLocker()

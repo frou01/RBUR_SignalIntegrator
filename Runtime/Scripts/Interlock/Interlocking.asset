@@ -127,7 +127,7 @@ MonoBehaviour:
       Data: 8|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.InterlockStateLinker[], RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.InterlockStateLocker[], RBUR_SignalIntegrator_ASMDEF
     - Name: 
       Entry: 8
       Data: 

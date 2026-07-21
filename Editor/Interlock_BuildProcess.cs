@@ -36,7 +36,7 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     interlocking.SetupLocker();
                 }
-                foreach (InterlockStateLinker stateLinker in obj.GetComponentsInChildren<InterlockStateLinker>(true))
+                foreach (InterlockStateLocker stateLinker in obj.GetComponentsInChildren<InterlockStateLocker>(true))
                 {
                     stateLinker.SetupLocker();
                 }
@@ -48,7 +48,7 @@ namespace RBUR_SignalIntegrator_Editor
                 foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     interlocking.GetRouteLocker().setParentInterlock(interlocking);
-                    foreach (InterlockStateLinker stateLinker in interlocking.GetInterlockStateLinker())
+                    foreach (InterlockStateLocker stateLinker in interlocking.GetInterlockStateLinker())
                     {
                         stateLinker.setParentInterlock(interlocking);
                     }
