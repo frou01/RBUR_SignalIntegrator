@@ -18,6 +18,7 @@ namespace RBUR_SignalIntegrator
         [SerializeField] int SignalClosePositionIndex;
         [SerializeField] int[] SignalOpenPositionIndex;
         [HideInInspector] public bool FailSafeCalled;
+        protected bool signal_isDirty = false;
         public RouteLocker GetRouteLocker()
         {
             return interlock_Route;
@@ -51,6 +52,8 @@ namespace RBUR_SignalIntegrator
         {
             Debug.Log("UpdateInterlock.Start", this);
             FailSafeCalled = false;
+            signal_isDirty = false;
+
             bool canOpenSignal = interlock_Route.isRouteOpen();
             Debug.Log("UpdateInterlock.RouteCheck " + canOpenSignal, interlock_Route);
             foreach (InterlockStateLocker interlockState in interlockStates)
@@ -59,10 +62,10 @@ namespace RBUR_SignalIntegrator
                 canOpenSignal &= interlockState.Check();
             }
 
-
             if (!canOpenSignal)
             {
-                Debug.Log("UpdateInterlock.Lock", this);
+                Debug.Log("UpdateInterlock.SignalLock", this);
+                signal_isDirty = true;
                 bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this, true, SignalClosePositionIndex);
                 if (!LockSuccess)
                 {
@@ -76,23 +79,25 @@ namespace RBUR_SignalIntegrator
             }
             else
             {
+                Debug.Log("UpdateInterlock.SignalRelease", this);
                 TargetSignalLocker.tryUpdateLocking(this, false, SignalClosePositionIndex);
             }
 
 
 
-            bool isOpen = false;
+            bool isSignalOpenned = false;
             int currentSignalPos = TargetSignalLocker.GetCurrentPosition();
             foreach (int OpenPosition in SignalOpenPositionIndex)
             {
                 if (currentSignalPos == OpenPosition)
                 {
-                    isOpen = true;
+                    isSignalOpenned = true;
                     break;
                 }
             }
-            if (isOpen)
+            if (isSignalOpenned)
             {
+                Debug.Log("UpdateInterlock.RouteLock", this);
                 bool LockSuccess = true;
                 foreach (InterlockStateLocker interlockState in interlockStates)
                 {
@@ -105,6 +110,19 @@ namespace RBUR_SignalIntegrator
                     this.RelayFailSafe();
                 }
             }
+            else
+            {
+                Debug.Log("UpdateInterlock.RouteRelease", this);
+                foreach (InterlockStateLocker interlockState in interlockStates)
+                {
+                    interlockState.UpdateLock(false);
+                }
+                interlock_Route.UpdateLockRoute(false);
+            }
+            if (signal_isDirty)
+            {
+                TargetSignalLocker.SyncController();
+            }
         }
 
         public void RelayFailSafe()
@@ -112,7 +130,11 @@ namespace RBUR_SignalIntegrator
             if (!FailSafeCalled)
             {
                 FailSafeCalled = true;
-                if (TargetSignalLocker.isControlerOwner()) TargetSignalLocker.SetToFailSafePosition();
+                if (TargetSignalLocker.isControlerOwner())
+                {
+                    TargetSignalLocker.SetToFailSafePosition();
+                    signal_isDirty = true;
+                }
                 TargetSignalLocker.RelayFailSafe();
                 foreach (InterlockStateLocker interlockState in interlockStates)
                 {
