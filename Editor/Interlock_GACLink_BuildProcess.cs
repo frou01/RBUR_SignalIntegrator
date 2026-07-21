@@ -16,7 +16,7 @@ namespace RBUR_SignalIntegrator_Editor
 {
     public class Interlock_GACLink_BuildProcess : IProcessSceneWithReport
     {
-        public int callbackOrder => 0;
+        public int callbackOrder => int.MinValue;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
@@ -46,6 +46,7 @@ namespace RBUR_SignalIntegrator_Editor
                         }
                     }
 
+                    bool failed = false;
                     if(interlocking.GetTargetSignalLocker() is GACLockerConsolidater)
                     {
                         VRCPickup Controller = ((GACLockerConsolidater)interlocking.GetTargetSignalLocker()).GetComponentInChildren<VRCPickup>();
@@ -59,11 +60,16 @@ namespace RBUR_SignalIntegrator_Editor
                             }
                             if (!pickUpEventLinker)
                             {
-                                pickUpEventLinker = Controller.gameObject.AddUdonSharpComponent<PickUpEventLinker>();
+                                Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
+                                failed = true;
                             }
                             syncEventLinker.targets = syncEventLinker.targets.AddItem(interlockUdon).ToArray();
                             pickUpEventLinker.targets = pickUpEventLinker.targets.AddItem(interlockUdon).ToArray();
                         }
+                    }
+                    if (failed)
+                    {
+                        throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
                     }
                 }
             }
