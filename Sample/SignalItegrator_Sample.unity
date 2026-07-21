@@ -576,6 +576,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 500647294}
     m_Modifications:
+    - target: {fileID: 117219276708036305, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 117219276708036305, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
     - target: {fileID: 2949158061436983178, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
       propertyPath: TargetAnimator
       value: 
@@ -588,6 +592,10 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 4127420205861307354, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+    - target: {fileID: 5640318522438624480, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 5640318522438624480, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
     - target: {fileID: 8583626798529616686, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7
@@ -658,6 +666,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1788296367222907638, guid: bac2c6c73e34a30489deddda92964b4c, type: 3}
   m_PrefabInstance: {fileID: 1340920610}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &646123454 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1788296368371808549, guid: bac2c6c73e34a30489deddda92964b4c, type: 3}
+  m_PrefabInstance: {fileID: 1340920610}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &787602885 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1094421957795851142, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
@@ -722,7 +735,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.size
-      value: 16
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.data[0].ID
@@ -789,6 +802,10 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
+      propertyPath: NetworkIDs.Array.data[16].ID
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.data[0].gameObject
       value: 
       objectReference: {fileID: 233507478}
@@ -853,6 +870,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 273616958}
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
+      propertyPath: NetworkIDs.Array.data[16].gameObject
+      value: 
+      objectReference: {fileID: 646123454}
+    - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.data[0].SerializedTypeNames.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -915,6 +936,10 @@ PrefabInstance:
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.data[15].SerializedTypeNames.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
+      propertyPath: NetworkIDs.Array.data[16].SerializedTypeNames.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.data[0].SerializedTypeNames.Array.data[0]
@@ -999,6 +1024,10 @@ PrefabInstance:
     - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
       propertyPath: NetworkIDs.Array.data[15].SerializedTypeNames.Array.data[1]
       value: VRC.SDK3.Components.VRCPickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 6759095419728963412, guid: 8894fa7e4588a5c4fab98453e558847d, type: 3}
+      propertyPath: NetworkIDs.Array.data[16].SerializedTypeNames.Array.data[0]
+      value: VRC.Udon.UdonBehaviour
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1453,6 +1482,10 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 150553440630834500, guid: bac2c6c73e34a30489deddda92964b4c, type: 3}
+    - target: {fileID: 1493554132638108769, guid: bac2c6c73e34a30489deddda92964b4c, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 1493554132638108769, guid: bac2c6c73e34a30489deddda92964b4c, type: 3}
     - target: {fileID: 2193280716434144144, guid: bac2c6c73e34a30489deddda92964b4c, type: 3}
       propertyPath: serializationData.Prefab
       value: 
@@ -1712,6 +1745,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 500647294}
     m_Modifications:
+    - target: {fileID: 117219276708036305, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 117219276708036305, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
     - target: {fileID: 2949158061436983178, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
       propertyPath: TargetAnimator
       value: 
@@ -1724,6 +1761,10 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 4127420205861307354, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+    - target: {fileID: 5640318522438624480, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 5640318522438624480, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
     - target: {fileID: 8583626798529616686, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7
