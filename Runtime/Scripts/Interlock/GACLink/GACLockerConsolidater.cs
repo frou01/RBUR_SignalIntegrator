@@ -86,6 +86,7 @@ namespace RBUR_SignalIntegrator
         }
         public override void SetToFailSafePosition()
         {
+            Networking.SetOwner(Networking.LocalPlayer,target.gameObject);
             target.SetPosition(lockPositions[failSafeIndex]);
             int idx = 0;
             foreach (bool lockedState in SettedLockStates)
