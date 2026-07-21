@@ -90,5 +90,10 @@ namespace RBUR_SignalIntegrator
         {
             return false;
         }
+
+        public virtual void SyncController()
+        {
+
+        }
     }
 }

@@ -187,13 +187,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: SettedLockPosition
+      Data: SettedLockIndex
     - Name: $v
       Entry: 7
       Data: 13|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: SettedLockPosition
+      Data: SettedLockIndex
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 14|System.RuntimeType, mscorlib
@@ -313,13 +313,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: failSafePosition
+      Data: failSafeIndex
     - Name: $v
       Entry: 7
       Data: 22|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: failSafePosition
+      Data: failSafeIndex
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 23|System.RuntimeType, mscorlib

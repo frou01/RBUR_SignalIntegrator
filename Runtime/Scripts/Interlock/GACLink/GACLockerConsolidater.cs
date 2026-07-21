@@ -9,9 +9,9 @@ namespace RBUR_SignalIntegrator
 {
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {
-        [HideInInspector][SerializeField] protected int[] SettedLockPosition;
+        [HideInInspector][SerializeField] protected int[] SettedLockIndex;
         [SerializeField] protected float[] lockPositions;
-        [SerializeField] protected int failSafePosition;
+        [SerializeField] protected int failSafeIndex;
         [SerializeField] protected Controller_Base target;
 
 
@@ -20,12 +20,12 @@ namespace RBUR_SignalIntegrator
         {
             base.tryUpdateLocking(triedFrom, lockState, lockPositionSelector,out triedIndex);
 
-            SettedLockPosition[triedIndex] = lockPositionSelector;
+            SettedLockIndex[triedIndex] = lockPositionSelector;
 
             bool locked = isLocked();
             bool lockFault;
-            float lockAngle;
-            GetLockAngle_And_CheckFault(out lockFault,out lockAngle);
+            int lockIndex;
+            GetLockAngle_And_CheckFault(out lockFault,out lockIndex);
 
             if (lockFault)
             {
@@ -34,7 +34,7 @@ namespace RBUR_SignalIntegrator
             if (locked)
             {
                 target.locked = locked;
-                if (!float.IsNaN(lockAngle)) target.SetPosition(lockAngle);
+                if (lockIndex != -1) target.SetPosition(lockPositions[lockIndex]);
             }
 
             return !lockFault;
@@ -43,24 +43,24 @@ namespace RBUR_SignalIntegrator
         {
             if(!base.AddNewLocker(triedFrom))return false;
 
-            int[] newSettedLockPosition = new int[SettedLockPosition.Length + 1];
-            SettedLockPosition.CopyTo(newSettedLockPosition, 0);
-            newSettedLockPosition[SettedLockPosition.Length] = 0;
-            SettedLockPosition = newSettedLockPosition;
+            int[] newSettedLockPosition = new int[SettedLockIndex.Length + 1];
+            SettedLockIndex.CopyTo(newSettedLockPosition, 0);
+            newSettedLockPosition[SettedLockIndex.Length] = 0;
+            SettedLockIndex = newSettedLockPosition;
             return true;
         }
 
-        private void GetLockAngle_And_CheckFault(out bool lockFault,out float lockAngle)
+        private void GetLockAngle_And_CheckFault(out bool lockFault,out int lockIndex)
         {
             lockFault = false;
-            lockAngle = float.NaN;
+            lockIndex = -1;
             int checkingIndex = 0;
             foreach (bool lockedState in SettedLockStates)
             {
                 if (lockedState)
                 {
-                    if (float.IsNaN(lockAngle)) lockAngle = lockPositions[SettedLockPosition[checkingIndex]];
-                    else if (lockAngle != lockPositions[SettedLockPosition[checkingIndex]]) lockFault = true;
+                    if (lockIndex == -1) lockIndex = SettedLockIndex[checkingIndex];
+                    else if (lockIndex != SettedLockIndex[checkingIndex]) lockFault = true;
                 }
 
                 checkingIndex++;
@@ -86,12 +86,12 @@ namespace RBUR_SignalIntegrator
         }
         public override void SetToFailSafePosition()
         {
-            target.SetPosition(lockPositions[failSafePosition]);
+            target.SetPosition(lockPositions[failSafeIndex]);
             int idx = 0;
             foreach (bool lockedState in SettedLockStates)
             {
                 SettedLockStates[idx] = false;
-                SettedLockPosition[idx] = failSafePosition;
+                SettedLockIndex[idx] = failSafeIndex;
 
                 idx++;
             }
@@ -100,6 +100,13 @@ namespace RBUR_SignalIntegrator
         public override bool isControlerOwner()
         {
             return Networking.IsOwner(target.gameObject);
+        }
+        public override void SyncController()
+        {
+            if (isControlerOwner())
+            {
+                target.RequestSerialization();
+            }
         }
     }
 }
