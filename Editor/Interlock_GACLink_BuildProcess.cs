@@ -55,10 +55,10 @@ namespace RBUR_SignalIntegrator_Editor
                             }
                         }
                         if (!pointController) continue;
-                        AbstractLockerConsolidater locker = pointController.GetComponentInParent<AbstractLockerConsolidater>();
+                        AbstractLockerConsolidater locker = pointController.GetComponentInParent<AbstractLockerConsolidater>(true);
                         if(locker == null)
                         {
-                            Debug.LogError("PickUpEventLinker not found", pointController);
+                            Debug.LogError("AbstractLockerConsolidater not found", pointController);
                         }
                         else
                         {
@@ -121,6 +121,7 @@ namespace RBUR_SignalIntegrator_Editor
                             {
                                 Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
                                 failed = true;
+                                continue;
                             }
                             syncEventLinker.targets = syncEventLinker.targets.AddItem(interlockUdon).ToArray();
                             pickUpEventLinker.targets = pickUpEventLinker.targets.AddItem(interlockUdon).ToArray();
