@@ -322,7 +322,6 @@ MonoBehaviour:
   - {fileID: 1498330035}
   TargetRoute: 00000000
   lockers: []
-  lockPositions: 
   interlocking: {fileID: 0}
 --- !u!1 &273616958 stripped
 GameObject:
@@ -580,6 +579,14 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 117219276708036305, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+    - target: {fileID: 2018401931736986246, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2018401931736986246, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+    - target: {fileID: 2155628994952750049, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2155628994952750049, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
     - target: {fileID: 2949158061436983178, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
       propertyPath: TargetAnimator
       value: 
@@ -1749,6 +1756,14 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 117219276708036305, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+    - target: {fileID: 2018401931736986246, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2018401931736986246, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+    - target: {fileID: 2155628994952750049, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2155628994952750049, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
     - target: {fileID: 2949158061436983178, guid: 31230630a302660469ec0ecc8715e8dc, type: 3}
       propertyPath: TargetAnimator
       value: 
