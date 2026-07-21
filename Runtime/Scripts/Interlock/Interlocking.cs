@@ -62,27 +62,6 @@ namespace RBUR_SignalIntegrator
                 canOpenSignal &= interlockState.Check();
             }
 
-            if (!canOpenSignal)
-            {
-                Debug.Log("UpdateInterlock.SignalLock", this);
-                signal_isDirty = true;
-                bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this, true, SignalClosePositionIndex);
-                if (!LockSuccess)
-                {
-                    Debug.LogError("Interlock Preset Error. Cannot lock in closed signal. Route/SignalState/ControllerLockPositon Settings is inconsistency.", this.gameObject);
-                }
-                foreach (InterlockStateLocker interlockState in interlockStates)
-                {
-                    interlockState.UpdateLock(false);
-                }
-                interlock_Route.UpdateLockRoute(false);
-            }
-            else
-            {
-                Debug.Log("UpdateInterlock.SignalRelease", this);
-                TargetSignalLocker.tryUpdateLocking(this, false, SignalClosePositionIndex);
-            }
-
 
 
             bool isSignalOpenned = false;
@@ -104,7 +83,8 @@ namespace RBUR_SignalIntegrator
                     LockSuccess &= interlockState.UpdateLock(true);
                 }
                 LockSuccess &= interlock_Route.UpdateLockRoute(true);
-                if (TargetSignalLocker.isControlerOwner() && !LockSuccess)
+                Debug.Log("UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
+                if (!LockSuccess)
                 {
                     Debug.LogError("inconsistency Interlocking. Reset All Signals", this.gameObject);
                     this.RelayFailSafe();
@@ -118,11 +98,34 @@ namespace RBUR_SignalIntegrator
                     interlockState.UpdateLock(false);
                 }
                 interlock_Route.UpdateLockRoute(false);
+                if (!canOpenSignal)
+                {
+                    Debug.Log("UpdateInterlock.SignalLock", this);
+                    signal_isDirty = true;
+                    bool LockSuccess = TargetSignalLocker.tryUpdateLocking(this, true, SignalClosePositionIndex);
+                    if (!LockSuccess)
+                    {
+                        Debug.LogError("Interlock Preset Error. Cannot lock in closed signal. Route/SignalState/ControllerLockPositon Settings is inconsistency.", this.gameObject);
+                    }
+                    foreach (InterlockStateLocker interlockState in interlockStates)
+                    {
+                        interlockState.UpdateLock(false);
+                    }
+                    interlock_Route.UpdateLockRoute(false);
+                }
+                else
+                {
+                    Debug.Log("UpdateInterlock.SignalRelease", this);
+                    TargetSignalLocker.tryUpdateLocking(this, false, SignalClosePositionIndex);
+                }
+
+                if (signal_isDirty)
+                {
+                    TargetSignalLocker.SyncController();
+                }
             }
-            if (signal_isDirty)
-            {
-                TargetSignalLocker.SyncController();
-            }
+
+            
         }
 
         public void RelayFailSafe()
@@ -130,11 +133,8 @@ namespace RBUR_SignalIntegrator
             if (!FailSafeCalled)
             {
                 FailSafeCalled = true;
-                if (TargetSignalLocker.isControlerOwner())
-                {
-                    TargetSignalLocker.SetToFailSafePosition();
-                    signal_isDirty = true;
-                }
+                TargetSignalLocker.SetToFailSafePosition();
+                signal_isDirty = true;
                 TargetSignalLocker.RelayFailSafe();
                 foreach (InterlockStateLocker interlockState in interlockStates)
                 {
