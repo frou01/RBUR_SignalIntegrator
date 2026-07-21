@@ -27,6 +27,7 @@ namespace RBUR_SignalIntegrator
                 if (triedFrom == locker)
                 {
                     triedIndex--;
+                    break;
                 }
             }
             if(lockingScripts.Length == triedIndex)
