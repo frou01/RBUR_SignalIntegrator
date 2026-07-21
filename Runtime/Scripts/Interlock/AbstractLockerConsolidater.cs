@@ -20,16 +20,18 @@ namespace RBUR_SignalIntegrator
         //Return: Success?
         public virtual bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector,out int triedIndex)
         {
-            triedIndex = -1;
+            triedIndex = 0;
             foreach(UdonSharpBehaviour locker in lockingScripts)
             {
                 triedIndex++;
-                if (triedFrom == locker)break;
+                if (triedFrom == locker)
+                {
+                    triedIndex--;
+                }
             }
-            if(lockingScripts.Length - 1 == triedIndex)
+            if(lockingScripts.Length == triedIndex)
             {
                 AddNewLocker(triedFrom);
-                triedIndex++;
             }
 
             SettedLockStates[triedIndex] = lockState;
