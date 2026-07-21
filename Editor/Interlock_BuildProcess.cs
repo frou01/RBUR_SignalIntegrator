@@ -20,7 +20,7 @@ namespace RBUR_SignalIntegrator_Editor
         //    }
 
         //}
-        public int callbackOrder => -1;
+        public int callbackOrder => 0;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {

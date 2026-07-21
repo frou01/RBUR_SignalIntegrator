@@ -19,7 +19,7 @@ namespace RBUR_SignalIntegrator_Editor
 {
     public class Interlock_GACLink_BuildProcess : IProcessSceneWithReport
     {
-        public int callbackOrder => 0;
+        public int callbackOrder => -1;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
@@ -32,48 +32,6 @@ namespace RBUR_SignalIntegrator_Editor
             bool failed = false;
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
-                {
-                    UdonBehaviour interlockUdon = null;
-                    foreach(UdonBehaviour udonComponent in interlocking.GetComponents<UdonBehaviour>())
-                    {
-                        //if(udonComponent.programSource is UdonSharpProgramAsset)
-                        //{
-                        //    Debug.Log("find USharp_UdonComponent", udonComponent);
-                        //    Debug.Log("sourceCsScript is " + ((UdonSharpProgramAsset)udonComponent.programSource).sourceCsScript.GetClass(), udonComponent);
-                        //    if (typeof(Interlocking).IsAssignableFrom(((UdonSharpProgramAsset)udonComponent.programSource).sourceCsScript.GetClass()))
-                        //    {
-                        //        Debug.Log("find USharp_UdonComponent", udonComponent);
-                        //        interlockUdon = udonComponent;
-                        //    }
-                        //}
-                        if(UdonSharpEditorUtility.GetProxyBehaviour(udonComponent) == interlocking)
-                        {
-                            interlockUdon = udonComponent;
-                        }
-                    }
-
-                    if(interlocking.GetTargetSignalLocker() is GACLockerConsolidater)
-                    {
-                        VRCPickup Controller = ((GACLockerConsolidater)interlocking.GetTargetSignalLocker()).GetComponentInChildren<VRCPickup>();
-                        if (Controller)
-                        {
-                            SyncEventLinker syncEventLinker = Controller.GetComponent<SyncEventLinker>();
-                            PickUpEventLinker pickUpEventLinker = Controller.GetComponent<PickUpEventLinker>();
-                            if (!syncEventLinker)
-                            {
-                                syncEventLinker = Controller.gameObject.AddUdonSharpComponent<SyncEventLinker>();
-                            }
-                            if (!pickUpEventLinker)
-                            {
-                                Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
-                                failed = true;
-                            }
-                            syncEventLinker.targets = syncEventLinker.targets.AddItem(interlockUdon).ToArray();
-                            pickUpEventLinker.targets = pickUpEventLinker.targets.AddItem(interlockUdon).ToArray();
-                        }
-                    }
-                }
                 foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
                 {
                     int idx = -1;
@@ -108,10 +66,71 @@ namespace RBUR_SignalIntegrator_Editor
                         }
                     }
                 }
-                if (failed)
+                foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
-                    throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
+                    //Setup EventLinkers
+                    UdonBehaviour interlockUdon = null;
+                    foreach (UdonBehaviour udonComponent in interlocking.GetComponents<UdonBehaviour>())
+                    {
+                        //if(udonComponent.programSource is UdonSharpProgramAsset)
+                        //{
+                        //    Debug.Log("find USharp_UdonComponent", udonComponent);
+                        //    Debug.Log("sourceCsScript is " + ((UdonSharpProgramAsset)udonComponent.programSource).sourceCsScript.GetClass(), udonComponent);
+                        //    if (typeof(Interlocking).IsAssignableFrom(((UdonSharpProgramAsset)udonComponent.programSource).sourceCsScript.GetClass()))
+                        //    {
+                        //        Debug.Log("find USharp_UdonComponent", udonComponent);
+                        //        interlockUdon = udonComponent;
+                        //    }
+                        //}
+                        if (UdonSharpEditorUtility.GetProxyBehaviour(udonComponent) == interlocking)
+                        {
+                            interlockUdon = udonComponent;
+                        }
+                    }
+                    List<GACLockerConsolidater> lockers = new List<GACLockerConsolidater>();
+                    if (interlocking.GetTargetSignalLocker() is GACLockerConsolidater)
+                    {
+                        lockers.Add((GACLockerConsolidater)interlocking.GetTargetSignalLocker());
+                    }
+                    foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Locker_GTST)
+                    {
+                        if (locker is GACLockerConsolidater)
+                        {
+                            lockers.Add((GACLockerConsolidater)locker);
+                        }
+                    }
+                    foreach (InterlockStateLocker StateLocker in interlocking.GetInterlockStateLinker())
+                    {
+                        if (StateLocker.getLocker() is GACLockerConsolidater)
+                        {
+                            lockers.Add((GACLockerConsolidater)StateLocker.getLocker());
+                        }
+                    }
+                    foreach (GACLockerConsolidater locker in lockers)
+                    {
+                        VRCPickup Controller = locker.GetComponentInChildren<VRCPickup>();
+                        if (Controller)
+                        {
+                            SyncEventLinker syncEventLinker = Controller.GetComponent<SyncEventLinker>();
+                            PickUpEventLinker pickUpEventLinker = Controller.GetComponent<PickUpEventLinker>();
+                            if (!syncEventLinker)
+                            {
+                                syncEventLinker = Controller.gameObject.AddUdonSharpComponent<SyncEventLinker>();
+                            }
+                            if (!pickUpEventLinker)
+                            {
+                                Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
+                                failed = true;
+                            }
+                            syncEventLinker.targets = syncEventLinker.targets.AddItem(interlockUdon).ToArray();
+                            pickUpEventLinker.targets = pickUpEventLinker.targets.AddItem(interlockUdon).ToArray();
+                        }
+                    }
                 }
+            }
+            if (failed)
+            {
+                throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
             }
             Debug.Log("InterlockLink Process End");
 

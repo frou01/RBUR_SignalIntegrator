@@ -10,6 +10,10 @@ namespace RBUR_SignalIntegrator
         [SerializeField] protected AbstractLockerConsolidater locker;
         [SerializeField] protected int[] MeetPositionIndex;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
+        public AbstractLockerConsolidater getLocker()
+        {
+            return locker;
+        }
         public void setParentInterlock(Interlocking val)
         {
             interlocking = val;
