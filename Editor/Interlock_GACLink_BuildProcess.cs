@@ -1,9 +1,12 @@
-﻿using frou01.util;
+﻿using frou01.GrabController;
+using frou01.RigidBodyTrain;
+using frou01.util;
 using HarmonyLib;
-using NUnit.Compatibility;
+//using NUnit.Compatibility;
 using RBUR_SignalIntegrator;
+using System.Collections.Generic;
 using System.Linq;
-using UdonSharp;
+//using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -16,15 +19,19 @@ namespace RBUR_SignalIntegrator_Editor
 {
     public class Interlock_GACLink_BuildProcess : IProcessSceneWithReport
     {
-        public int callbackOrder => int.MinValue;
+        public int callbackOrder => 0;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
             Debug.Log("InterlockLink Start Process");
+            List<Controller_Base> controllers = new List<Controller_Base>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                //TODO GACからInterlockへイベントを配送するためPickUpEventLinker/SyncEventLinkerを自動設定する
-
+                controllers.AddRange(obj.GetComponentsInChildren<Controller_Base>(true));
+            }
+            bool failed = false;
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
                 foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     UdonBehaviour interlockUdon = null;
@@ -46,7 +53,6 @@ namespace RBUR_SignalIntegrator_Editor
                         }
                     }
 
-                    bool failed = false;
                     if(interlocking.GetTargetSignalLocker() is GACLockerConsolidater)
                     {
                         VRCPickup Controller = ((GACLockerConsolidater)interlocking.GetTargetSignalLocker()).GetComponentInChildren<VRCPickup>();
@@ -67,10 +73,44 @@ namespace RBUR_SignalIntegrator_Editor
                             pickUpEventLinker.targets = pickUpEventLinker.targets.AddItem(interlockUdon).ToArray();
                         }
                     }
-                    if (failed)
+                }
+                foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
+                {
+                    int idx = -1;
+                    if(routeLocker.Locker_GTST == null || routeLocker.Locker_GTST.Length == 0)
                     {
-                        throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
+                        routeLocker.Locker_GTST = new AbstractLockerConsolidater[routeLocker.GetTargetPoints().Length];
                     }
+                    foreach (AbstractPointSetter points in routeLocker.GetTargetPoints())
+                    {
+                        idx++;
+                        Animator pointAnimator = points.GetComponent<Animator>();
+                        if (!pointAnimator) continue;
+
+                        Controller_Base pointController = null;
+                        foreach(Controller_Base checkingController in controllers)
+                        {
+                            if(pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator))
+                            {
+                                pointController = checkingController;
+                                break;
+                            }
+                        }
+                        if (!pointController) continue;
+                        AbstractLockerConsolidater locker = pointController.GetComponentInParent<AbstractLockerConsolidater>();
+                        if(locker == null)
+                        {
+                            Debug.LogError("PickUpEventLinker not found", pointController);
+                        }
+                        else
+                        {
+                            routeLocker.Locker_GTST[idx] = locker;
+                        }
+                    }
+                }
+                if (failed)
+                {
+                    throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
                 }
             }
             Debug.Log("InterlockLink Process End");
