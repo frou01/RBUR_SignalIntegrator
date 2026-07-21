@@ -31,9 +31,9 @@ namespace RBUR_SignalIntegrator
             {
                 locked = false;
             }
+            target.locked = locked;
             if (locked)
             {
-                target.locked = locked;
                 if (lockIndex != -1) target.SetPosition(lockPositions[lockIndex]);
             }
 
