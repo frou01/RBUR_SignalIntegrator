@@ -43,9 +43,10 @@ namespace RBUR_SignalIntegrator
         {
             if(!base.AddNewLocker(triedFrom))return false;
 
-            bool[] newSettedLockPosition = new bool[SettedLockPosition.Length + 1];
+            int[] newSettedLockPosition = new int[SettedLockPosition.Length + 1];
             SettedLockPosition.CopyTo(newSettedLockPosition, 0);
-            newSettedLockPosition[SettedLockPosition.Length] = false;
+            newSettedLockPosition[SettedLockPosition.Length] = 0;
+            SettedLockPosition = newSettedLockPosition;
             return true;
         }
 
