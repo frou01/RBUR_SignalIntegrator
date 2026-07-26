@@ -9,36 +9,11 @@ namespace RBUR_SignalIntegrator
 {
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {
-        [HideInInspector][SerializeField] protected int[] SettedLockIndex;
         [SerializeField] protected float[] lockPositions;
         [SerializeField] protected int failSafeIndex;
         [SerializeField] protected Controller_Base target;
 
 
-        //Return: Success?
-        public override bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector, out int triedIndex)
-        {
-            base.tryUpdateLocking(triedFrom, lockState, lockPositionSelector,out triedIndex);
-
-            SettedLockIndex[triedIndex] = lockPositionSelector;
-
-            bool locked = isLocked();
-            bool lockFault;
-            int lockIndex;
-            GetLockAngle_And_CheckFault(out lockFault,out lockIndex);
-
-            if (lockFault)
-            {
-                locked = false;
-            }
-            target.locked = locked;
-            if (locked)
-            {
-                if (lockIndex != -1) target.SetPosition(lockPositions[lockIndex]);
-            }
-
-            return !lockFault;
-        }
         public override bool AddNewLocker(UdonSharpBehaviour triedFrom)
         {
             if(!base.AddNewLocker(triedFrom))return false;
@@ -50,22 +25,6 @@ namespace RBUR_SignalIntegrator
             return true;
         }
 
-        private void GetLockAngle_And_CheckFault(out bool lockFault,out int lockIndex)
-        {
-            lockFault = false;
-            lockIndex = -1;
-            int checkingIndex = 0;
-            foreach (bool lockedState in SettedLockStates)
-            {
-                if (lockedState)
-                {
-                    if (lockIndex == -1) lockIndex = SettedLockIndex[checkingIndex];
-                    else if (lockIndex != SettedLockIndex[checkingIndex]) lockFault = true;
-                }
-
-                checkingIndex++;
-            }
-        }
 
         //Return: Controller positon (On Analog controller, return nearest lock point)
         public override int GetCurrentPosition()
@@ -87,7 +46,7 @@ namespace RBUR_SignalIntegrator
         public override void SetToFailSafePosition()
         {
             Networking.SetOwner(Networking.LocalPlayer,target.gameObject);
-            target.SetPosition(lockPositions[failSafeIndex]);
+            applyToControllerPos(failSafeIndex);
             int idx = 0;
             foreach (bool lockedState in SettedLockStates)
             {
@@ -98,6 +57,14 @@ namespace RBUR_SignalIntegrator
             }
         }
 
+        protected override void applyToControllerLock(bool state)
+        {
+            target.locked = state;
+        }
+        protected override void applyToControllerPos(int posIndex)
+        {
+            target.SetPosition(lockPositions[posIndex]);
+        }
         public override bool isControlerOwner()
         {
             return Networking.IsOwner(target.gameObject);
