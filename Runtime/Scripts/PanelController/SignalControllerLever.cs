@@ -10,7 +10,6 @@ namespace RBUR_SignalIntegrator
 {
     public class SignalControllerLever : AbstractPanelController
     {
-        [SerializeField] [HideInInspector] public Interlocking[] interlocks;
         [SerializeField] Animator[] SignalSideAnimators;
         [SerializeField] string signalAnimationParamater = "SignalRelayPosition";
         [SerializeField] int signalRelayPositionNum;
@@ -22,18 +21,6 @@ namespace RBUR_SignalIntegrator
             {
                 animator.enabled = true;
                 animator.SetFloat(signalAnimationParamater, (float)controllingPosition/ (signalRelayPositionNum-1));
-            }
-        }
-        public override void OnValueChanged()
-        {
-            foreach (Interlocking interlock in interlocks)
-            {
-                interlock.UpdateInterlock();
-            }
-            base.OnValueChanged();
-            foreach (Interlocking interlock in interlocks)
-            {
-                interlock.UpdateInterlock();
             }
         }
 

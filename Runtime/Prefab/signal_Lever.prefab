@@ -222,7 +222,7 @@ PrefabInstance:
     - target: {fileID: 1504486499249735486, guid: 5decb6b20bf8d644ea976c1e711c81b4,
         type: 3}
       propertyPath: m_Name
-      value: lever_MainSignal_2p_S_2 Variant
+      value: signal_Lever
       objectReference: {fileID: 0}
     - target: {fileID: 2281867966634433924, guid: 5decb6b20bf8d644ea976c1e711c81b4,
         type: 3}
@@ -364,10 +364,8 @@ MonoBehaviour:
   - {fileID: 618714116668079247}
   switchAnimationParamater: SwitchPosition
   switchPosition: 0
-  interlocks:
-  - {fileID: 0}
-  signalAnimators:
-  - {fileID: 0}
+  interlocks: []
+  SignalSideAnimators: []
   signalAnimationParamater: SignalRelayPosition
   signalRelayPositionNum: 2
 --- !u!114 &7738315141869546552
