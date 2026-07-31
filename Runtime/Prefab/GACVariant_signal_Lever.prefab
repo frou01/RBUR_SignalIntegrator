@@ -127,9 +127,13 @@ PrefabInstance:
     - target: {fileID: 3765030547202587564, guid: 3d4b452f8bdc0f147b904dbcb53844a0, type: 3}
       propertyPath: serializationData.Prefab
       value: 
-      objectReference: {fileID: 3765030547202587564, guid: 3d4b452f8bdc0f147b904dbcb53844a0, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 3765030547202587564, guid: 3d4b452f8bdc0f147b904dbcb53844a0, type: 3}
       propertyPath: segment_points.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3765030547202587564, guid: 3d4b452f8bdc0f147b904dbcb53844a0, type: 3}
+      propertyPath: serializationData.SerializedFormat
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -167,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -215,7 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 

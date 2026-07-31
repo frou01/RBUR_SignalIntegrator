@@ -19,11 +19,11 @@ namespace RBUR_SignalIntegrator_Editor
 {
     public class Interlock_GACLink_BuildProcess : IProcessSceneWithReport
     {
-        public int callbackOrder => -1;
+        public int callbackOrder => -100;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
-            Debug.Log("InterlockLink Start Process");
+            Debug.Log("InterlockLink GAC Start Process");
             List<Controller_Base> controllers = new List<Controller_Base>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
@@ -133,7 +133,7 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
             }
-            Debug.Log("InterlockLink Process End");
+            Debug.Log("InterlockLink GAC Process End");
 
         }
     }
