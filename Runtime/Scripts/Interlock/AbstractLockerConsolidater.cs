@@ -1,7 +1,6 @@
-﻿using UdonSharp;
+﻿using System;
+using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
 
 namespace RBUR_SignalIntegrator
 {
@@ -10,6 +9,7 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] protected bool[] SettedLockStates;
         [HideInInspector][SerializeField] protected UdonSharpBehaviour[] lockerInstances;
         [HideInInspector][SerializeField] protected int[] SettedLockIndex;
+        [SerializeField] protected int failSafeIndex;
 
         //Return: Success?
         public bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector)
@@ -17,9 +17,14 @@ namespace RBUR_SignalIntegrator
             return tryUpdateLocking(triedFrom, lockState, lockPositionSelector,out int idx);
         }
         //Return: Success?
-        public bool trySetPosition(UdonSharpBehaviour triedFrom, int lockPositionSelector)
+        public virtual bool trySetPosition(int lockPositionSelector)
         {
-            return trySetPosition(triedFrom, lockPositionSelector, out int idx);
+            if (isLocked()) return false;
+            else
+            {
+                applyPositionToController(lockPositionSelector);
+                return true;
+            }
         }
 
         //Return: Success?
@@ -43,22 +48,13 @@ namespace RBUR_SignalIntegrator
             {
                 locked = false;
             }
-            applyToControllerLock(locked);
+            applyLockToController(locked);
             if (locked)
             {
-                if (lockIndex != -1) applyToControllerPos(lockIndex); 
+                if (lockIndex != -1) applyPositionToController(lockIndex); 
             }
 
             return !lockFault;
-        }
-        public virtual bool trySetPosition(UdonSharpBehaviour triedFromInstance, int lockPositionSelector, out int triedInstanceIndex)
-        {
-            getCallingBehaviourIndex(triedFromInstance, out triedInstanceIndex);
-            if (isLocked()) return false;
-            else {
-                applyToControllerPos(lockPositionSelector);
-                return true;
-            }
         }
 
         //Return: Success?(Not already added?)
@@ -80,19 +76,12 @@ namespace RBUR_SignalIntegrator
             newSettedLockStates[SettedLockStates.Length] = false;
             SettedLockStates = newSettedLockStates;
 
+            int[] newSettedLockPosition = new int[SettedLockIndex.Length + 1];
+            SettedLockIndex.CopyTo(newSettedLockPosition, 0);
+            newSettedLockPosition[SettedLockIndex.Length] = 0;
+            SettedLockIndex = newSettedLockPosition;
+
             return true;
-        }
-
-        //Return: Controller positon (On Analog controller, return nearest lock point)
-        public virtual int GetCurrentPosition()
-        {
-            return -1;
-        }
-
-        //Return: Controller positon (On Analog controller, return nearest lock point)
-        public virtual bool SetCurrentPosition()
-        {
-            return false;
         }
 
         public virtual bool isLocked()
@@ -113,21 +102,62 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void SetToFailSafePosition()//for exception
         {
+            setControllerOwner();
+            int idx = 0;
+            foreach (bool lockedState in SettedLockStates)
+            {
+                SettedLockStates[idx] = false;
+                SettedLockIndex[idx] = failSafeIndex;
+
+                idx++;
+            }
+            applyPositionToController(failSafeIndex);
         }
 
-        protected virtual void applyToControllerLock(bool state)
+        //Return: Controller positon (On Analog controller, return nearest lock point)
+        public virtual int GetCurrentPosition()
         {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            throw new NotImplementedException();
+#endif
+#pragma warning disable CS0162 // 到達できないコードが検出されました
+            return -1;
+#pragma warning restore CS0162 // 到達できないコードが検出されました
         }
-        protected virtual void applyToControllerPos(int posIndex)
+
+        protected virtual void applyLockToController(bool state)
         {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            throw new NotImplementedException();
+#endif
         }
-        public virtual bool isControlerOwner()
+        protected virtual void applyPositionToController(int posIndex)
         {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            throw new NotImplementedException();
+#endif
+        }
+        public virtual bool isControllerOwner()
+        {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            throw new NotImplementedException();
+#endif
+#pragma warning disable CS0162 // 到達できないコードが検出されました
             return false;
+#pragma warning restore CS0162 // 到達できないコードが検出されました
+        }
+        public virtual void setControllerOwner()
+        {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            throw new NotImplementedException();
+#endif
         }
 
         public virtual void SyncController()
         {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            throw new NotImplementedException();
+#endif
         }
         protected void CheckFaultAndGetLockIndex(out bool lockFault, out int lockIndex)
         {
@@ -159,5 +189,28 @@ namespace RBUR_SignalIntegrator
                 }
             }
         }
+        /*
+        //function override template
+        public override int GetCurrentPosition()
+        {
+            return -1;
+        }
+        protected override void applyLockToController(bool state)
+        {
+        }
+        protected override void applyPositionToController(int posIndex)
+        {
+        }
+        public override bool isControllerOwner()
+        {
+            return true;
+        }
+        public override void setControllerOwner()
+        {
+        }
+        public override void SyncController()
+        {
+        }
+         */
     }
 }

@@ -1,5 +1,6 @@
 ﻿
 using frou01.GrabController;
+using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -10,20 +11,8 @@ namespace RBUR_SignalIntegrator
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {
         [SerializeField] protected float[] lockPositions;
-        [SerializeField] protected int failSafeIndex;
         [SerializeField] protected Controller_Base target;
 
-
-        public override bool AddNewLocker(UdonSharpBehaviour triedFrom)
-        {
-            if(!base.AddNewLocker(triedFrom))return false;
-
-            int[] newSettedLockPosition = new int[SettedLockIndex.Length + 1];
-            SettedLockIndex.CopyTo(newSettedLockPosition, 0);
-            newSettedLockPosition[SettedLockIndex.Length] = 0;
-            SettedLockIndex = newSettedLockPosition;
-            return true;
-        }
 
 
         //Return: Controller positon (On Analog controller, return nearest lock point)
@@ -32,7 +21,7 @@ namespace RBUR_SignalIntegrator
             float controllerPos = target.controllerPosition;
             float diffhistr = float.MaxValue;
             int res = -1;
-            for (int idx = 0;idx < lockPositions.Length; idx++)
+            for (int idx = 0; idx < lockPositions.Length; idx++)
             {
                 float diff = Mathf.Abs(lockPositions[idx] - controllerPos);
                 if (diff < diffhistr)
@@ -43,35 +32,26 @@ namespace RBUR_SignalIntegrator
             }
             return res;
         }
-        public override void SetToFailSafePosition()
-        {
-            Networking.SetOwner(Networking.LocalPlayer,target.gameObject);
-            applyToControllerPos(failSafeIndex);
-            int idx = 0;
-            foreach (bool lockedState in SettedLockStates)
-            {
-                SettedLockStates[idx] = false;
-                SettedLockIndex[idx] = failSafeIndex;
 
-                idx++;
-            }
-        }
-
-        protected override void applyToControllerLock(bool state)
+        protected override void applyLockToController(bool state)
         {
             target.locked = state;
         }
-        protected override void applyToControllerPos(int posIndex)
+        protected override void applyPositionToController(int posIndex)
         {
             target.SetPosition(lockPositions[posIndex]);
         }
-        public override bool isControlerOwner()
+        public override bool isControllerOwner()
         {
             return Networking.IsOwner(target.gameObject);
         }
+        public override void setControllerOwner()
+        {
+            Networking.SetOwner(Networking.LocalPlayer, target.gameObject);
+        }
         public override void SyncController()
         {
-            if (isControlerOwner())
+            if (isControllerOwner())
             {
                 target.RequestSerialization();
             }
