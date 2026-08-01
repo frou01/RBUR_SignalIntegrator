@@ -272,7 +272,7 @@ PrefabInstance:
     - target: {fileID: 1129418787418657251, guid: 2ee8010e0b61bf3448a58f6e74ce7b12,
         type: 3}
       propertyPath: m_Name
-      value: lever_Point_3p_S Variant
+      value: point_leverAndLamp
       objectReference: {fileID: 0}
     - target: {fileID: 5302601357937497862, guid: 2ee8010e0b61bf3448a58f6e74ce7b12,
         type: 3}
@@ -371,16 +371,22 @@ MonoBehaviour:
   lockerInstances: []
   SettedLockIndex: 
   failSafeIndex: 1
+  interlocks: []
   controllingPosition: 0
   switchToControllerMap: 00000000ffffffff01000000
   SwitchSideAnimator:
   - {fileID: 4401638272681535061}
   switchAnimationParamater: SwitchPosition
-  switchPosition: 0
+  switchPosition: 1
   pointInstance: {fileID: 0}
   PointSideAnimators:
   - {fileID: 4401638272681535061}
-  pointAnimationParamater: PointRoute
+  currentRouteParamater: PointRoute
+  progressParamater: PointMovePos
+  PointRouteIndex: 0
+  changeProgress: 0
+  changeTimeLength: 4
+  NetworkUpdate: 0
 --- !u!114 &1054795953820116318
 MonoBehaviour:
   m_ObjectHideFlags: 0
