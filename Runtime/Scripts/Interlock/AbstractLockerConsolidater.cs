@@ -11,6 +11,10 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] protected int[] SettedLockIndex;
         [SerializeField] protected int failSafeIndex;
 
+        protected virtual void Start()
+        {
+
+        }
         //Return: Success?
         public bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector)
         {

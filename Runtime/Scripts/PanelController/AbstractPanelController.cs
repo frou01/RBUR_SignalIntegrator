@@ -13,14 +13,35 @@ namespace RBUR_SignalIntegrator
     public class AbstractPanelController : AbstractLockerConsolidater
     {
         [SerializeField][HideInInspector] public Interlocking[] interlocks;
+        int PannelCon_prevControllingPosition = -1;
         [SerializeField][UdonSynced] protected int controllingPosition;//machine controlling position
         [SerializeField] protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] protected Animator[] SwitchSideAnimator;
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
 
-        void Start()
+        [UdonSynced][SerializeField] protected int switchPosition;
+        Slider slider
         {
+            get
+            {
+                if (m_slider == null)
+                {
+                    m_slider = GetComponentInChildren<Slider>();
+                }
+                return m_slider;
+            }
 
+            set
+            {
+                m_slider = value;
+            }
+        }
+        Slider m_slider;
+
+        protected override void Start()
+        {
+            base.Start();
+            OnDeserialization();
         }
         public override bool tryUpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector, out int triedInstanceIndex)
         {
@@ -45,11 +66,20 @@ namespace RBUR_SignalIntegrator
             if (isControllerOwner() && posIndex != controllingPosition)
             {
                 controllingPosition = posIndex;
-                SyncController();
+                if(PannelCon_prevControllingPosition != controllingPosition) SyncController();
             }
             else
             {
                 controllingPosition = posIndex;
+            }
+
+            if(PannelCon_prevControllingPosition != controllingPosition)
+            {
+                PannelCon_prevControllingPosition = controllingPosition;
+                foreach (Interlocking interlock in interlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
             }
         }
         public override bool isControllerOwner()
@@ -64,25 +94,6 @@ namespace RBUR_SignalIntegrator
         {
             this.RequestSerialization();
         }
-
-        [UdonSynced][SerializeField] protected int switchPosition;
-        Slider slider
-        {
-            get
-            {
-                if(m_slider == null)
-                {
-                    m_slider = GetComponentInChildren<Slider>();
-                }
-                return m_slider;
-            }
-
-            set
-            {
-                m_slider = value;
-            }
-        }
-        Slider m_slider;
         public virtual void OnValueChanged()
         {
             foreach (Interlocking interlock in interlocks)
@@ -100,17 +111,13 @@ namespace RBUR_SignalIntegrator
                 animator.enabled = true;
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length-1));
             }
-            foreach (Interlocking interlock in interlocks)
-            {
-                interlock.UpdateInterlock();
-            }
             SyncController();
         }
         public override void OnDeserialization()
         {
             if (slider != null)
             {
-                slider.value = switchPosition;
+                slider.SetValueWithoutNotify(switchPosition);
             }
             foreach (Animator animator in SwitchSideAnimator)
             {
