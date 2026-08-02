@@ -83,7 +83,7 @@ namespace RBUR_SignalIntegrator_Editor
                     foreach(AbstractPanelController panelController in multiLeverController.controlledLevers)
                     {
                         if (panelController.callbackBehaviours.Contains(UdonSharpEditorUtility.GetBackingUdonBehaviour(panelController))) break;
-                        panelController.callbackBehaviours = panelController.callbackBehaviours.AddItem(UdonSharpEditorUtility.GetBackingUdonBehaviour(panelController)).ToArray();
+                        panelController.callbackBehaviours = panelController.callbackBehaviours.AddItem(UdonSharpEditorUtility.GetBackingUdonBehaviour(multiLeverController)).ToArray();
                     }
                 }
             }
