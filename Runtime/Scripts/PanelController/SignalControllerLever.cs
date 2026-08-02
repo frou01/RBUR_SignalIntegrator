@@ -12,7 +12,9 @@ namespace RBUR_SignalIntegrator
     {
         [SerializeField] Animator[] SignalSideAnimators;
         [SerializeField] string signalAnimationParamater = "SignalRelayPosition";
-        [SerializeField] int signalRelayPositionNum;
+        [SerializeField] int signalLargestLevel;
+        [SerializeField] protected SignalEvaluator[] Evaluators;
+
         protected override void applyPositionToController(int posIndex)
         {
             base.applyPositionToController(posIndex);
@@ -20,7 +22,11 @@ namespace RBUR_SignalIntegrator
             foreach (Animator animator in SignalSideAnimators)
             {
                 animator.enabled = true;
-                animator.SetFloat(signalAnimationParamater, (float)controllingPosition/ (signalRelayPositionNum-1));
+                animator.SetFloat(signalAnimationParamater, (float)controllingPosition/ signalLargestLevel);
+            }
+            foreach (SignalEvaluator Evaluator in Evaluators)
+            {
+                Evaluator.updateSignal(this, controllingPosition);
             }
         }
 
@@ -36,6 +42,14 @@ namespace RBUR_SignalIntegrator
 
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), this.gameObject.name + ".SignalSideAnimator", guiStyle);
+            }
+            foreach (SignalEvaluator Evaluator in Evaluators)
+            {
+                Gizmos.color = new Color(0.5f, 1f, 0f, 1f);
+                guiStyle.normal.textColor = Gizmos.color;
+
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.02f, 0.02f);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.8f), this.gameObject.name + ".SignalEvaluator", guiStyle);
             }
         }
 #endif

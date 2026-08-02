@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
+using VRC.Udon;
+
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
 using frou01.util;
@@ -18,6 +20,7 @@ namespace RBUR_SignalIntegrator
         [SerializeField] protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] protected Animator[] SwitchSideAnimator;
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
+        [SerializeField] public UdonBehaviour[] callbackBehaviours;
 
         [UdonSynced][SerializeField] protected int switchPosition;
         Slider slider
@@ -45,10 +48,18 @@ namespace RBUR_SignalIntegrator
         }
         public override bool tryUpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector, out int triedInstanceIndex)
         {
+            bool prevLock = isLocked();
             bool res = base.tryUpdateLocking(triedFromInstance, lockState, lockPositionSelector, out triedInstanceIndex);
-            if (!isLocked() && switchToControllerMap[switchPosition] != -1)
+            if (!isLocked())
             {
                 trySetPosition(switchToControllerMap[switchPosition]);
+            }
+            if(isLocked() != prevLock)
+            {
+                foreach (UdonBehaviour beh in callbackBehaviours)
+                {
+                    beh.SendCustomEvent("PanelLeverUpdate");
+                }
             }
 
             return res;
@@ -63,14 +74,17 @@ namespace RBUR_SignalIntegrator
         }
         protected override void applyPositionToController(int posIndex)
         {
-            if (isControllerOwner() && posIndex != controllingPosition)
+            if(posIndex != -1)
             {
-                controllingPosition = posIndex;
-                if(PannelCon_prevControllingPosition != controllingPosition) SyncController();
-            }
-            else
-            {
-                controllingPosition = posIndex;
+                if (isControllerOwner() && posIndex != controllingPosition)
+                {
+                    controllingPosition = posIndex;
+                    if (PannelCon_prevControllingPosition != controllingPosition) SyncController();
+                }
+                else
+                {
+                    controllingPosition = posIndex;
+                }
             }
 
             if(PannelCon_prevControllingPosition != controllingPosition)
@@ -102,16 +116,19 @@ namespace RBUR_SignalIntegrator
             }
             setControllerOwner();
             if(slider != null) switchPosition = (int)slider.value;
-            if (switchToControllerMap[switchPosition] != -1)
-            {
-                trySetPosition(switchToControllerMap[switchPosition]);
-            }
+            trySetPosition(switchToControllerMap[switchPosition]);
+
             foreach (Animator animator in SwitchSideAnimator)
             {
                 animator.enabled = true;
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length-1));
             }
             SyncController();
+
+            foreach(UdonBehaviour beh in callbackBehaviours)
+            {
+                beh.SendCustomEvent("PanelLeverUpdate");
+            }
         }
         public override void OnDeserialization()
         {
@@ -125,6 +142,11 @@ namespace RBUR_SignalIntegrator
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
             }
             applyPositionToController(controllingPosition);
+
+            foreach (UdonBehaviour beh in callbackBehaviours)
+            {
+                beh.SendCustomEvent("PanelLeverUpdate");
+            }
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected virtual void OnDrawGizmos()

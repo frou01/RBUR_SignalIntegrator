@@ -3,10 +3,13 @@ using HarmonyLib;
 using RBUR_SignalIntegrator;
 using System.Collections.Generic;
 using System.Linq;
+using UdonSharp;
+using UdonSharpEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VRC.Udon;
 
 namespace RBUR_SignalIntegrator_Editor
 {
@@ -73,6 +76,14 @@ namespace RBUR_SignalIntegrator_Editor
                     foreach (AbstractPanelController controller in controllers)
                     {
                         controller.interlocks = controller.interlocks.AddToArray(interlocking);
+                    }
+                }
+                foreach (MultiLeverController multiLeverController in obj.GetComponentsInChildren<MultiLeverController>(true))
+                {
+                    foreach(AbstractPanelController panelController in multiLeverController.controlledLevers)
+                    {
+                        if (panelController.callbackBehaviours.Contains(UdonSharpEditorUtility.GetBackingUdonBehaviour(panelController))) break;
+                        panelController.callbackBehaviours = panelController.callbackBehaviours.AddItem(UdonSharpEditorUtility.GetBackingUdonBehaviour(panelController)).ToArray();
                     }
                 }
             }
