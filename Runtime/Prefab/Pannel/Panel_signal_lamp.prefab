@@ -100,6 +100,41 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 409614142956662767, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 409614142956662767, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 409614142956662767, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 409614142956662767, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1241313047812506028, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1241313047812506028, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1241313047812506028, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1311471159491909704, guid: e4910984b56a1d142b7166af57833b3d,
         type: 3}
       propertyPath: m_IsActive
@@ -115,6 +150,81 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2179601052596917561, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179601052596917561, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179601052596917561, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2618597578786159542, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2618597578786159542, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2618597578786159542, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2990073224065826329, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2990073224065826329, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2990073224065826329, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2992673074144373844, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2992673074144373844, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2992673074144373844, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085249804140133881, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085249804140133881, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085249804140133881, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3100298637845236953, guid: e4910984b56a1d142b7166af57833b3d,
         type: 3}
       propertyPath: m_IsActive
@@ -124,6 +234,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Panel_signal_lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704153565655203270, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704153565655203270, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704153565655203270, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3916044148447349144, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4152027897323820306, guid: e4910984b56a1d142b7166af57833b3d,
         type: 3}
@@ -180,9 +310,64 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4254996500325906498, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4254996500325906498, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4254996500325906498, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4254996500325906498, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5046628327937663888, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5046628327937663888, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5046628327937663888, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5046707094084606007, guid: e4910984b56a1d142b7166af57833b3d,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6531407389954208997, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8376944574659970667, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8376944574659970667, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8376944574659970667, guid: e4910984b56a1d142b7166af57833b3d,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9150016547892844861, guid: e4910984b56a1d142b7166af57833b3d,
