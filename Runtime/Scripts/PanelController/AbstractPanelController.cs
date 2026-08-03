@@ -18,6 +18,14 @@ namespace RBUR_SignalIntegrator
         int PannelCon_prevControllingPosition = -1;
         [SerializeField][UdonSynced] protected int controllingPosition;//machine controlling position
         [SerializeField] protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public int[] getSwitchToControllerMap()
+        {
+            return switchToControllerMap;
+        }
+#endif
+
         [SerializeField] protected Animator[] SwitchSideAnimator;
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
         [SerializeField] public UdonBehaviour[] callbackBehaviours;

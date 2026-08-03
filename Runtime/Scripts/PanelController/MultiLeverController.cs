@@ -8,12 +8,13 @@ using VRC.Udon.Serialization.OdinSerializer;
 
 namespace RBUR_SignalIntegrator
 {
+    [RequireComponent(typeof(MultiLeverMappingHolder))]
     public class MultiLeverController : UdonSharpBehaviour
     {
         [UdonSynced][SerializeField] protected int switchPosition;
         [SerializeField] protected Animator[] SwitchSideAnimator;
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
-        [OdinSerialize][SerializeField] protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [HideInInspector][OdinSerialize][SerializeField] protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         Slider slider
         {
             get
