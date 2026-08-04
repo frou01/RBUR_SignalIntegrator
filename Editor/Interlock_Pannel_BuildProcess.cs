@@ -52,6 +52,10 @@ namespace RBUR_SignalIntegrator_Editor
                         }
                     }
                 }
+                foreach (MultiLeverController MulCon in obj.GetComponentsInChildren<MultiLeverController>(true))
+                {
+                    MulCon.Set_switchToControllerMap(MulCon.GetComponent<MultiLeverMappingHolder>().get_mulCon_to_Con_Map());
+                }
                 foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     List<AbstractPanelController> controllers = new List<AbstractPanelController>();

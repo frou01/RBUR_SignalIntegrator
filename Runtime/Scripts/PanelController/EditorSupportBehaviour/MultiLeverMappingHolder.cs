@@ -10,6 +10,13 @@ namespace RBUR_SignalIntegrator
     public class MultiLeverMappingHolder : MonoBehaviour
     {
         [SerializeField] List<To_ControllerMap> mulCon_To_ControllerMap;
+        public int[][] get_mulCon_to_Con_Map()
+        {
+            return mulCon_To_ControllerMap
+                .Select(val => val.Switch_To_ControlMap)//List<To_ControllerMap> -> List<int[]>
+                .ToArray();
+        }
+
         [SerializeField] int switchPositionNum;
 
         void Update()
