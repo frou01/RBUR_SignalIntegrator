@@ -12,6 +12,7 @@ namespace RBUR_SignalIntegrator
         //TODO Local鎖錠
         //TODO 同期デッドロック防止：両否決
 
+        [SerializeField] protected EventStackHolder eventStackHolder;
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
         [SerializeField] InterlockStateLocker[] interlockStates;//進路以外の進行要件
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
@@ -50,6 +51,7 @@ namespace RBUR_SignalIntegrator
         }
         public void UpdateInterlock()//called by Controller Pickup Event
         {
+            eventStackHolder.AddStack(this, nameof(UpdateInterlock));
             Debug.Log("UpdateInterlock.Start", this);
             FailSafeCalled = false;
             signal_isDirty = false;
@@ -76,12 +78,13 @@ namespace RBUR_SignalIntegrator
             }
             if (isSignalOpenned)
             {
-                Debug.Log("UpdateInterlock.RouteLock", this);
                 bool LockSuccess = true;
+                Debug.Log("UpdateInterlock.LockDependSignal", this);
                 foreach (InterlockStateLocker interlockState in interlockStates)
                 {
                     LockSuccess &= interlockState.UpdateLock(true);
                 }
+                Debug.Log("UpdateInterlock.LockRoute", this);
                 LockSuccess &= interlock_Route.UpdateLockRoute(true);
                 Debug.Log("UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
                 if (!LockSuccess)
@@ -92,12 +95,16 @@ namespace RBUR_SignalIntegrator
             }
             else
             {
-                Debug.Log("UpdateInterlock.RouteRelease", this);
+                Debug.Log("UpdateInterlock.ReleaseLocks", this);
+
+                Debug.Log("UpdateInterlock.ReleaseDependSignal", this);
                 foreach (InterlockStateLocker interlockState in interlockStates)
                 {
                     interlockState.UpdateLock(false);
                 }
+                Debug.Log("UpdateInterlock.ReleaseRoute", this);
                 interlock_Route.UpdateLockRoute(false);
+
                 if (!canOpenSignal)
                 {
                     Debug.Log("UpdateInterlock.SignalLock", this);
@@ -107,11 +114,6 @@ namespace RBUR_SignalIntegrator
                     {
                         Debug.LogError("Interlock Preset Error. Cannot lock in closed signal. Route/SignalState/ControllerLockPositon Settings is inconsistency.", this.gameObject);
                     }
-                    foreach (InterlockStateLocker interlockState in interlockStates)
-                    {
-                        interlockState.UpdateLock(false);
-                    }
-                    interlock_Route.UpdateLockRoute(false);
                 }
                 else
                 {
@@ -124,8 +126,8 @@ namespace RBUR_SignalIntegrator
                     TargetSignalLocker.SyncController();
                 }
             }
+            eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
 
-            
         }
 
         public void RelayFailSafe()

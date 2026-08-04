@@ -7,6 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteLocker : RouteChecker
     {
+        [SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] lockers;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
 
@@ -33,12 +34,19 @@ namespace RBUR_SignalIntegrator
 
         public bool UpdateLockRoute(bool State)
         {
+            eventStackHolder.AddStack(this, nameof(UpdateLockRoute));
+            if (lockers.Length == 0)
+            {
+                eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
+                return true;
+            }
             if (!State)
             {
                 foreach (AbstractLockerConsolidater locker in lockers)
                 {
                     locker.tryUpdateLocking(this,false,-1);
                 }
+                eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return true;
             }
             else
@@ -52,7 +60,7 @@ namespace RBUR_SignalIntegrator
                 {
                     result &= locker.tryUpdateLocking(this, true, TargetRoute[idx]);
                 }
-
+                eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return result;
             }
         }

@@ -7,6 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class InterlockStateLocker : UdonSharpBehaviour
     {
+        [SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] protected AbstractLockerConsolidater locker;
         [SerializeField] protected int[] MeetPositionIndex;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
@@ -20,9 +21,12 @@ namespace RBUR_SignalIntegrator
         }
         public virtual bool Check()
         {
-            foreach(int meet in MeetPositionIndex)
+            foreach (int meet in MeetPositionIndex)
             {
-                if (locker.GetCurrentPosition() == meet) return true;
+                if (locker.GetCurrentPosition() == meet)
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -30,14 +34,22 @@ namespace RBUR_SignalIntegrator
         //return: Sucess?
         public virtual bool UpdateLock(bool isLocking)
         {
+            eventStackHolder.AddStack(this, nameof(UpdateLock));
+            bool res;
             if (Check())
             {
-                return locker.tryUpdateLocking(this, isLocking, locker.GetCurrentPosition());
+                res = locker.tryUpdateLocking(this, isLocking, locker.GetCurrentPosition());
             }
             else
             {
-                return locker.tryUpdateLocking(this, isLocking, MeetPositionIndex[0]);
+                if (isLocking && !locker.isControllerOwner()) res = false;
+                else
+                {
+                    res = locker.tryUpdateLocking(this, isLocking, MeetPositionIndex[0]);
+                }
             }
+            eventStackHolder.RemoveStack(this, nameof(UpdateLock));
+            return res;
         }
         public void RelayFailSafe()
         {

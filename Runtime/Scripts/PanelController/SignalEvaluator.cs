@@ -7,6 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class SignalEvaluator : UdonSharpBehaviour
     {
+        [SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] protected UdonSharpBehaviour[] senderInstance;
         [SerializeField] protected int[] ReceiveSignal;
 
@@ -23,6 +24,7 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void updateSignal(UdonSharpBehaviour callingInstance, int signal, out int triedIndex)
         {
+            eventStackHolder.AddStack(this, nameof(updateSignal));
             getCallingBehaviourIndex(callingInstance,out triedIndex);
             if (senderInstance.Length == triedIndex)
             {
@@ -59,6 +61,7 @@ namespace RBUR_SignalIntegrator
             {
                 Evaluator.updateSignal(this, currentOutSig);
             }
+            eventStackHolder.RemoveStack(this, nameof(updateSignal));
         }
         protected void getCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {

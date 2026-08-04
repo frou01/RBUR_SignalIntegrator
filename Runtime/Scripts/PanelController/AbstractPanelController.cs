@@ -51,11 +51,14 @@ namespace RBUR_SignalIntegrator
 
         protected override void Start()
         {
+            eventStackHolder.AddStack(this, nameof(Start));
             base.Start();
             OnDeserialization();
+            eventStackHolder.RemoveStack(this, nameof(Start));
         }
         public override bool tryUpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector, out int triedInstanceIndex)
         {
+            eventStackHolder.AddStack(this, nameof(tryUpdateLocking));
             bool prevLock = isLocked();
             bool res = base.tryUpdateLocking(triedFromInstance, lockState, lockPositionSelector, out triedInstanceIndex);
             if (!isLocked())
@@ -69,6 +72,7 @@ namespace RBUR_SignalIntegrator
                     beh.SendCustomEvent("PanelLeverUpdate");
                 }
             }
+            eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
 
             return res;
         }
@@ -82,7 +86,8 @@ namespace RBUR_SignalIntegrator
         }
         protected override void applyPositionToController(int posIndex)
         {
-            if(posIndex != -1)
+            eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if (posIndex != -1)
             {
                 if (isControllerOwner() && posIndex != controllingPosition)
                 {
@@ -103,6 +108,7 @@ namespace RBUR_SignalIntegrator
                     interlock.UpdateInterlock();
                 }
             }
+            eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
         public override bool isControllerOwner()
         {
@@ -118,6 +124,7 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void OnValueChanged()
         {
+            eventStackHolder.AddStack(this, nameof(OnValueChanged));
             foreach (Interlocking interlock in interlocks)
             {
                 interlock.UpdateInterlock();
@@ -137,9 +144,11 @@ namespace RBUR_SignalIntegrator
             {
                 beh.SendCustomEvent("PanelLeverUpdate");
             }
+            eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
+            eventStackHolder.AddStack(this, nameof(OnDeserialization));
             if (slider != null)
             {
                 slider.SetValueWithoutNotify(switchPosition);
@@ -155,6 +164,7 @@ namespace RBUR_SignalIntegrator
             {
                 beh.SendCustomEvent("PanelLeverUpdate");
             }
+            eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected virtual void OnDrawGizmos()

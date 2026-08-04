@@ -27,8 +27,10 @@ namespace RBUR_SignalIntegrator
         [SerializeField] bool NetworkUpdate;
         protected override void Start()
         {
+            eventStackHolder.AddStack(this, nameof(Start));
             base.Start();
             PointUpdate();
+            eventStackHolder.RemoveStack(this, nameof(Start));
         }
         public override int GetCurrentPosition()
         {
@@ -36,6 +38,7 @@ namespace RBUR_SignalIntegrator
         }
         protected override void applyPositionToController(int posIndex)
         {
+            eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
             if(pointCon_prevControllingPosition != controllingPosition)
             {
@@ -43,6 +46,7 @@ namespace RBUR_SignalIntegrator
                 this.enabled = true;
                 pointCon_prevControllingPosition = controllingPosition;
             }
+            eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
         private void Update()
@@ -93,6 +97,7 @@ namespace RBUR_SignalIntegrator
 
         public void PointUpdate()
         {
+            eventStackHolder.AddStack(this,nameof(PointUpdate));
             this.enabled = true;
             PointRouteIndex = pointInstance.get_current_To_Index();
             foreach (Animator animator in PointSideAnimators)
@@ -108,6 +113,7 @@ namespace RBUR_SignalIntegrator
                     interlock.UpdateInterlock();
                 }
             }
+            eventStackHolder.RemoveStack(this, nameof(PointUpdate));
         }
         public override void SyncController()
         {

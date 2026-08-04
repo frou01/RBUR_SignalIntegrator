@@ -6,6 +6,7 @@ namespace RBUR_SignalIntegrator
 {
     public class AbstractLockerConsolidater : UdonSharpBehaviour
     {
+        [SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] protected bool[] SettedLockStates;
         [HideInInspector][SerializeField] protected UdonSharpBehaviour[] lockerInstances;
         [HideInInspector][SerializeField] protected int[] SettedLockIndex;
@@ -26,7 +27,9 @@ namespace RBUR_SignalIntegrator
             if (isLocked()) return false;
             else
             {
+                eventStackHolder.AddStack(this, nameof(trySetPosition));
                 applyPositionToController(lockPositionSelector);
+                eventStackHolder.RemoveStack(this, nameof(trySetPosition));
                 return true;
             }
         }
@@ -34,6 +37,7 @@ namespace RBUR_SignalIntegrator
         //Return: Success?
         public virtual bool tryUpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector,out int triedInstanceIndex)
         {
+            eventStackHolder.AddStack(this, nameof(tryUpdateLocking));
             getCallingBehaviourIndex(triedFromInstance, out triedInstanceIndex);
             if (lockerInstances.Length == triedInstanceIndex)
             {
@@ -55,9 +59,9 @@ namespace RBUR_SignalIntegrator
             applyLockToController(locked);
             if (locked)
             {
-                if (lockIndex != -1) applyPositionToController(lockIndex); 
+                if (lockIndex != -1) applyPositionToController(lockIndex);
             }
-
+            eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
             return !lockFault;
         }
 

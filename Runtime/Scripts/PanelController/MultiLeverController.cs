@@ -11,10 +11,16 @@ namespace RBUR_SignalIntegrator
     [RequireComponent(typeof(MultiLeverMappingHolder))]
     public class MultiLeverController : UdonSharpBehaviour
     {
+        [SerializeField] public EventStackHolder eventStackHolder;
         [UdonSynced][SerializeField] protected int switchPosition;
         [SerializeField] protected Animator[] SwitchSideAnimator;
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
         [HideInInspector][OdinSerialize][SerializeField] protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+
+        public void Set_switchToControllerMap(int[][] switchToControllerMap)
+        {
+            this.switchToControllerMap = switchToControllerMap;
+        }
         Slider slider
         {
             get
@@ -45,6 +51,7 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void OnValueChanged()
         {
+            eventStackHolder.AddStack(this, nameof(OnValueChanged));
             setControllerOwner();
             if (slider != null) switchPosition = (int)slider.value;
 
@@ -65,9 +72,11 @@ namespace RBUR_SignalIntegrator
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
             }
             SyncController();
+            eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
+            eventStackHolder.AddStack(this, nameof(OnDeserialization));
             if (slider != null)
             {
                 slider.SetValueWithoutNotify(switchPosition);
@@ -87,9 +96,11 @@ namespace RBUR_SignalIntegrator
                 }
                 idx++;
             }
+            eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
         public void PanelLeverUpdate()
         {
+            eventStackHolder.AddStack(this, nameof(PanelLeverUpdate));
             if (slider != null)
             {
                 slider.SetValueWithoutNotify(switchPosition);
@@ -109,6 +120,7 @@ namespace RBUR_SignalIntegrator
                 }
                 idx++;
             }
+            eventStackHolder.RemoveStack(this, nameof(PanelLeverUpdate));
         }
     }
 }
