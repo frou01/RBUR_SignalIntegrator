@@ -12,7 +12,7 @@ namespace RBUR_SignalIntegrator
         //TODO Local鎖錠
         //TODO 同期デッドロック防止：両否決
 
-        [SerializeField] protected EventStackHolder eventStackHolder;
+        [SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
         [SerializeField] InterlockStateLocker[] interlockStates;//進路以外の進行要件
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
