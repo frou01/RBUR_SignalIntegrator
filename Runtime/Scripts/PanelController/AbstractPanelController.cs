@@ -14,7 +14,7 @@ namespace RBUR_SignalIntegrator
     //virtualization controller for machine<Point,Signal,Sign>
     public class AbstractPanelController : AbstractLockerConsolidater
     {
-        [SerializeField][HideInInspector] public Interlocking[] interlocks;
+        [SerializeField][HideInInspector] public Interlocking[] LinkedInterlocks;
         int PannelCon_prevControllingPosition = -1;
         [SerializeField][UdonSynced] protected int controllingPosition;//machine controlling position
         [SerializeField] protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
@@ -103,10 +103,6 @@ namespace RBUR_SignalIntegrator
             if(PannelCon_prevControllingPosition != controllingPosition)
             {
                 PannelCon_prevControllingPosition = controllingPosition;
-                foreach (Interlocking interlock in interlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
             }
             eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
@@ -125,10 +121,6 @@ namespace RBUR_SignalIntegrator
         public virtual void OnValueChanged()
         {
             eventStackHolder.AddStack(this, nameof(OnValueChanged));
-            foreach (Interlocking interlock in interlocks)
-            {
-                interlock.UpdateInterlock();
-            }
             setControllerOwner();
             if(slider != null) switchPosition = (int)slider.value;
             trySetPosition(switchToControllerMap[switchPosition]);

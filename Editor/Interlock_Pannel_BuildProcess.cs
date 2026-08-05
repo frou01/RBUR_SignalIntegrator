@@ -79,7 +79,7 @@ namespace RBUR_SignalIntegrator_Editor
                     }
                     foreach (AbstractPanelController controller in controllers)
                     {
-                        controller.interlocks = controller.interlocks.AddToArray(interlocking);
+                        controller.LinkedInterlocks = controller.LinkedInterlocks.AddToArray(interlocking);
                     }
                 }
                 foreach (MultiLeverController multiLeverController in obj.GetComponentsInChildren<MultiLeverController>(true))

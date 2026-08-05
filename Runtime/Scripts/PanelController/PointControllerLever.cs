@@ -108,7 +108,7 @@ namespace RBUR_SignalIntegrator
             if(PrevPointRouteIndex != PointRouteIndex)
             {
                 PrevPointRouteIndex = PointRouteIndex;
-                foreach (Interlocking interlock in interlocks)
+                foreach (Interlocking interlock in LinkedInterlocks)
                 {
                     interlock.UpdateInterlock();
                 }
