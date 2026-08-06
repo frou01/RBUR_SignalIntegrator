@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
 using System.Linq;
 using HarmonyLib;
+#endif
 
 namespace RBUR_SignalIntegrator
 {
@@ -10,12 +12,14 @@ namespace RBUR_SignalIntegrator
     public class MultiLeverMappingHolder : MonoBehaviour
     {
         [SerializeField] List<To_ControllerMap> mulCon_To_ControllerMap;
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
         public int[][] get_mulCon_to_Con_Map()
         {
             return mulCon_To_ControllerMap
                 .Select(val => val.Switch_To_ControlMap)//List<To_ControllerMap> -> List<int[]>
                 .ToArray();
         }
+#endif
 
         [SerializeField] int switchPositionNum;
 
