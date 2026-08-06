@@ -142,8 +142,9 @@ namespace RBUR_SignalIntegrator
         }
         protected virtual void applyPositionToController(int posIndex)
         {
-            if(GetCurrentPosition() != posIndex)
+            if(posIndex != -1 && GetCurrentPosition() != posIndex)
             {
+                Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
                 positionUpdated = true;
             }
         }

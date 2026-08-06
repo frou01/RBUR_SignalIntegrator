@@ -88,9 +88,9 @@ namespace RBUR_SignalIntegrator_Editor
                         }
                     }
                     List<GACLockerConsolidater> lockers = new List<GACLockerConsolidater>();
-                    if (interlocking.GetTargetSignalLocker() is GACLockerConsolidater)
+                    if (interlocking.GetFromLocker() is GACLockerConsolidater)
                     {
-                        lockers.Add((GACLockerConsolidater)interlocking.GetTargetSignalLocker());
+                        lockers.Add((GACLockerConsolidater)interlocking.GetFromLocker());
                     }
                     foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Locker_GTST)
                     {
@@ -99,7 +99,7 @@ namespace RBUR_SignalIntegrator_Editor
                             lockers.Add((GACLockerConsolidater)locker);
                         }
                     }
-                    foreach (InterlockStateLocker StateLocker in interlocking.GetInterlockStateLinker())
+                    foreach (Interlock_ToLockerAndMeetPosition StateLocker in interlocking.GetInterlockStateLinker())
                     {
                         if (StateLocker.getLocker() is GACLockerConsolidater)
                         {

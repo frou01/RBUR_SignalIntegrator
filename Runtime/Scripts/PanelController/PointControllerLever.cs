@@ -34,7 +34,7 @@ namespace RBUR_SignalIntegrator
         }
         public override int GetCurrentPosition()
         {
-            return PointRouteIndex;
+            return controllingPosition;
         }
         protected override void applyPositionToController(int posIndex)
         {

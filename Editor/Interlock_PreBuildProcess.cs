@@ -51,7 +51,7 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     con.eventStackHolder = eventStackHolder;
                 }
-                foreach (InterlockStateLocker con in obj.GetComponentsInChildren<InterlockStateLocker>())
+                foreach (Interlock_ToLockerAndMeetPosition con in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>())
                 {
                     con.eventStackHolder = eventStackHolder;
                 }

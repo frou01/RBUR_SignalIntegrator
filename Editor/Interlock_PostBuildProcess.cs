@@ -1,6 +1,9 @@
 ﻿
 using frou01.util;
+using HarmonyLib;
 using RBUR_SignalIntegrator;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -36,7 +39,7 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     interlocking.SetupLocker();
                 }
-                foreach (InterlockStateLocker stateLinker in obj.GetComponentsInChildren<InterlockStateLocker>(true))
+                foreach (Interlock_ToLockerAndMeetPosition stateLinker in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>(true))
                 {
                     stateLinker.SetupLocker();
                 }
@@ -44,13 +47,55 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     routeLocker.SetupLocker();
                 }
-                //TODO stateLinker,routeLockerからInterlockingへの参照を張る
-                foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
+                // stateLinker,routeLockerからInterlockingへの参照を張る
+                // Interlockに影響を受ける全てのコントローラーを探索しておく。更新終了検知で使う。
+                foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
                 {
-                    interlocking.GetRouteLocker().setParentInterlock(interlocking);
-                    foreach (InterlockStateLocker stateLinker in interlocking.GetInterlockStateLinker())
+                    currentInterlock.GetRouteLocker().setParentInterlock(currentInterlock);
+                    foreach (Interlock_ToLockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
                     {
-                        stateLinker.setParentInterlock(interlocking);
+                        stateLinker.setParentInterlock(currentInterlock);
+                    }
+
+                    List<AbstractLockerConsolidater> controllers = new List<AbstractLockerConsolidater>();
+                    foreach (Interlock_ToLockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+                    {
+                        controllers.Add(StateLocker.getLocker());
+                    }
+                    foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    {
+                        controllers.Add(locker);
+                    }
+                    controllers.Add(currentInterlock.GetFromLocker());
+                    currentInterlock.affectedLockers = currentInterlock.affectedLockers.AddRangeToArray(controllers.ToArray());
+                }
+            }
+
+            Dictionary<AbstractLockerConsolidater, Interlocking> interlock_From_Lockers = new Dictionary<AbstractLockerConsolidater, Interlocking>();
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
+                foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
+                {
+                    interlock_From_Lockers.Add(currentInterlock.GetFromLocker(), currentInterlock);
+                }
+            }
+
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
+                foreach (Interlocking interlockA in obj.GetComponentsInChildren<Interlocking>(true))
+                {
+                    foreach (AbstractLockerConsolidater lockerAffectedFromA in interlockA.affectedLockers)
+                    {
+                        Interlocking interlockB;
+                        if (interlock_From_Lockers.TryGetValue(lockerAffectedFromA, out interlockB))
+                        {
+                            if (interlockB != interlockA && interlockB.affectedLockers.Contains(interlockA.GetFromLocker()))
+                            {
+                                Debug.LogWarning("AnController " + interlockA.GetFromLocker().name + " is Locking / Locked by " + interlockB.GetFromLocker().name, interlockA);
+                                Debug.LogWarning("This may cause inconsistent sync result.", interlockB);
+                                Debug.LogWarning("Remove " + interlockA.GetFromLocker().name + " or " + interlockB.GetFromLocker().name + " from To Locker_States");
+                            }
+                        }
                     }
                 }
             }
