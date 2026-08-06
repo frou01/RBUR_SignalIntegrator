@@ -92,7 +92,8 @@ namespace RBUR_SignalIntegrator
                 {
                     LockSuccess &= interlockState.UpdateLock(true);
                 }
-                LockSuccess &= interlock_Route.UpdateLockRoute(true);
+                LockSuccess &= interlock_Route.UpdateLockRoute(true,From_Locker.isControllerOwner());
+
                 Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
                 if (!LockSuccess)
                 {

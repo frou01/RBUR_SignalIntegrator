@@ -32,7 +32,7 @@ namespace RBUR_SignalIntegrator
             base.Start();
         }
 
-        public bool UpdateLockRoute(bool State)
+        public bool UpdateLockRoute(bool State,bool checkRoute)
         {
             eventStackHolder.AddStack(this, nameof(UpdateLockRoute));
             if (lockers.Length == 0)
@@ -51,7 +51,11 @@ namespace RBUR_SignalIntegrator
             }
             else
             {
-                if (!isRouteOpen()) return false;
+                if (checkRoute && !isRouteOpen())
+                {
+                    eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
+                    return false;
+                }
 
                 bool result = true;
 
