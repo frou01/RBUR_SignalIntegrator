@@ -56,39 +56,69 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     MulCon.Set_switchToControllerMap(MulCon.GetComponent<MultiLeverMappingHolder>().get_mulCon_to_Con_Map());
                 }
-                foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
+                foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
                 {
+                    //Add Interlocking Reverse reference to Controller
                     List<AbstractPanelController> controllers = new List<AbstractPanelController>();
-                    foreach (InterlockStateLocker StateLocker in interlocking.GetInterlockStateLinker())
+                    foreach (InterlockStateLocker StateLocker in currentInterlock.GetInterlockStateLinker())
                     {
                         if (StateLocker.getLocker() is AbstractPanelController)
                         {
                             controllers.Add((AbstractPanelController)StateLocker.getLocker());
                         }
                     }
-                    foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Locker_GTST)
+                    foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
                     {
                         if (locker is AbstractPanelController)
                         {
                             controllers.Add((AbstractPanelController)locker);
                         }
                     }
-                    if (interlocking.GetTargetSignalLocker() is AbstractPanelController)
+                    if (currentInterlock.GetTargetSignalLocker() is AbstractPanelController)
                     {
-                        controllers.Add((AbstractPanelController)interlocking.GetTargetSignalLocker());
+                        controllers.Add((AbstractPanelController)currentInterlock.GetTargetSignalLocker());
                     }
                     foreach (AbstractPanelController controller in controllers)
                     {
-                        controller.LinkedInterlocks = controller.LinkedInterlocks.AddToArray(interlocking);
+                        controller.ReferingInterlocks = controller.ReferingInterlocks.AddToArray(currentInterlock);
                     }
+                }
+                foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
+                {
+                    //Add Affected Interlocks to Interlocking 
+                    List<Interlocking> ReverseReferencedInterlocks = new List<Interlocking>();
+                    foreach (InterlockStateLocker StateLocker in currentInterlock.GetInterlockStateLinker())
+                    {
+                        if (StateLocker.getLocker() is AbstractPanelController)
+                        {
+                            ReverseReferencedInterlocks.AddRange(((AbstractPanelController)StateLocker.getLocker()).ReferingInterlocks);
+                        }
+                    }
+                    foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    {
+                        if (locker is AbstractPanelController)
+                        {
+                            ReverseReferencedInterlocks.AddRange(((AbstractPanelController)locker).ReferingInterlocks);
+                        }
+                    }
+                    if (currentInterlock.GetTargetSignalLocker() is AbstractPanelController)
+                    {
+                        ReverseReferencedInterlocks.AddRange(((AbstractPanelController)currentInterlock.GetTargetSignalLocker()).ReferingInterlocks);
+                    }
+                    ReverseReferencedInterlocks.Distinct();
+
+                    currentInterlock.affectedInterlockings = currentInterlock.affectedInterlockings.AddRangeToArray(ReverseReferencedInterlocks.ToArray());
                 }
                 foreach (MultiLeverController multiLeverController in obj.GetComponentsInChildren<MultiLeverController>(true))
                 {
                     foreach(AbstractPanelController panelController in multiLeverController.controlledLevers)
                     {
+                        multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.AddRangeToArray(panelController.ReferingInterlocks);
+
                         if (panelController.callbackBehaviours.Contains(UdonSharpEditorUtility.GetBackingUdonBehaviour(panelController))) break;
                         panelController.callbackBehaviours = panelController.callbackBehaviours.AddItem(UdonSharpEditorUtility.GetBackingUdonBehaviour(multiLeverController)).ToArray();
                     }
+                    multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.Distinct().ToArray();
                 }
             }
         }

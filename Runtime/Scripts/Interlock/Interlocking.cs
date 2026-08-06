@@ -18,7 +18,8 @@ namespace RBUR_SignalIntegrator
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
         [SerializeField] int SignalClosePositionIndex;
         [SerializeField] int[] SignalOpenPositionIndex;
-        [HideInInspector] public bool FailSafeCalled;
+        [HideInInspector][SerializeField] public bool FailSafeCalled;
+        [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;
         protected bool signal_isDirty = false;
         public RouteLocker GetRouteLocker()
         {
@@ -49,9 +50,11 @@ namespace RBUR_SignalIntegrator
         {
             UpdateInterlock();
         }
-        public void UpdateInterlock()//called by Controller Pickup Event
+
+        public void UpdateInterlock(bool updateAffected)
         {
             eventStackHolder.AddStack(this, nameof(UpdateInterlock));
+
             Debug.Log("UpdateInterlock.Start", this);
             FailSafeCalled = false;
             signal_isDirty = false;
@@ -126,8 +129,19 @@ namespace RBUR_SignalIntegrator
                     TargetSignalLocker.SyncController();
                 }
             }
-            eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
 
+            if (updateAffected)
+            {
+                foreach(Interlocking interlock in affectedInterlockings)
+                {
+                    interlock.UpdateInterlock(false);
+                }
+            }
+            eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
+        }
+        public void UpdateInterlock()//called by Controller Pickup Event
+        {
+            UpdateInterlock(true);
         }
 
         public void RelayFailSafe()

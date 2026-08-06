@@ -1024,7 +1024,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 500647295}
-  debugLog_onAddStack: 1
+  debugLog_onAddStack: 0
 --- !u!1 &520425861
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,6 +1415,7 @@ MonoBehaviour:
   SignalClosePositionIndex: 0
   SignalOpenPositionIndex: 01000000
   FailSafeCalled: 0
+  affectedInterlockings: []
 --- !u!1001 &697956443
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6985,6 +6986,7 @@ MonoBehaviour:
   SignalClosePositionIndex: 0
   SignalOpenPositionIndex: 01000000
   FailSafeCalled: 0
+  affectedInterlockings: []
 --- !u!1 &1554777387 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1645302281881041568, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
@@ -7079,6 +7081,7 @@ MonoBehaviour:
   SignalClosePositionIndex: 0
   SignalOpenPositionIndex: 01000000
   FailSafeCalled: 0
+  affectedInterlockings: []
 --- !u!1001 &1586316654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7882,6 +7885,7 @@ MonoBehaviour:
   SignalClosePositionIndex: 0
   SignalOpenPositionIndex: 01000000
   FailSafeCalled: 0
+  affectedInterlockings: []
 --- !u!1 &2048563921 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4031794571036734116, guid: 7a201aa92c568814284037b369d08e56,
@@ -8273,6 +8277,7 @@ MonoBehaviour:
   SignalClosePositionIndex: 0
   SignalOpenPositionIndex: 01000000
   FailSafeCalled: 0
+  affectedInterlockings: []
 --- !u!4 &2129388624 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6092699542364383740, guid: c156d8540eb49134d96d3e98d2a1c042,
@@ -9491,7 +9496,7 @@ MonoBehaviour:
   lockerInstances: []
   SettedLockIndex: 
   failSafeIndex: 0
-  interlocks: []
+  ReferingInterlocks: []
   controllingPosition: 0
   switchToControllerMap: ffffffff
   SwitchSideAnimator: []
@@ -9745,7 +9750,7 @@ MonoBehaviour:
   lockerInstances: []
   SettedLockIndex: 
   failSafeIndex: 0
-  interlocks: []
+  ReferingInterlocks: []
   controllingPosition: 0
   switchToControllerMap: ffffffff
   SwitchSideAnimator: []

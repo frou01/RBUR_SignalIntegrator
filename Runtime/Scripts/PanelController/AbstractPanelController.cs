@@ -14,7 +14,7 @@ namespace RBUR_SignalIntegrator
     //virtualization controller for machine<Point,Signal,Sign>
     public class AbstractPanelController : AbstractLockerConsolidater
     {
-        [SerializeField][HideInInspector] public Interlocking[] LinkedInterlocks;
+        [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
         int PannelCon_prevControllingPosition = -1;
         [SerializeField][UdonSynced] protected int controllingPosition;//machine controlling position
         [SerializeField] protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
@@ -31,6 +31,7 @@ namespace RBUR_SignalIntegrator
         [SerializeField] public UdonBehaviour[] callbackBehaviours;
 
         [UdonSynced][SerializeField] protected int switchPosition;
+        protected int PrevSwitchPos = -1;
         Slider slider
         {
             get
@@ -69,7 +70,7 @@ namespace RBUR_SignalIntegrator
             {
                 foreach (UdonBehaviour beh in callbackBehaviours)
                 {
-                    beh.SendCustomEvent("PanelLeverUpdate");
+                    beh.SendCustomEvent("PanelLockstateUpdate");
                 }
             }
             eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
@@ -121,8 +122,14 @@ namespace RBUR_SignalIntegrator
         public virtual void OnValueChanged()
         {
             eventStackHolder.AddStack(this, nameof(OnValueChanged));
+            //Pre-control Interlock update
+            foreach (Interlocking interlock in ReferingInterlocks)
+            {
+                interlock.UpdateInterlock();
+            }
+
             setControllerOwner();
-            if(slider != null) switchPosition = (int)slider.value;
+            if (slider != null) switchPosition = (int)slider.value;
             trySetPosition(switchToControllerMap[switchPosition]);
 
             foreach (Animator animator in SwitchSideAnimator)
@@ -132,15 +139,27 @@ namespace RBUR_SignalIntegrator
             }
             SyncController();
 
-            foreach(UdonBehaviour beh in callbackBehaviours)
+            //Post-control Interlock update
+            foreach (Interlocking interlock in ReferingInterlocks)
             {
-                beh.SendCustomEvent("PanelLeverUpdate");
+                interlock.UpdateInterlock();
             }
+            PrevSwitchPos = switchPosition;
             eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
             eventStackHolder.AddStack(this, nameof(OnDeserialization));
+
+            if(PrevSwitchPos != switchPosition)
+            {
+                //Pre-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
+            }
+
             if (slider != null)
             {
                 slider.SetValueWithoutNotify(switchPosition);
@@ -152,10 +171,16 @@ namespace RBUR_SignalIntegrator
             }
             applyPositionToController(controllingPosition);
 
-            foreach (UdonBehaviour beh in callbackBehaviours)
+            if (PrevSwitchPos != switchPosition)
             {
-                beh.SendCustomEvent("PanelLeverUpdate");
+                //Post-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
             }
+
+            PrevSwitchPos = switchPosition;
             eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

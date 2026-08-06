@@ -13,9 +13,11 @@ namespace RBUR_SignalIntegrator
     {
         [SerializeField] public EventStackHolder eventStackHolder;
         [UdonSynced][SerializeField] protected int switchPosition;
+        protected int PrevSwitchPos = -1;
         [SerializeField] protected Animator[] SwitchSideAnimator;
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
         [HideInInspector][OdinSerialize][SerializeField] protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
 
         public void Set_switchToControllerMap(int[][] switchToControllerMap)
         {
@@ -52,6 +54,13 @@ namespace RBUR_SignalIntegrator
         public virtual void OnValueChanged()
         {
             eventStackHolder.AddStack(this, nameof(OnValueChanged));
+
+            //Pre-control Interlock update
+            foreach(Interlocking interlock in ReferingInterlocks)
+            {
+                interlock.UpdateInterlock();
+            }
+
             setControllerOwner();
             if (slider != null) switchPosition = (int)slider.value;
 
@@ -72,11 +81,29 @@ namespace RBUR_SignalIntegrator
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
             }
             SyncController();
+
+            //Post-control Interlock update
+            foreach (Interlocking interlock in ReferingInterlocks)
+            {
+                interlock.UpdateInterlock();
+            }
+            PrevSwitchPos = switchPosition;
+
             eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
             eventStackHolder.AddStack(this, nameof(OnDeserialization));
+
+            if (PrevSwitchPos != switchPosition)
+            {
+                //Pre-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
+            }
+
             if (slider != null)
             {
                 slider.SetValueWithoutNotify(switchPosition);
@@ -96,20 +123,21 @@ namespace RBUR_SignalIntegrator
                 }
                 idx++;
             }
+
+            if (PrevSwitchPos != switchPosition)
+            {
+                //Post-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
+            }
+
             eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
-        public void PanelLeverUpdate()
+        public void PanelLockstateUpdate()
         {
-            eventStackHolder.AddStack(this, nameof(PanelLeverUpdate));
-            if (slider != null)
-            {
-                slider.SetValueWithoutNotify(switchPosition);
-            }
-            foreach (Animator animator in SwitchSideAnimator)
-            {
-                animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
-            }
+            eventStackHolder.AddStack(this, nameof(PanelLockstateUpdate));
 
             int idx = 0;
             foreach (AbstractPanelController panelController in controlledLevers)
@@ -120,7 +148,7 @@ namespace RBUR_SignalIntegrator
                 }
                 idx++;
             }
-            eventStackHolder.RemoveStack(this, nameof(PanelLeverUpdate));
+            eventStackHolder.RemoveStack(this, nameof(PanelLockstateUpdate));
         }
     }
 }
