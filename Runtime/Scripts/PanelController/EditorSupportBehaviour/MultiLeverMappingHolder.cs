@@ -11,25 +11,23 @@ namespace RBUR_SignalIntegrator
     [ExecuteAlways]
     public class MultiLeverMappingHolder : MonoBehaviour
     {
-        [SerializeField] List<To_ControllerMap> mulCon_To_ControllerMap;
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
+        [SerializeField] List<To_ControllerMap> To_ControllerMaps;
         public int[][] get_mulCon_to_Con_Map()
         {
-            return mulCon_To_ControllerMap
+            return To_ControllerMaps
                 .Select(val => val.Switch_To_ControlMap)//List<To_ControllerMap> -> List<int[]>
                 .ToArray();
         }
-#endif
 
         [SerializeField] int switchPositionNum;
 
         void Update()
         {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
             MultiLeverController TargetMulCon;
             TargetMulCon = GetComponent<MultiLeverController>();
             Dictionary<AbstractPanelController, To_ControllerMap> synced_controller_controlPositions_Map = new Dictionary<AbstractPanelController, To_ControllerMap> ();
-            foreach (To_ControllerMap syncedControllerMap in mulCon_To_ControllerMap)
+            foreach (To_ControllerMap syncedControllerMap in To_ControllerMaps)
             {
                 if(syncedControllerMap.linkedController != null && !synced_controller_controlPositions_Map.ContainsKey(syncedControllerMap.linkedController)) 
                     synced_controller_controlPositions_Map.Add(syncedControllerMap.linkedController, syncedControllerMap);
@@ -64,9 +62,8 @@ namespace RBUR_SignalIntegrator
                 idx++;
             }
             SyncingMulCon_To_ControllerMap.OrderBy(toConMap => toConMap.onMulConOrder);
-            mulCon_To_ControllerMap.Clear();
-            mulCon_To_ControllerMap.AddRange(SyncingMulCon_To_ControllerMap);
-#endif
+            To_ControllerMaps.Clear();
+            To_ControllerMaps.AddRange(SyncingMulCon_To_ControllerMap);
         }
 
         [System.Serializable]
@@ -83,5 +80,6 @@ namespace RBUR_SignalIntegrator
                 this.Switch_To_ControlMap = MulConSwitch_To_ControllerControlMap;
             }
         }
+#endif
     }
 }

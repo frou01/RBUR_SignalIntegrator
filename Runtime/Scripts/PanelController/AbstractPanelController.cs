@@ -31,7 +31,6 @@ namespace RBUR_SignalIntegrator
         [SerializeField] public UdonBehaviour[] callbackBehaviours;
 
         [UdonSynced][SerializeField] protected int switchPosition;
-        protected int PrevSwitchPos = -1;
         Slider slider
         {
             get
@@ -145,7 +144,6 @@ namespace RBUR_SignalIntegrator
             {
                 interlock.UpdateInterlock();
             }
-            PrevSwitchPos = switchPosition;
             eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
@@ -159,15 +157,8 @@ namespace RBUR_SignalIntegrator
                 interlock.UpdateInterlock();
             }
 
-            if (slider != null)
-            {
-                slider.SetValueWithoutNotify(switchPosition);
-            }
-            foreach (Animator animator in SwitchSideAnimator)
-            {
-                animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
-            }
+            setSwitchPosition(switchPosition);
+
             applyPositionToController(controllingPosition);
 
 
@@ -177,8 +168,21 @@ namespace RBUR_SignalIntegrator
                 interlock.UpdateInterlock();
             }
 
-            PrevSwitchPos = switchPosition;
             eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        }
+
+        protected virtual void setSwitchPosition(int switchPosition)
+        {
+            this.switchPosition = switchPosition;
+            if (slider != null)
+            {
+                slider.SetValueWithoutNotify(this.switchPosition);
+            }
+            foreach (Animator animator in SwitchSideAnimator)
+            {
+                animator.enabled = true;
+                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
+            }
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected virtual void OnDrawGizmos()

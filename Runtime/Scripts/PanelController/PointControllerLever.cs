@@ -6,15 +6,26 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using VRC.Udon.Common;
+using VRC.Udon.Serialization.OdinSerializer;
 
 namespace RBUR_SignalIntegrator
 {
+    [RequireComponent(typeof(PointLeverTargetHolder))]
     public class PointControllerLever : AbstractPanelController
     {
-        [SerializeField] protected AbstractPointSetter pointInstance;
-        public AbstractPointSetter getPointInstance()
+        [SerializeField] protected AbstractPointSetter[] pointInstances;
+        [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        public void SetControlToRouteIndexMap(int[][] ControlToRouteIndexMap)
         {
-            return pointInstance;
+            this.ControlToRouteIndexMap = ControlToRouteIndexMap;
+        }
+        public int[][] GetControlToRouteIndexMap()
+        {
+            return this.ControlToRouteIndexMap;
+        }
+        public AbstractPointSetter[] getPointInstances()
+        {
+            return pointInstances;
         }
         [SerializeField] Animator[] PointSideAnimators;
         [SerializeField] string currentRouteParamater = "PointRoute";
@@ -42,7 +53,10 @@ namespace RBUR_SignalIntegrator
             base.applyPositionToController(posIndex);
             if(pointCon_prevControllingPosition != controllingPosition)
             {
-                pointInstance.set_route_To(-1);
+                foreach(AbstractPointSetter pointSetter in pointInstances)
+                {
+                    pointSetter.set_route_To(-1);
+                }
                 this.enabled = true;
                 pointCon_prevControllingPosition = controllingPosition;
             }
@@ -54,7 +68,7 @@ namespace RBUR_SignalIntegrator
             if (PointRouteIndex != controllingPosition)
             {
                 int prevChanging = Mathf.RoundToInt(changeProgress / changeTimeLength);
-                int Changing = -1;
+                int Changing;
                 if (controllingPosition * changeTimeLength > changeProgress)
                 {
                     prevChanging = Mathf.FloorToInt(changeProgress / changeTimeLength);
@@ -69,12 +83,18 @@ namespace RBUR_SignalIntegrator
                 }
                 else
                 {
-
+                    prevChanging = int.MinValue;
+                    Changing = Mathf.CeilToInt(changeProgress / changeTimeLength);
                 }
-                if (prevChanging != Changing)
+                if (prevChanging != Changing && Changing == controllingPosition)
                 {
                     changeProgress = Changing * changeTimeLength;
-                    pointInstance.set_route_To(Changing);
+                    int pointIdx = 0;
+                    foreach (AbstractPointSetter pointSetter in pointInstances)
+                    {
+                        pointSetter.set_route_To(ControlToRouteIndexMap[pointIdx][Changing]);
+                        pointIdx++;
+                    }
                 }
                 foreach (Animator animator in PointSideAnimators)
                 {
@@ -99,11 +119,34 @@ namespace RBUR_SignalIntegrator
         {
             eventStackHolder.AddStack(this,nameof(PointUpdate));
             this.enabled = true;
-            PointRouteIndex = pointInstance.get_current_To_Index();
+            int Control_RouteCorresponding = -1;
+
+            int pointIdx = 0;
+            foreach (PointLever_Setter aPoint in pointInstances)
+            {
+                int aPointRoute = aPoint.get_current_To_Index();
+
+                int aControl_RouteCorresponding = 0;
+                foreach (int anRoute in ControlToRouteIndexMap[pointIdx])
+                {
+                    if(anRoute == aPointRoute)
+                    {
+                        if (Control_RouteCorresponding == -1) Control_RouteCorresponding = aControl_RouteCorresponding;
+                        else if (Control_RouteCorresponding != aControl_RouteCorresponding)
+                        {
+                            Control_RouteCorresponding = -1;
+                            break;
+                        }
+                    }
+                    aControl_RouteCorresponding++;
+                }
+                pointIdx++;
+            }
+            PointRouteIndex = Control_RouteCorresponding;
             foreach (Animator animator in PointSideAnimators)
             {
                 animator.enabled = true;
-                animator.SetFloat(currentRouteParamater, (float)PointRouteIndex / (float)(pointInstance.getRoutes().Length-1));
+                animator.SetFloat(currentRouteParamater, (float)PointRouteIndex / (float)(ControlToRouteIndexMap[0].Length-1));
             }
             if(PrevPointRouteIndex != PointRouteIndex)
             {
@@ -130,12 +173,29 @@ namespace RBUR_SignalIntegrator
                 NetworkUpdate = false;
             }
         }
+        public override void SetToFailSafePosition()//for exception
+        {
+            setControllerOwner();
+            int idx = 0;
+            foreach (bool lockedState in SettedLockStates)
+            {
+                SettedLockStates[idx] = false;
+                SettedLockIndex[idx] = failSafeIndex;
+
+                idx++;
+            }
+            setSwitchPosition(failSafeIndex);
+            trySetPosition(switchToControllerMap[switchPosition]);
+        }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected override void OnDrawGizmos()
         {
             Gizmos.color = new Color(0f, 0f, 1f, 0.1f);
-            if(pointInstance)GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointInstance.transform), 0.02f, 0.02f);
+            foreach (AbstractPointSetter pointSetter in pointInstances)
+            {
+                if (pointSetter) GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.02f, 0.02f);
+            }
         }
         protected override void OnDrawGizmosSelected()
         {
@@ -148,26 +208,32 @@ namespace RBUR_SignalIntegrator
                 GizmoExtension.DrawArrow(this.transform.position, animator.transform.position, 0.02f, 0.02f);
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), this.gameObject.name + ".PointAnimator", guiStyle);
             }
-            if (pointInstance)
+
+            ControlToRouteIndexMap = GetComponent<PointLeverTargetHolder>().get_Control_to_RouteIndex_Map();
+            int pointIdx = 0;
+            foreach (AbstractPointSetter pointSetter in pointInstances)
             {
+                if (!pointSetter) continue;
                 Gizmos.color = new Color(0f, 0f, 1f, 1f);
-                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), pointInstance.transform.position, 0.02f, 0.02f);
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), pointSetter.transform.position, 0.02f, 0.02f);
                 guiStyle.normal.textColor = Gizmos.color;
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), pointInstance.transform.position, 0.6f), this.gameObject.name + ".PointInstance", guiStyle);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), pointSetter.transform.position, 0.6f), this.gameObject.name + ".PointInstance " + pointIdx, guiStyle);
 
                 Gizmos.color = new Color(0f, 1f, 0f, 1f);
-                pointInstance.DrawGizmo_From();
-                Vector4 colorVec_Start = new Vector4(0f, 1f, 1f, 1f);
-                Vector4 colorVec_End = new Vector4(1f, 1f, 0f, 1f);
-                float routeNum = pointInstance.getRoutes().Length - 1;
+                pointSetter.DrawGizmo_From();
+                Vector4 colorVec_Start = new Vector4(0f, 0f, 1f, 1f);
+                Vector4 colorVec_End = new Vector4(1f, 0f, 0f, 1f);
+                float routeNum = ControlToRouteIndexMap[pointIdx].Length - 1;
                 float idx = 0;
-                foreach (Rail_Script route in pointInstance.getRoutes())
+                Rail_Script[] routes = pointSetter.getRoutes();
+                foreach(int routeIndex in ControlToRouteIndexMap[pointIdx])
                 {
                     Vector4 currentCol = Vector4.Lerp(colorVec_Start, colorVec_End, idx / routeNum);
                     Gizmos.color = new Color(currentCol.x, currentCol.y, currentCol.z, currentCol.w);
-                    pointInstance.DrawGizmo_To(route);
+                    pointSetter.DrawGizmo_To(routes[routeIndex]);
                     idx++;
                 }
+                pointIdx++;
             }
         }
 #endif
