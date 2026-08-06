@@ -11,7 +11,7 @@ namespace RBUR_SignalIntegrator
     [RequireComponent(typeof(MultiLeverMappingHolder))]
     public class MultiLeverController : UdonSharpBehaviour
     {
-        [SerializeField] public EventStackHolder eventStackHolder;
+        [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [UdonSynced][SerializeField] protected int switchPosition;
         protected int PrevSwitchPos = -1;
         [SerializeField] protected Animator[] SwitchSideAnimator;

@@ -7,7 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteLocker : RouteChecker
     {
-        [SerializeField] public EventStackHolder eventStackHolder;
+        [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] lockers;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
 

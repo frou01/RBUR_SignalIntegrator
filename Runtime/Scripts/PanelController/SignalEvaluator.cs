@@ -7,7 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class SignalEvaluator : UdonSharpBehaviour
     {
-        [SerializeField] public EventStackHolder eventStackHolder;
+        [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] protected UdonSharpBehaviour[] senderInstance;
         [SerializeField] protected int[] ReceiveSignal;
 

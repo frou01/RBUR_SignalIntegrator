@@ -12,10 +12,10 @@ namespace RBUR_SignalIntegrator
         //TODO Local鎖錠
         //TODO 同期デッドロック防止：両否決
 
-        [SerializeField] public EventStackHolder eventStackHolder;
+        [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
+        [SerializeField] AbstractLockerConsolidater From_Locker;//GAC以外も制御できるように間を挟む
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
         [SerializeField] Interlock_ToLockerAndMeetPosition[] toLocker_States;//進路以外の進行要件
-        [SerializeField] AbstractLockerConsolidater From_Locker;//GAC以外も制御できるように間を挟む
         [SerializeField] int ReleasePositionIndex;
         [SerializeField] int[] LockPositionIndexes;
         [HideInInspector][SerializeField] public bool FailSafeCalled;
@@ -56,7 +56,7 @@ namespace RBUR_SignalIntegrator
         {
             eventStackHolder.AddStack(this, nameof(UpdateInterlock));
 
-            Debug.Log("UpdateInterlock.Start", this);
+            Debug.Log(this.name + ": UpdateInterlock.Start", this);
 
             foreach (AbstractLockerConsolidater locker in affectedLockers)
             {
@@ -65,7 +65,7 @@ namespace RBUR_SignalIntegrator
             FailSafeCalled = false;
             signal_isDirty = false;
 
-            Debug.Log("UpdateInterlock.Check_To");
+            Debug.Log(this.name + ": UpdateInterlock.Check_To");
             bool canOpenSignal = interlock_Route.isRouteOpen();
             foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
             {
@@ -87,41 +87,41 @@ namespace RBUR_SignalIntegrator
             if (isSignalOpenned)
             {
                 bool LockSuccess = true;
-                Debug.Log("UpdateInterlock.Lock_To", this);
+                Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
                 foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
                 {
                     LockSuccess &= interlockState.UpdateLock(true);
                 }
                 LockSuccess &= interlock_Route.UpdateLockRoute(true);
-                Debug.Log("UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
+                Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
                 if (!LockSuccess)
                 {
-                    Debug.LogError("inconsistency Interlocking. Reset All Signals", this.gameObject);
+                    Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
                     this.RelayFailSafe();
                 }
             }
             else
             {
-                Debug.Log("UpdateInterlock.Release_To", this);
+                Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
                 foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
                 {
                     interlockState.UpdateLock(false);
                 }
-                interlock_Route.UpdateLockRoute(false);
+                interlock_Route.UpdateLockRoute(false,false);
 
                 if (!canOpenSignal)
                 {
-                    Debug.Log("UpdateInterlock.Lock_From", this);
+                    Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
                     signal_isDirty = true;
                     bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ReleasePositionIndex);
                     if (!LockSuccess)
                     {
-                        Debug.LogError("Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on anohter position", From_Locker);
+                        Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on anohter position", From_Locker);
                     }
                 }
                 else
                 {
-                    Debug.Log("UpdateInterlock.Release_From", this);
+                    Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
                     From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
                 }
 
@@ -146,10 +146,10 @@ namespace RBUR_SignalIntegrator
                 } while (needNextUpdate && loopLimit>0);
                 if (loopLimit <= 0)
                 {
-                    Debug.LogError("Interlock Update Looping. Interlock Settings is inconsistency." + this.name, this);
+                    Debug.LogError(this.name + ": Interlock Update Looping. Interlock Settings is inconsistency." + this.name, this);
                     foreach (Interlocking interlock in affectedInterlockings)
                     {
-                        Debug.LogError("    L" + interlock.name, interlock);
+                        Debug.LogError(this.name + ":    L" + interlock.name, interlock);
                     }
                 }
             }

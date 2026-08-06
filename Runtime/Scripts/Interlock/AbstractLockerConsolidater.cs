@@ -6,7 +6,7 @@ namespace RBUR_SignalIntegrator
 {
     public class AbstractLockerConsolidater : UdonSharpBehaviour
     {
-        [SerializeField] public EventStackHolder eventStackHolder;
+        [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] protected bool[] SettedLockStates;
         [HideInInspector][SerializeField] protected UdonSharpBehaviour[] lockerInstances;
         [HideInInspector][SerializeField] protected int[] SettedLockIndex;

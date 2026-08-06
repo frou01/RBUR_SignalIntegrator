@@ -7,7 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class Interlock_ToLockerAndMeetPosition : UdonSharpBehaviour
     {
-        [SerializeField] public EventStackHolder eventStackHolder;
+        [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] protected AbstractLockerConsolidater locker;
         [SerializeField] protected int[] MeetPositionIndex;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
