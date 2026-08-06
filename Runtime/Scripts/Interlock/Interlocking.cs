@@ -16,6 +16,7 @@ namespace RBUR_SignalIntegrator
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
         [SerializeField] InterlockStateLocker[] interlockStates;//進路以外の進行要件
         [SerializeField] AbstractLockerConsolidater TargetSignalLocker;//GAC以外も制御できるように間を挟む
+        [SerializeField] AbstractLockerConsolidater[] AffectedLockers;
         [SerializeField] int SignalClosePositionIndex;
         [SerializeField] int[] SignalOpenPositionIndex;
         [HideInInspector][SerializeField] public bool FailSafeCalled;

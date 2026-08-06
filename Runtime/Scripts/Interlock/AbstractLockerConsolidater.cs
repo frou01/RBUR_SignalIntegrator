@@ -11,6 +11,7 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] protected UdonSharpBehaviour[] lockerInstances;
         [HideInInspector][SerializeField] protected int[] SettedLockIndex;
         [SerializeField] protected int failSafeIndex;
+        [HideInInspector] public bool positionUpdated = false;
 
         protected virtual void Start()
         {
@@ -141,9 +142,10 @@ namespace RBUR_SignalIntegrator
         }
         protected virtual void applyPositionToController(int posIndex)
         {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-            throw new NotImplementedException();
-#endif
+            if(GetCurrentPosition() != posIndex)
+            {
+                positionUpdated = true;
+            }
         }
         public virtual bool isControllerOwner()
         {

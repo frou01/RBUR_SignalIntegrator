@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace RBUR_SignalIntegrator_Editor
 {
-    public class Interlock_BuildProcess : IProcessSceneWithReport
+    public class Interlock_PostBuildProcess : IProcessSceneWithReport
     {
         //public class Interlock_BuildPreProcess : IProcessSceneWithReport
         //{

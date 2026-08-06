@@ -88,6 +88,7 @@ namespace RBUR_SignalIntegrator
         protected override void applyPositionToController(int posIndex)
         {
             eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            base.applyPositionToController(posIndex);
             if (posIndex != -1)
             {
                 if (isControllerOwner() && posIndex != controllingPosition)
