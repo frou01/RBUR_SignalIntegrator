@@ -152,13 +152,11 @@ namespace RBUR_SignalIntegrator
         {
             eventStackHolder.AddStack(this, nameof(OnDeserialization));
 
-            if(PrevSwitchPos != switchPosition)
+
+            //Pre-control Interlock update
+            foreach (Interlocking interlock in ReferingInterlocks)
             {
-                //Pre-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                interlock.UpdateInterlock();
             }
 
             if (slider != null)
@@ -172,13 +170,11 @@ namespace RBUR_SignalIntegrator
             }
             applyPositionToController(controllingPosition);
 
-            if (PrevSwitchPos != switchPosition)
+
+            //Post-control Interlock update
+            foreach (Interlocking interlock in ReferingInterlocks)
             {
-                //Post-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                interlock.UpdateInterlock();
             }
 
             PrevSwitchPos = switchPosition;

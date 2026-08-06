@@ -113,8 +113,7 @@ namespace RBUR_SignalIntegrator_Editor
                     {
                         ReverseReferencedInterlocks.AddRange(((AbstractPanelController)currentInterlock.GetFromLocker()).ReferingInterlocks);
                     }
-                    ReverseReferencedInterlocks.Distinct();
-                    ReverseReferencedInterlocks.Remove(currentInterlock);
+                    ReverseReferencedInterlocks = ReverseReferencedInterlocks.Distinct().ToList();
 
                     currentInterlock.affectedInterlockings = currentInterlock.affectedInterlockings.AddRangeToArray(ReverseReferencedInterlocks.ToArray());
                 }

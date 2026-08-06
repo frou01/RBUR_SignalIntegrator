@@ -52,6 +52,7 @@ namespace RBUR_SignalIntegrator
             UpdateInterlock();
         }
 
+        [RecursiveMethod]
         public bool UpdateInterlock(bool updateAffected)
         {
             eventStackHolder.AddStack(this, nameof(UpdateInterlock));
@@ -95,7 +96,7 @@ namespace RBUR_SignalIntegrator
                 LockSuccess &= interlock_Route.UpdateLockRoute(true,From_Locker.isControllerOwner());
 
                 Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
-                if (!LockSuccess)
+                if (!LockSuccess && From_Locker.isControllerOwner())
                 {
                     Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
                     this.RelayFailSafe();

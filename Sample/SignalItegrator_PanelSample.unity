@@ -1407,9 +1407,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 643552202}
   eventStackHolder: {fileID: 0}
+  From_Locker: {fileID: 1211032579}
   interlock_Route: {fileID: 1725361158}
   toLocker_States: []
-  From_Locker: {fileID: 1211032579}
   ReleasePositionIndex: 0
   LockPositionIndexes: 01000000
   FailSafeCalled: 0
@@ -7012,11 +7012,11 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1547974026}
   eventStackHolder: {fileID: 0}
+  From_Locker: {fileID: 4920066874882511089}
   interlock_Route: {fileID: 2061719700}
   toLocker_States:
   - {fileID: 795696826}
   - {fileID: 1868328718}
-  From_Locker: {fileID: 4920066874882511089}
   ReleasePositionIndex: 0
   LockPositionIndexes: 01000000
   FailSafeCalled: 0
@@ -7110,9 +7110,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1581490969}
   eventStackHolder: {fileID: 0}
+  From_Locker: {fileID: 2136281918}
   interlock_Route: {fileID: 1829162339}
   toLocker_States: []
-  From_Locker: {fileID: 2136281918}
   ReleasePositionIndex: 0
   LockPositionIndexes: 01000000
   FailSafeCalled: 0
@@ -7916,10 +7916,10 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2001885753}
   eventStackHolder: {fileID: 0}
+  From_Locker: {fileID: 4457645061710611199}
   interlock_Route: {fileID: 1848272543}
   toLocker_States:
   - {fileID: 579346109}
-  From_Locker: {fileID: 4457645061710611199}
   ReleasePositionIndex: 0
   LockPositionIndexes: 01000000
   FailSafeCalled: 0
@@ -8310,9 +8310,9 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2103742558}
   eventStackHolder: {fileID: 0}
+  From_Locker: {fileID: 2129388627}
   interlock_Route: {fileID: 520425864}
   toLocker_States: []
-  From_Locker: {fileID: 2129388627}
   ReleasePositionIndex: 0
   LockPositionIndexes: 01000000
   FailSafeCalled: 0
