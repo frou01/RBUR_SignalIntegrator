@@ -577,7 +577,11 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1129418787418657251, guid: 2ee8010e0b61bf3448a58f6e74ce7b12,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5788656020809255118}
+      addedObject: {fileID: 391806205748098335}
+    - targetCorrespondingSourceObject: {fileID: 1129418787418657251, guid: 2ee8010e0b61bf3448a58f6e74ce7b12,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9169787904953004739}
   m_SourcePrefab: {fileID: 100100000, guid: 2ee8010e0b61bf3448a58f6e74ce7b12, type: 3}
 --- !u!4 &295749778978875521 stripped
 Transform:
@@ -634,7 +638,16 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes:
     - Name: ControlToRouteIndexMap
-      Entry: 6
+      Entry: 7
+      Data: 0|System.Int32[][], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 1054795953820116318}
   eventStackHolder: {fileID: 0}
@@ -699,7 +712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   forceProceed: 0
---- !u!114 &5788656020809255118
+--- !u!114 &391806205748098335
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -708,11 +721,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 1103776049212158523}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7340fbb8bac8a24bafa372c8612bd81, type: 3}
+  m_Script: {fileID: 11500000, guid: 86672927b1eea584e9c96a3e64e20f0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   control_To_RouteIndexMaps: []
-  RouteIndexNum: 0
+  RouteIndexNum: 2
+--- !u!114 &9169787904953004739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103776049212158523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d97e3d5f3ecccaf438bf4052d08e0cf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Control_To_ParamaterMaps:
+  - onPointConOrder: 0
+    linkedAnimator: {fileID: 4401638272681535061}
+    Control_To_Paramater:
+    - 0
+    - 1
 --- !u!1001 &2597509935439403115
 PrefabInstance:
   m_ObjectHideFlags: 0

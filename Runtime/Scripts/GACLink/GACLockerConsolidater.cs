@@ -37,7 +37,6 @@ namespace RBUR_SignalIntegrator
         protected override void applyPositionToController(int posIndex)
         {
             eventStackHolder.AddStack(this, nameof(OnDeserialization));
-            base.applyPositionToController(posIndex);
             target.SetPosition(lockPositions[posIndex]);
             eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }

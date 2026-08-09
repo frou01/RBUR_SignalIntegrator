@@ -1,17 +1,21 @@
-﻿using System;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 
 namespace RBUR_SignalIntegrator
 {
-    public class AbstractLockerConsolidater : UdonSharpBehaviour
+    public
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        abstract
+#endif
+        class AbstractLockerConsolidater : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] protected bool[] SettedLockStates;
         [HideInInspector][SerializeField] protected UdonSharpBehaviour[] lockerInstances;
         [HideInInspector][SerializeField] protected int[] SettedLockIndex;
+        [HideInInspector][SerializeField] public bool positionUpdated = false;
         [SerializeField] protected int failSafeIndex;
-        [HideInInspector] public bool positionUpdated = false;
 
         protected virtual void Start()
         {
@@ -29,7 +33,7 @@ namespace RBUR_SignalIntegrator
             else
             {
                 eventStackHolder.AddStack(this, nameof(trySetPosition));
-                applyPositionToController(lockPositionSelector);
+                applyPosition(lockPositionSelector);
                 eventStackHolder.RemoveStack(this, nameof(trySetPosition));
                 return true;
             }
@@ -60,7 +64,7 @@ namespace RBUR_SignalIntegrator
             applyLockToController(locked);
             if (locked)
             {
-                if (lockIndex != -1) applyPositionToController(lockIndex);
+                if (lockIndex != -1) applyPosition(lockIndex);
             }
             eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
             return !lockFault;
@@ -104,13 +108,16 @@ namespace RBUR_SignalIntegrator
 
         public virtual void RelayFailSafe()//for exception
         {
+            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             foreach (UdonSharpBehaviour locker in lockerInstances)
             {
                 locker.SendCustomEvent(nameof(RelayFailSafe));
             }
+            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
         public virtual void SetToFailSafePosition()//for exception
         {
+            eventStackHolder.AddStack(this, nameof(SetToFailSafePosition));
             setControllerOwner();
             int idx = 0;
             foreach (bool lockedState in SettedLockStates)
@@ -120,55 +127,50 @@ namespace RBUR_SignalIntegrator
 
                 idx++;
             }
-            applyPositionToController(failSafeIndex);
+            applyPosition(failSafeIndex);
+            eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
         }
 
         //Return: Controller positon (On Analog controller, return nearest lock point)
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public abstract int GetCurrentPosition();
+        protected abstract void applyLockToController(bool state);
+        protected abstract void applyPositionToController(int posIndex);
+        public abstract bool isControllerOwner();
+        public abstract void setControllerOwner();
+        public abstract void SyncController();
+#else
         public virtual int GetCurrentPosition()
         {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-            throw new NotImplementedException();
-#endif
-#pragma warning disable CS0162 // 到達できないコードが検出されました
             return -1;
-#pragma warning restore CS0162 // 到達できないコードが検出されました
         }
-
         protected virtual void applyLockToController(bool state)
         {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-            throw new NotImplementedException();
-#endif
         }
         protected virtual void applyPositionToController(int posIndex)
+        {
+        }
+        public virtual bool isControllerOwner()
+        {
+            return false;
+        }
+        public virtual void setControllerOwner()
+        {
+        }
+        public virtual void SyncController()
+        {
+        }
+#endif
+
+        protected void applyPosition(int posIndex)
         {
             if(posIndex != -1 && GetCurrentPosition() != posIndex)
             {
                 Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
                 positionUpdated = true;
             }
-        }
-        public virtual bool isControllerOwner()
-        {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-            throw new NotImplementedException();
-#endif
-#pragma warning disable CS0162 // 到達できないコードが検出されました
-            return false;
-#pragma warning restore CS0162 // 到達できないコードが検出されました
-        }
-        public virtual void setControllerOwner()
-        {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-            throw new NotImplementedException();
-#endif
-        }
-
-        public virtual void SyncController()
-        {
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-            throw new NotImplementedException();
-#endif
+            applyPositionToController(posIndex);
         }
         protected void CheckFaultAndGetLockIndex(out bool lockFault, out int lockIndex)
         {

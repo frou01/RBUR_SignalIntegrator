@@ -87,7 +87,6 @@ namespace RBUR_SignalIntegrator
         protected override void applyPositionToController(int posIndex)
         {
             eventStackHolder.AddStack(this, nameof(applyPositionToController));
-            base.applyPositionToController(posIndex);
             if (posIndex != -1)
             {
                 if (isControllerOwner() && posIndex != controllingPosition)
@@ -159,7 +158,7 @@ namespace RBUR_SignalIntegrator
 
             setSwitchPosition(switchPosition);
 
-            applyPositionToController(controllingPosition);
+            applyPosition(controllingPosition);
 
 
             //Post-control Interlock update

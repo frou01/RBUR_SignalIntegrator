@@ -53,8 +53,10 @@ namespace RBUR_SignalIntegrator
         }
         public void RelayFailSafe()
         {
+            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!interlocking.FailSafeCalled)
                 locker.RelayFailSafe();
+            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
         public void SetupLocker()
         {

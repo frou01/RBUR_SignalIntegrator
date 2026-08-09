@@ -10,7 +10,7 @@ using VRC.Udon.Serialization.OdinSerializer;
 
 namespace RBUR_SignalIntegrator
 {
-    [RequireComponent(typeof(PointLeverTargetHolder))]
+    [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_RouteIndexToParamaterHolder))]
     public class PointControllerLever : AbstractPanelController
     {
         [SerializeField] protected AbstractPointSetter[] pointInstances;
@@ -28,6 +28,10 @@ namespace RBUR_SignalIntegrator
             return pointInstances;
         }
         [SerializeField] Animator[] PointSideAnimators;
+        public Animator[] attachedPointAnimator()
+        {
+            return PointSideAnimators;
+        }
         [SerializeField] string currentRouteParamater = "PointRoute";
         [SerializeField] string progressParamater = "PointMovePos";
         int pointCon_prevControllingPosition = -1;
@@ -51,20 +55,20 @@ namespace RBUR_SignalIntegrator
         {
             eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
-            if(pointCon_prevControllingPosition != controllingPosition)
-            {
-                foreach(AbstractPointSetter pointSetter in pointInstances)
-                {
-                    pointSetter.set_route_To(-1);
-                }
-                this.enabled = true;
-                pointCon_prevControllingPosition = controllingPosition;
-            }
+            this.enabled = true;
             eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
         private void Update()
         {
+            if (pointCon_prevControllingPosition != controllingPosition)
+            {
+                foreach (AbstractPointSetter pointSetter in pointInstances)
+                {
+                    pointSetter.set_route_To(-1);
+                }
+                pointCon_prevControllingPosition = controllingPosition;
+            }
             if (PointRouteIndex != controllingPosition)
             {
                 int prevChanging = Mathf.RoundToInt(changeProgress / changeTimeLength);
@@ -205,11 +209,11 @@ namespace RBUR_SignalIntegrator
             {
                 Gizmos.color = new Color(0.5f, 0f, 1f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;
-                GizmoExtension.DrawArrow(this.transform.position, animator.transform.position, 0.02f, 0.02f);
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), this.gameObject.name + ".PointAnimator", guiStyle);
             }
 
-            ControlToRouteIndexMap = GetComponent<PointLeverTargetHolder>().get_Control_to_RouteIndex_Map();
+            ControlToRouteIndexMap = GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
             int pointIdx = 0;
             foreach (AbstractPointSetter pointSetter in pointInstances)
             {
@@ -226,11 +230,17 @@ namespace RBUR_SignalIntegrator
                 float routeNum = ControlToRouteIndexMap[pointIdx].Length - 1;
                 float idx = 0;
                 Rail_Script[] routes = pointSetter.getRoutes();
-                foreach(int routeIndex in ControlToRouteIndexMap[pointIdx])
+                foreach (int routeIndex in ControlToRouteIndexMap[pointIdx])
                 {
                     Vector4 currentCol = Vector4.Lerp(colorVec_Start, colorVec_End, idx / routeNum);
                     Gizmos.color = new Color(currentCol.x, currentCol.y, currentCol.z, currentCol.w);
+                    guiStyle.normal.textColor = Gizmos.color;
                     pointSetter.DrawGizmo_To(routes[routeIndex]);
+
+                    Vector3 gizmoStart;
+                    Vector3 gizmoEnd;
+                    pointSetter.Gizmo_LineTarget(routes[routeIndex], out gizmoStart, out gizmoEnd);
+                    Handles.Label(gizmoEnd, this.gameObject.name + ".ControlIndex " + idx, guiStyle);
                     idx++;
                 }
                 pointIdx++;

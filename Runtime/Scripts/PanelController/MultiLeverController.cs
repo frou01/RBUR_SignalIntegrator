@@ -8,7 +8,7 @@ using VRC.Udon.Serialization.OdinSerializer;
 
 namespace RBUR_SignalIntegrator
 {
-    [RequireComponent(typeof(MultiLeverMappingHolder))]
+    [RequireComponent(typeof(MultiLever_SwitchToControlMapsHolder))]
     public class MultiLeverController : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;

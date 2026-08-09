@@ -29,17 +29,21 @@ namespace RBUR_SignalIntegrator_Editor
             }
             foreach (PointControllerLever pointCon in pointControllers)
             {
-                foreach(AbstractPointSetter point in pointCon.getPointInstances())
+                pointCon.SetControlToRouteIndexMap(pointCon.GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map());
+                foreach (AbstractPointSetter point in pointCon.getPointInstances())
                 {
                     point.callbackUdons = point.callbackUdons.AddToArray(pointCon);
                 }
             }
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                foreach (PointControllerLever pointCon in obj.GetComponentsInChildren<PointControllerLever>(true))
+                foreach (MultiLeverController MulCon in obj.GetComponentsInChildren<MultiLeverController>(true))
                 {
-                    pointCon.SetControlToRouteIndexMap(pointCon.GetComponent<PointLeverTargetHolder>().get_Control_to_RouteIndex_Map());
+                    MulCon.Set_switchToControllerMap(MulCon.GetComponent<MultiLever_SwitchToControlMapsHolder>().get_mulCon_to_Con_Map());
                 }
+            }
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
                 foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
                 {
                     int LockerIdx = -1;
@@ -51,11 +55,11 @@ namespace RBUR_SignalIntegrator_Editor
                     foreach (AbstractPointSetter point in routeLocker.GetTargetPoints())
                     {
                         LockerIdx++;
-                        foreach(PointControllerLever pointController in pointControllers)
+                        foreach (PointControllerLever pointController in pointControllers)
                         {
-                            int pointIdx = Array.IndexOf(pointController.getPointInstances() , point);
+                            int pointIdx = Array.IndexOf(pointController.getPointInstances(), point);
 
-                            if(pointIdx >= 0)
+                            if (pointIdx >= 0)
                             {
                                 routeLocker.ControlTargetIndex[LockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.getTargetRoute()[LockerIdx]);
                                 routeLocker.Locker_GTST[LockerIdx] = pointController;
@@ -63,10 +67,6 @@ namespace RBUR_SignalIntegrator_Editor
                             }
                         }
                     }
-                }
-                foreach (MultiLeverController MulCon in obj.GetComponentsInChildren<MultiLeverController>(true))
-                {
-                    MulCon.Set_switchToControllerMap(MulCon.GetComponent<MultiLeverMappingHolder>().get_mulCon_to_Con_Map());
                 }
             }
 

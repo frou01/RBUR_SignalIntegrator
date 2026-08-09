@@ -155,7 +155,6 @@ namespace RBUR_SignalIntegrator
                     }
                 }
             }
-            eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
 
             bool LockerUpdated = false;
             foreach(AbstractLockerConsolidater locker in affectedLockers)
@@ -167,6 +166,7 @@ namespace RBUR_SignalIntegrator
                 }
             }
 
+            eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
             return LockerUpdated;
         }
         public void UpdateInterlock()//called by Controller Pickup Event
@@ -176,6 +176,7 @@ namespace RBUR_SignalIntegrator
 
         public void RelayFailSafe()
         {
+            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!FailSafeCalled)
             {
                 FailSafeCalled = true;
@@ -188,6 +189,7 @@ namespace RBUR_SignalIntegrator
                 }
                 interlock_Route.RelayFailSafe();
             }
+            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
         public void SetupLocker()
         {

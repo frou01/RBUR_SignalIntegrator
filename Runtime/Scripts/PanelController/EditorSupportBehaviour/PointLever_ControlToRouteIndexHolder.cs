@@ -3,16 +3,18 @@ using frou01.RigidBodyTrain;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+
 #endif
 using UnityEngine;
 
 namespace RBUR_SignalIntegrator
 {
     [ExecuteAlways]
-    public class PointLeverTargetHolder : MonoBehaviour
+    public class PointLever_ControlToRouteIndexHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] List<Control_To_RouteIndexMap> control_To_RouteIndexMaps;
+        [SerializeField] public List<Control_To_RouteIndexMap> control_To_RouteIndexMaps;
         public int[][] get_Control_to_RouteIndex_Map()
         {
             return control_To_RouteIndexMaps
@@ -20,9 +22,9 @@ namespace RBUR_SignalIntegrator
                 .ToArray();
         }
 
-        [SerializeField] int RouteIndexNum;
+        [SerializeField] public int RouteIndexNum;
 
-        void Update()
+        public void Update()
         {
             PointControllerLever TargetPointControllerLever;
             TargetPointControllerLever = GetComponent<PointControllerLever>();
@@ -35,6 +37,7 @@ namespace RBUR_SignalIntegrator
 
 
             List<Control_To_RouteIndexMap> SyncingMulCon_Control_To_RouteIndexMap = new List<Control_To_RouteIndexMap>();
+            bool isDirty = false;
             int idx = 0;
             foreach (AbstractPointSetter assignedController in TargetPointControllerLever.getPointInstances())
             {
@@ -50,26 +53,39 @@ namespace RBUR_SignalIntegrator
                                 .Select((mapArray, i) => (toConMap: mapArray, i))//get index
                                 .Where(val => val.i < RouteIndexNum)//cut index
                                 .Select(val => val.toConMap).ToArray();
+                            isDirty |= true;
                         }
                         else if (Control_To_RouteIndexMap.Control_To_RouteIndex.Length < RouteIndexNum)
                         {
                             Control_To_RouteIndexMap.Control_To_RouteIndex = Control_To_RouteIndexMap.Control_To_RouteIndex.AddRangeToArray(new int[RouteIndexNum - Control_To_RouteIndexMap.Control_To_RouteIndex.Length]);
+                            isDirty |= true;
                         }
                         SyncingMulCon_Control_To_RouteIndexMap.Add(Control_To_RouteIndexMap);
                     }
                     else
                     {
-                        if (assignedController != null) SyncingMulCon_Control_To_RouteIndexMap.Add(new Control_To_RouteIndexMap(idx, assignedController, new int[RouteIndexNum]));
+                        if (assignedController != null)
+                        {
+                            SyncingMulCon_Control_To_RouteIndexMap.Add(new Control_To_RouteIndexMap(idx, assignedController,
+                                (new int[RouteIndexNum])
+                                .Select((val, i) => (val, i))
+                                .Select(val => val.i).ToArray()
+                            ));
+                            isDirty |= true;
+                        }
                     }
                 }
                 idx++;
             }
-            SyncingMulCon_Control_To_RouteIndexMap.OrderBy(toConMap => toConMap.onControllerOrder);
-            control_To_RouteIndexMaps.Clear();
-            control_To_RouteIndexMaps.AddRange(SyncingMulCon_Control_To_RouteIndexMap);
+            if (isDirty)
+            {
+                SyncingMulCon_Control_To_RouteIndexMap.OrderBy(toConMap => toConMap.onControllerOrder);
+                control_To_RouteIndexMaps = SyncingMulCon_Control_To_RouteIndexMap;
+                EditorUtility.SetDirty(this);
+            }
         }
         [System.Serializable]
-        class Control_To_RouteIndexMap
+        public class Control_To_RouteIndexMap
         {
             [SerializeField] public int onControllerOrder;
             [SerializeField] public AbstractPointSetter linkedPoint;

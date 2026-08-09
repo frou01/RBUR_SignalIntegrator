@@ -81,11 +81,13 @@ namespace RBUR_SignalIntegrator
 
         public void RelayFailSafe()
         {
+            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!interlocking.FailSafeCalled)
                 foreach (AbstractLockerConsolidater locker in lockers)
                 {
                     locker.RelayFailSafe();
                 }
+            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
     }
 }
