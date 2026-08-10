@@ -14,7 +14,8 @@ namespace RBUR_SignalIntegrator
     public class PointControllerLever : AbstractPanelController
     {
         [SerializeField] protected AbstractPointSetter[] pointInstances;
-        [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)
+        [HideInInspector][OdinSerialize][SerializeField] protected float[][] RouteToParamaterMap;//2nd index:route, value:animationParamater.
         public void SetControlToRouteIndexMap(int[][] ControlToRouteIndexMap)
         {
             this.ControlToRouteIndexMap = ControlToRouteIndexMap;
@@ -22,6 +23,14 @@ namespace RBUR_SignalIntegrator
         public int[][] GetControlToRouteIndexMap()
         {
             return this.ControlToRouteIndexMap;
+        }
+        public void SetRouteToParamaterMap(float[][] RouteToParamaterMap)
+        {
+            this.RouteToParamaterMap = RouteToParamaterMap;
+        }
+        public float[][] GetRouteToParamaterMap()
+        {
+            return this.RouteToParamaterMap;
         }
         public AbstractPointSetter[] getPointInstances()
         {
@@ -100,10 +109,15 @@ namespace RBUR_SignalIntegrator
                         pointIdx++;
                     }
                 }
+                int animatorindex = 0;
                 foreach (Animator animator in PointSideAnimators)
                 {
                     animator.enabled = true;
-                    animator.SetFloat(progressParamater, changeProgress / changeTimeLength);
+                    int mapSection = Mathf.FloorToInt(changeProgress / changeTimeLength);
+                    float mapstart = RouteToParamaterMap[animatorindex][mapSection];
+                    float mapEnd = RouteToParamaterMap[animatorindex][mapSection + mapSection == RouteToParamaterMap[animatorindex].Length ? 0 : 1];
+                    animator.SetFloat(progressParamater, Mathf.Lerp(mapstart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
+                    animatorindex++;
                 }
             }
             else

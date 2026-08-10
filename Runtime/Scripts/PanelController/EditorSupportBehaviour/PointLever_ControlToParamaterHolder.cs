@@ -14,10 +14,10 @@ namespace RBUR_SignalIntegrator
     public class PointLever_RouteIndexToParamaterHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] List<To_Paramater> Control_To_ParamaterMaps;
+        [SerializeField] List<To_Paramater> Route_To_ParamaterMaps;
         public float[][] get_Control_to_Paramater_Map()
         {
-            return Control_To_ParamaterMaps
+            return Route_To_ParamaterMaps
                 .Select(val => val.Control_To_Paramater)//List<To_ControllerMap> -> List<int[]>
                 .ToArray();
         }
@@ -32,14 +32,14 @@ namespace RBUR_SignalIntegrator
             PointControllerLever TargetPointCon;
             TargetPointCon = GetComponent<PointControllerLever>();
             Dictionary<Animator, To_Paramater> synced_Animator_To_Paramater_Map = new Dictionary<Animator, To_Paramater>();
-            foreach (To_Paramater syncedControllerMap in Control_To_ParamaterMaps)
+            foreach (To_Paramater syncedParamaterMap in Route_To_ParamaterMaps)
             {
-                if (syncedControllerMap.linkedAnimator != null && !synced_Animator_To_Paramater_Map.ContainsKey(syncedControllerMap.linkedAnimator))
-                    synced_Animator_To_Paramater_Map.Add(syncedControllerMap.linkedAnimator, syncedControllerMap);
+                if (syncedParamaterMap.linkedAnimator != null && !synced_Animator_To_Paramater_Map.ContainsKey(syncedParamaterMap.linkedAnimator))
+                    synced_Animator_To_Paramater_Map.Add(syncedParamaterMap.linkedAnimator, syncedParamaterMap);
             }
 
 
-            List<To_Paramater> SyncingControl_To_ParamaterMap = new List<To_Paramater>();
+            List<To_Paramater> SyncingRoute_To_ParamaterMap = new List<To_Paramater>();
             bool isDirty = false;
             int idx = 0;
             foreach (Animator assignedAnimator in TargetPointCon.attachedPointAnimator())
@@ -61,7 +61,7 @@ namespace RBUR_SignalIntegrator
                         to_Paramater.Control_To_Paramater = to_Paramater.Control_To_Paramater.AddRangeToArray(new float[RouteIndexNum - to_Paramater.Control_To_Paramater.Length]);
                         isDirty |= true;
                     }
-                    SyncingControl_To_ParamaterMap.Add(to_Paramater);
+                    SyncingRoute_To_ParamaterMap.Add(to_Paramater);
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace RBUR_SignalIntegrator
                     if (assignedAnimator != null)
                         if (routeIndexMap == null)
                         {
-                            SyncingControl_To_ParamaterMap.Add(new To_Paramater(idx, assignedAnimator,
+                            SyncingRoute_To_ParamaterMap.Add(new To_Paramater(idx, assignedAnimator,
                                 (new float[RouteIndexNum])
                                 .Select((val, i) => (val, i))
                                 .Select(val => (float)val.i / (RouteIndexNum > 0 ? (RouteIndexNum - 1) : 1))
@@ -79,7 +79,7 @@ namespace RBUR_SignalIntegrator
                         }
                         else
                         {
-                            SyncingControl_To_ParamaterMap.Add(new To_Paramater(idx, assignedAnimator,
+                            SyncingRoute_To_ParamaterMap.Add(new To_Paramater(idx, assignedAnimator,
                                 (new float[RouteIndexNum])
                                 .Select((val, i) => (val, i))
                                 .Select(val => (float)routeIndexMap.Control_To_RouteIndex[val.i]/ (RouteIndexNum > 0 ? (RouteIndexNum - 1) : 1))
@@ -92,8 +92,8 @@ namespace RBUR_SignalIntegrator
             }
             if (isDirty)
             {
-                SyncingControl_To_ParamaterMap.OrderBy(toConMap => toConMap.onPointConOrder);
-                Control_To_ParamaterMaps = SyncingControl_To_ParamaterMap;
+                SyncingRoute_To_ParamaterMap.OrderBy(toConMap => toConMap.onPointConOrder);
+                Route_To_ParamaterMaps = SyncingRoute_To_ParamaterMap;
                 EditorUtility.SetDirty(this);
             }
         }

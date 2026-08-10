@@ -30,6 +30,7 @@ namespace RBUR_SignalIntegrator_Editor
             foreach (PointControllerLever pointCon in pointControllers)
             {
                 pointCon.SetControlToRouteIndexMap(pointCon.GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map());
+                pointCon.SetRouteToParamaterMap(pointCon.GetComponent<PointLever_RouteIndexToParamaterHolder>().get_Control_to_Paramater_Map());
                 foreach (AbstractPointSetter point in pointCon.getPointInstances())
                 {
                     point.callbackUdons = point.callbackUdons.AddToArray(pointCon);
