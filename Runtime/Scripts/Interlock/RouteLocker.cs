@@ -64,6 +64,7 @@ namespace RBUR_SignalIntegrator
                 foreach (AbstractLockerConsolidater locker in lockers)
                 {
                     result &= locker.tryUpdateLocking(this, true, ControlTargetIndex[idx]);
+                    idx++;
                 }
                 eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return result;
