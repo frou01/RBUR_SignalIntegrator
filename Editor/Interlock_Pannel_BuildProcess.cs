@@ -84,7 +84,7 @@ namespace RBUR_SignalIntegrator_Editor
                             controllers.Add((AbstractPanelController)StateLocker.getLocker());
                         }
                     }
-                    foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
                     {
                         if (locker is AbstractPanelController)
                         {
@@ -115,7 +115,7 @@ namespace RBUR_SignalIntegrator_Editor
                             ReverseReferencedInterlocks.AddRange(((AbstractPanelController)StateLocker.getLocker()).ReferingInterlocks);
                         }
                     }
-                    foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
                     {
                         if (locker is AbstractPanelController)
                         {

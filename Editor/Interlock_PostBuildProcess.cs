@@ -51,7 +51,7 @@ namespace RBUR_SignalIntegrator_Editor
                 // Interlockに影響を受ける全てのコントローラーを探索しておく。更新終了検知で使う。
                 foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
                 {
-                    currentInterlock.GetRouteLocker().setParentInterlock(currentInterlock);
+                    if(currentInterlock.GetRouteLocker() != null) currentInterlock.GetRouteLocker().setParentInterlock(currentInterlock);
                     foreach (Interlock_ToLockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
                     {
                         stateLinker.setParentInterlock(currentInterlock);
@@ -62,7 +62,7 @@ namespace RBUR_SignalIntegrator_Editor
                     {
                         controllers.Add(StateLocker.getLocker());
                     }
-                    foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    if (currentInterlock.GetRouteLocker() != null) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
                     {
                         controllers.Add(locker);
                     }
@@ -76,7 +76,7 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
                 {
-                    interlock_From_Lockers.Add(currentInterlock.GetFromLocker(), currentInterlock);
+                    if(currentInterlock.GetFromLocker()) interlock_From_Lockers.Add(currentInterlock.GetFromLocker(), currentInterlock);
                 }
             }
 
@@ -87,7 +87,7 @@ namespace RBUR_SignalIntegrator_Editor
                     foreach (AbstractLockerConsolidater lockerAffectedFromA in interlockA.affectedLockers)
                     {
                         Interlocking interlockB;
-                        if (interlock_From_Lockers.TryGetValue(lockerAffectedFromA, out interlockB))
+                        if (lockerAffectedFromA != null && interlock_From_Lockers.ContainsKey(lockerAffectedFromA) && interlock_From_Lockers.TryGetValue(lockerAffectedFromA, out interlockB))
                         {
                             if (interlockB != interlockA && interlockB.affectedLockers.Contains(interlockA.GetFromLocker()))
                             {

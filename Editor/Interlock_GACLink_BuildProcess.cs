@@ -92,7 +92,7 @@ namespace RBUR_SignalIntegrator_Editor
                     {
                         lockers.Add((GACLockerConsolidater)interlocking.GetFromLocker());
                     }
-                    foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Locker_GTST)
+                    if(interlocking.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Locker_GTST)
                     {
                         if (locker is GACLockerConsolidater)
                         {
