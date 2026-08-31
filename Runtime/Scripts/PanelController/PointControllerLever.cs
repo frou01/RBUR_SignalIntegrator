@@ -52,6 +52,7 @@ namespace RBUR_SignalIntegrator
         protected override void Start()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(Start));
+            UpdateInterlockBySwitching = false;
             base.Start();
             PointUpdate();
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(Start));
@@ -202,7 +203,7 @@ namespace RBUR_SignalIntegrator
 
                 idx++;
             }
-            setSwitchPosition(failSafeIndex);
+            SyncUI(failSafeIndex);
             trySetPosition(switchToControllerMap[switchPosition]);
         }
 

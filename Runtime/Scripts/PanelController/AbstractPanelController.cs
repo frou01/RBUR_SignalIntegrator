@@ -30,6 +30,8 @@ namespace RBUR_SignalIntegrator
         [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
         [SerializeField] public UdonBehaviour[] callbackBehaviours;
 
+        protected bool UpdateInterlockBySwitching = true;
+
         [UdonSynced][SerializeField] protected int switchPosition;
         Slider slider
         {
@@ -100,11 +102,9 @@ namespace RBUR_SignalIntegrator
                 }
             }
 
-            if(PannelCon_prevControllingPosition != controllingPosition)
-            {
-                PannelCon_prevControllingPosition = controllingPosition;
-            }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+
+            PannelCon_prevControllingPosition = controllingPosition;
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
         public override bool isControllerOwner()
         {
@@ -140,10 +140,13 @@ namespace RBUR_SignalIntegrator
             }
             SyncController();
 
-            //Post-control Interlock update
-            foreach (Interlocking interlock in ReferingInterlocks)
+            if (UpdateInterlockBySwitching)
             {
-                interlock.UpdateInterlock();
+                //Post-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
@@ -152,27 +155,26 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnDeserialization));
 
 
-            //Pre-control Interlock update
-            foreach (Interlocking interlock in ReferingInterlocks)
-            {
-                interlock.UpdateInterlock();
-            }
+            bool updateControllingPosition = PannelCon_prevControllingPosition != controllingPosition;
 
-            setSwitchPosition(switchPosition);
+            SyncUI(switchPosition);
 
             applyPosition(controllingPosition);
 
 
             //Post-control Interlock update
-            foreach (Interlocking interlock in ReferingInterlocks)
+            if (updateControllingPosition)
             {
-                interlock.UpdateInterlock();
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
             }
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 
-        protected virtual void setSwitchPosition(int switchPosition)
+        protected virtual void SyncUI(int switchPosition)
         {
             this.switchPosition = switchPosition;
             if (slider != null)

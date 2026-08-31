@@ -132,6 +132,7 @@ namespace RBUR_SignalIntegrator
                     interlock.UpdateInterlock();
                 }
             }
+            PrevSwitchPos = switchPosition;
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
