@@ -53,7 +53,7 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void OnValueChanged()
         {
-            eventStackHolder.AddStack(this, nameof(OnValueChanged));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
 
             //Pre-control Interlock update
             foreach(Interlocking interlock in ReferingInterlocks)
@@ -89,11 +89,11 @@ namespace RBUR_SignalIntegrator
             }
             PrevSwitchPos = switchPosition;
 
-            eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
-            eventStackHolder.AddStack(this, nameof(OnDeserialization));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnDeserialization));
 
             if (PrevSwitchPos != switchPosition)
             {
@@ -133,11 +133,11 @@ namespace RBUR_SignalIntegrator
                 }
             }
 
-            eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
         public void PanelLockstateUpdate()
         {
-            eventStackHolder.AddStack(this, nameof(PanelLockstateUpdate));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(PanelLockstateUpdate));
 
             int idx = 0;
             foreach (AbstractPanelController panelController in controlledLevers)
@@ -148,7 +148,7 @@ namespace RBUR_SignalIntegrator
                 }
                 idx++;
             }
-            eventStackHolder.RemoveStack(this, nameof(PanelLockstateUpdate));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PanelLockstateUpdate));
         }
     }
 }

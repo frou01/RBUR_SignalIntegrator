@@ -36,9 +36,13 @@ namespace RBUR_SignalIntegrator
         }
         protected override void applyPositionToController(int posIndex)
         {
-            eventStackHolder.AddStack(this, nameof(OnDeserialization));
-            target.SetPosition(lockPositions[posIndex]);
-            eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if (target.controllerPosition_Exposed[0] != lockPositions[posIndex])
+            {
+                target.SetPosition(lockPositions[posIndex]);
+                SyncController();
+            }
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
         public override bool isControllerOwner()
         {

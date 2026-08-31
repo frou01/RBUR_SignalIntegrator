@@ -32,36 +32,39 @@ namespace RBUR_SignalIntegrator_Editor
                 eventStackHolder = obj.GetComponentInChildren<EventStackHolder>(true);
                 if (eventStackHolder) break;
             }
-            if (!eventStackHolder)
+            //if (!eventStackHolder)
+            //{
+            //GameObject newGo = new GameObject("EventStackHolder");
+            //eventStackHolder = newGo.AddUdonSharpComponent<EventStackHolder>();
+            //}
+            if (eventStackHolder)
             {
-                GameObject newGo = new GameObject("EventStackHolder");
-                eventStackHolder = newGo.AddUdonSharpComponent<EventStackHolder>();
-            }
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                foreach(SignalEvaluator con in obj.GetComponentsInChildren<SignalEvaluator>())
+                foreach (GameObject obj in scene.GetRootGameObjects())
                 {
-                    con.eventStackHolder = eventStackHolder;
-                }
-                foreach (MultiLeverController con in obj.GetComponentsInChildren <MultiLeverController>())
-                {
-                    con.eventStackHolder = eventStackHolder;
-                }
-                foreach (RouteLocker con in obj.GetComponentsInChildren<RouteLocker>())
-                {
-                    con.eventStackHolder = eventStackHolder;
-                }
-                foreach (Interlock_ToLockerAndMeetPosition con in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>())
-                {
-                    con.eventStackHolder = eventStackHolder;
-                }
-                foreach (Interlocking con in obj.GetComponentsInChildren<Interlocking>())
-                {
-                    con.eventStackHolder = eventStackHolder;
-                }
-                foreach (AbstractLockerConsolidater con in obj.GetComponentsInChildren<AbstractLockerConsolidater>())
-                {
-                    con.eventStackHolder = eventStackHolder;
+                    foreach (SignalEvaluator con in obj.GetComponentsInChildren<SignalEvaluator>())
+                    {
+                        con.eventStackHolder = eventStackHolder;
+                    }
+                    foreach (MultiLeverController con in obj.GetComponentsInChildren<MultiLeverController>())
+                    {
+                        con.eventStackHolder = eventStackHolder;
+                    }
+                    foreach (RouteLocker con in obj.GetComponentsInChildren<RouteLocker>())
+                    {
+                        con.eventStackHolder = eventStackHolder;
+                    }
+                    foreach (Interlock_ToLockerAndMeetPosition con in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>())
+                    {
+                        con.eventStackHolder = eventStackHolder;
+                    }
+                    foreach (Interlocking con in obj.GetComponentsInChildren<Interlocking>())
+                    {
+                        con.eventStackHolder = eventStackHolder;
+                    }
+                    foreach (AbstractLockerConsolidater con in obj.GetComponentsInChildren<AbstractLockerConsolidater>())
+                    {
+                        con.eventStackHolder = eventStackHolder;
+                    }
                 }
             }
 

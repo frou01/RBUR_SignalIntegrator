@@ -6,6 +6,7 @@ using UnityEditor;
 
 #endif
 using UnityEngine;
+using UnityEngine.Serialization;
 using static RBUR_SignalIntegrator.PointLever_ControlToRouteIndexHolder;
 
 namespace RBUR_SignalIntegrator
@@ -18,7 +19,7 @@ namespace RBUR_SignalIntegrator
         public float[][] get_Control_to_Paramater_Map()
         {
             return Route_To_ParamaterMaps
-                .Select(val => val.Control_To_Paramater)//List<To_ControllerMap> -> List<int[]>
+                .Select(val => val.Route_To_Paramater)//List<To_ControllerMap> -> List<int[]>
                 .ToArray();
         }
 
@@ -48,17 +49,17 @@ namespace RBUR_SignalIntegrator
                 if (synced_Animator_To_Paramater_Map.TryGetValue(assignedAnimator, out to_Paramater))
                 {
                     to_Paramater.onPointConOrder = idx;
-                    if (to_Paramater.Control_To_Paramater.Length > RouteIndexNum)
+                    if (to_Paramater.Route_To_Paramater.Length > RouteIndexNum)
                     {
-                        to_Paramater.Control_To_Paramater = to_Paramater.Control_To_Paramater
+                        to_Paramater.Route_To_Paramater = to_Paramater.Route_To_Paramater
                             .Select((mapArray, i) => (toConMap: mapArray, i))//get index
                             .Where(val => val.i < RouteIndexNum)//cut index
                             .Select(val => val.toConMap).ToArray();
                         isDirty |= true;
                     }
-                    else if (to_Paramater.Control_To_Paramater.Length < RouteIndexNum)
+                    else if (to_Paramater.Route_To_Paramater.Length < RouteIndexNum)
                     {
-                        to_Paramater.Control_To_Paramater = to_Paramater.Control_To_Paramater.AddRangeToArray(new float[RouteIndexNum - to_Paramater.Control_To_Paramater.Length]);
+                        to_Paramater.Route_To_Paramater = to_Paramater.Route_To_Paramater.AddRangeToArray(new float[RouteIndexNum - to_Paramater.Route_To_Paramater.Length]);
                         isDirty |= true;
                     }
                     SyncingRoute_To_ParamaterMap.Add(to_Paramater);
@@ -103,13 +104,14 @@ namespace RBUR_SignalIntegrator
         {
             [SerializeField] public int onPointConOrder;
             [SerializeField] public Animator linkedAnimator;
-            [SerializeField] public float[] Control_To_Paramater;
+            [FormerlySerializedAs("Control_To_Paramater")]
+            [SerializeField] public float[] Route_To_Paramater;
 
             public To_Paramater(int onPointConOrder, Animator linkedAnimator, float[] Control_To_Paramater)
             {
                 this.onPointConOrder = onPointConOrder;
                 this.linkedAnimator = linkedAnimator;
-                this.Control_To_Paramater = Control_To_Paramater;
+                this.Route_To_Paramater = Control_To_Paramater;
             }
         }
 #endif

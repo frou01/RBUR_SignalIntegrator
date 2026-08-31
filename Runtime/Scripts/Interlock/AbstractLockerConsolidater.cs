@@ -32,9 +32,9 @@ namespace RBUR_SignalIntegrator
             if (isLocked()) return false;
             else
             {
-                eventStackHolder.AddStack(this, nameof(trySetPosition));
+                if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(trySetPosition));
                 applyPosition(lockPositionSelector);
-                eventStackHolder.RemoveStack(this, nameof(trySetPosition));
+                if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(trySetPosition));
                 return true;
             }
         }
@@ -42,7 +42,7 @@ namespace RBUR_SignalIntegrator
         //Return: Success?
         public virtual bool tryUpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector,out int triedInstanceIndex)
         {
-            eventStackHolder.AddStack(this, nameof(tryUpdateLocking));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(tryUpdateLocking));
             getCallingBehaviourIndex(triedFromInstance, out triedInstanceIndex);
             if (lockerInstances.Length == triedInstanceIndex)
             {
@@ -66,7 +66,7 @@ namespace RBUR_SignalIntegrator
             {
                 if (lockIndex != -1) applyPosition(lockIndex);
             }
-            eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
             return !lockFault;
         }
 
@@ -108,16 +108,16 @@ namespace RBUR_SignalIntegrator
 
         public virtual void RelayFailSafe()//for exception
         {
-            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             foreach (UdonSharpBehaviour locker in lockerInstances)
             {
                 locker.SendCustomEvent(nameof(RelayFailSafe));
             }
-            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
         public virtual void SetToFailSafePosition()//for exception
         {
-            eventStackHolder.AddStack(this, nameof(SetToFailSafePosition));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(SetToFailSafePosition));
             setControllerOwner();
             int idx = 0;
             foreach (bool lockedState in SettedLockStates)
@@ -128,7 +128,7 @@ namespace RBUR_SignalIntegrator
                 idx++;
             }
             applyPosition(failSafeIndex);
-            eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
         }
 
         //Return: Controller positon (On Analog controller, return nearest lock point)

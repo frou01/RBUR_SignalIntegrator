@@ -51,10 +51,10 @@ namespace RBUR_SignalIntegrator
         [SerializeField] bool NetworkUpdate;
         protected override void Start()
         {
-            eventStackHolder.AddStack(this, nameof(Start));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(Start));
             base.Start();
             PointUpdate();
-            eventStackHolder.RemoveStack(this, nameof(Start));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(Start));
         }
         public override int GetCurrentPosition()
         {
@@ -62,10 +62,10 @@ namespace RBUR_SignalIntegrator
         }
         protected override void applyPositionToController(int posIndex)
         {
-            eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
             this.enabled = true;
-            eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
         private void Update()
@@ -135,7 +135,7 @@ namespace RBUR_SignalIntegrator
 
         public void PointUpdate()
         {
-            eventStackHolder.AddStack(this,nameof(PointUpdate));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this,nameof(PointUpdate));
             this.enabled = true;
             int Control_RouteCorresponding = -1;
 
@@ -174,7 +174,7 @@ namespace RBUR_SignalIntegrator
                     interlock.UpdateInterlock();
                 }
             }
-            eventStackHolder.RemoveStack(this, nameof(PointUpdate));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
         }
         public override void SyncController()
         {
@@ -209,7 +209,7 @@ namespace RBUR_SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected override void OnDrawGizmos()
         {
-            Gizmos.color = new Color(0f, 0f, 1f, 0.1f);
+            Gizmos.color = new Color(0.2f, 0.2f, 1f, 0.1f);
             foreach (AbstractPointSetter pointSetter in pointInstances)
             {
                 if (pointSetter) GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.02f, 0.02f);
@@ -232,14 +232,14 @@ namespace RBUR_SignalIntegrator
             foreach (AbstractPointSetter pointSetter in pointInstances)
             {
                 if (!pointSetter) continue;
-                Gizmos.color = new Color(0f, 0f, 1f, 1f);
-                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), pointSetter.transform.position, 0.02f, 0.02f);
+                Gizmos.color = new Color(0.2f, 0.2f, 1f, 1f);
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.02f, 0.02f);
                 guiStyle.normal.textColor = Gizmos.color;
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), pointSetter.transform.position, 0.6f), this.gameObject.name + ".PointInstance " + pointIdx, guiStyle);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.6f), this.gameObject.name + ".PointInstance " + pointIdx, guiStyle);
 
                 Gizmos.color = new Color(0f, 1f, 0f, 1f);
                 pointSetter.DrawGizmo_From();
-                Vector4 colorVec_Start = new Vector4(0f, 0f, 1f, 1f);
+                Vector4 colorVec_Start = new Vector4(0.2f, 0.2f, 1f, 1f);
                 Vector4 colorVec_End = new Vector4(1f, 0f, 0f, 1f);
                 float routeNum = ControlToRouteIndexMap[pointIdx].Length - 1;
                 float idx = 0;

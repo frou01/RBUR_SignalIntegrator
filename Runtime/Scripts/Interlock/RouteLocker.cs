@@ -35,10 +35,10 @@ namespace RBUR_SignalIntegrator
 
         public bool UpdateLockRoute(bool State,bool checkRoute)
         {
-            eventStackHolder.AddStack(this, nameof(UpdateLockRoute));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLockRoute));
             if (lockers.Length == 0)
             {
-                eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
+                if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return true;
             }
             if (!State)
@@ -47,14 +47,14 @@ namespace RBUR_SignalIntegrator
                 {
                     locker.tryUpdateLocking(this,false,-1);
                 }
-                eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
+                if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return true;
             }
             else
             {
                 if (checkRoute && !isRouteOpen())
                 {
-                    eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
+                    if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                     return false;
                 }
 
@@ -66,7 +66,7 @@ namespace RBUR_SignalIntegrator
                     result &= locker.tryUpdateLocking(this, true, ControlTargetIndex[idx]);
                     idx++;
                 }
-                eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
+                if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return result;
             }
         }
@@ -75,20 +75,20 @@ namespace RBUR_SignalIntegrator
         {
             foreach(AbstractLockerConsolidater locker in lockers)
             {
-                locker.AddNewLocker(this);
+                if(locker != null) locker.AddNewLocker(this);
             }
         }
 
 
         public void RelayFailSafe()
         {
-            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!interlocking.FailSafeCalled)
                 foreach (AbstractLockerConsolidater locker in lockers)
                 {
                     locker.RelayFailSafe();
                 }
-            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
     }
 }

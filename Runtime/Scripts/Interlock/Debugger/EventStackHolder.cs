@@ -1,13 +1,17 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RBUR_SignalIntegrator
 {
     public class EventStackHolder : UdonSharpBehaviour
     {
-        [SerializeField] bool debugLog_onAddStack = false;
+        [FormerlySerializedAs("debugLog_onAddStack")]
+        [SerializeField] bool debugLog = false;
         protected string StackString;
         protected string indent;
+
+        bool nestBottom = true;
         private void Update()
         {
             StackString = "";
@@ -23,10 +27,7 @@ namespace RBUR_SignalIntegrator
             pointedStack += "\n";
 
             StackString += pointedStack;
-            if (debugLog_onAddStack)
-            {
-                Debug.Log("EventStackHolder\nAdd:" + pointedStack + "Result:\n" + StackString, on);
-            }
+            nestBottom = true;
         }
         public void RemoveStack(UdonSharpBehaviour on, string funcName)
         {
@@ -37,9 +38,13 @@ namespace RBUR_SignalIntegrator
             pointedStack += "\n";
 
             StackString = StackString.Remove(StackString.Length - pointedStack.Length);
-            if (debugLog_onAddStack)
+            if (nestBottom)
             {
-                Debug.Log("EventStackHolder\nRemove:" + pointedStack + "Result:\n" + StackString, on);
+                if (debugLog)
+                {
+                    Debug.Log("Stacktrace:\n" + StackString, on);
+                }
+                nestBottom = false;
             }
             indent = indent.Remove(indent.Length - "    ".Length);
         }

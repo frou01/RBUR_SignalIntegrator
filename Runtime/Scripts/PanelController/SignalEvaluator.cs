@@ -24,7 +24,7 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void updateSignal(UdonSharpBehaviour callingInstance, int signal, out int triedIndex)
         {
-            eventStackHolder.AddStack(this, nameof(updateSignal));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(updateSignal));
             getCallingBehaviourIndex(callingInstance,out triedIndex);
             if (senderInstance.Length == triedIndex)
             {
@@ -61,7 +61,7 @@ namespace RBUR_SignalIntegrator
             {
                 Evaluator.updateSignal(this, currentOutSig);
             }
-            eventStackHolder.RemoveStack(this, nameof(updateSignal));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(updateSignal));
         }
         protected void getCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {

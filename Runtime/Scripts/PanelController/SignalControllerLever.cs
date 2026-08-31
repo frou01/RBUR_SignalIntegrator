@@ -18,7 +18,7 @@ namespace RBUR_SignalIntegrator
         protected override void applyPositionToController(int posIndex)
         {
 
-            eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
 
             foreach (Animator animator in SignalSideAnimators)
@@ -30,7 +30,7 @@ namespace RBUR_SignalIntegrator
             {
                 Evaluator.updateSignal(this, controllingPosition);
             }
-            eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

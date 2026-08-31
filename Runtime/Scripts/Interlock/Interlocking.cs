@@ -21,9 +21,9 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] public bool FailSafeCalled;
         [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;
         [HideInInspector][SerializeField] public AbstractLockerConsolidater[] affectedLockers;
-        protected bool signal_isDirty = false;
         public RouteLocker GetRouteLocker()
         {
+            if (!interlock_Route) interlock_Route = GetComponentInChildren<RouteLocker>();
             return interlock_Route;
         }
         public Interlock_ToLockerAndMeetPosition[] GetInterlockStateLinker()
@@ -55,7 +55,7 @@ namespace RBUR_SignalIntegrator
         [RecursiveMethod]
         public bool UpdateInterlock(bool updateAffected)
         {
-            eventStackHolder.AddStack(this, nameof(UpdateInterlock));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateInterlock));
 
             Debug.Log(this.name + ": UpdateInterlock.Start", this);
 
@@ -64,10 +64,9 @@ namespace RBUR_SignalIntegrator
                 locker.positionUpdated = false;
             }
             FailSafeCalled = false;
-            signal_isDirty = false;
 
             Debug.Log(this.name + ": UpdateInterlock.Check_To");
-            bool canOpenSignal = interlock_Route.isRouteOpen();
+            bool canOpenSignal = GetRouteLocker().isRouteOpen();
             foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
             {
                 canOpenSignal &= interlockState.Check();
@@ -93,7 +92,7 @@ namespace RBUR_SignalIntegrator
                 {
                     LockSuccess &= interlockState.UpdateLock(true);
                 }
-                LockSuccess &= interlock_Route.UpdateLockRoute(true,From_Locker.isControllerOwner());
+                LockSuccess &= GetRouteLocker().UpdateLockRoute(true,From_Locker.isControllerOwner());
 
                 Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
                 if (!LockSuccess && From_Locker.isControllerOwner())
@@ -109,12 +108,11 @@ namespace RBUR_SignalIntegrator
                 {
                     interlockState.UpdateLock(false);
                 }
-                interlock_Route.UpdateLockRoute(false,false);
+                GetRouteLocker().UpdateLockRoute(false,false);
 
                 if (!canOpenSignal)
                 {
                     Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
-                    signal_isDirty = true;
                     bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ReleasePositionIndex);
                     if (!LockSuccess)
                     {
@@ -125,11 +123,6 @@ namespace RBUR_SignalIntegrator
                 {
                     Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
                     From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
-                }
-
-                if (signal_isDirty)
-                {
-                    From_Locker.SyncController();
                 }
             }
 
@@ -166,7 +159,7 @@ namespace RBUR_SignalIntegrator
                 }
             }
 
-            eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
             return LockerUpdated;
         }
         public void UpdateInterlock()//called by Controller Pickup Event
@@ -176,24 +169,23 @@ namespace RBUR_SignalIntegrator
 
         public void RelayFailSafe()
         {
-            eventStackHolder.AddStack(this, nameof(RelayFailSafe));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!FailSafeCalled)
             {
                 FailSafeCalled = true;
                 From_Locker.SetToFailSafePosition();
-                signal_isDirty = true;
                 From_Locker.RelayFailSafe();
                 foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
                 {
                     interlockState.RelayFailSafe();
                 }
-                interlock_Route.RelayFailSafe();
+                GetRouteLocker().RelayFailSafe();
             }
-            eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
         public void SetupLocker()
         {
-            From_Locker.AddNewLocker(this);
+            if(From_Locker)From_Locker.AddNewLocker(this);
         }
     }
 
