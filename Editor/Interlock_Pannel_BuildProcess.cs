@@ -134,6 +134,20 @@ namespace RBUR_SignalIntegrator_Editor
 
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
+                foreach (AbstractPanelController controller in obj.GetComponentsInChildren<AbstractPanelController>(true))
+                {
+                    List<Interlocking> ReferingInterlocks = new List<Interlocking>();
+                    foreach(Interlocking interlock in controller.ReferingInterlocks)
+                    {
+                        ReferingInterlocks.AddRange(interlock.affectedInterlockings);
+                    }
+                    ReferingInterlocks = ReferingInterlocks.Distinct().ToList();
+                    controller.ReferingInterlocks = ReferingInterlocks.ToArray();
+                }
+            }
+
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
                 foreach (MultiLeverController multiLeverController in obj.GetComponentsInChildren<MultiLeverController>(true))
                 {
                     foreach (AbstractPanelController panelController in multiLeverController.controlledLevers)

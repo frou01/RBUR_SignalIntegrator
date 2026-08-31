@@ -51,7 +51,9 @@ namespace RBUR_SignalIntegrator
         {
             UpdateInterlock();
         }
-
+        bool Initial_Fetched;
+        bool Prev_SignalOpenned;
+        bool Prev_canOpenSignal;
         [RecursiveMethod]
         public bool UpdateInterlock(bool updateAffected)
         {
@@ -84,45 +86,53 @@ namespace RBUR_SignalIntegrator
                     break;
                 }
             }
-            if (isSignalOpenned)
+            if (!Initial_Fetched || (isSignalOpenned != Prev_SignalOpenned) || (canOpenSignal != Prev_canOpenSignal))
             {
-                bool LockSuccess = true;
-                //Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
-                foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
-                {
-                    LockSuccess &= interlockState.UpdateLock(true);
-                }
-                LockSuccess &= GetRouteLocker().UpdateLockRoute(true,From_Locker.isControllerOwner());
+                Initial_Fetched = true;
+                Prev_SignalOpenned = isSignalOpenned;
+                Prev_canOpenSignal = canOpenSignal;
 
-                //Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
-                if (!LockSuccess && From_Locker.isControllerOwner())
+                if (isSignalOpenned)
                 {
-                    Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
-                    this.RelayFailSafe();
-                }
-            }
-            else
-            {
-                //Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
-                foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
-                {
-                    interlockState.UpdateLock(false);
-                }
-                GetRouteLocker().UpdateLockRoute(false,false);
-
-                if (!canOpenSignal)
-                {
-                    //Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
-                    bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ReleasePositionIndex);
-                    if (!LockSuccess)
+                    bool LockSuccess = true;
+                    //Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
+                    foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
                     {
-                        Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on anohter position", From_Locker);
+                        LockSuccess &= interlockState.UpdateLock(true);
                     }
+                    LockSuccess &= GetRouteLocker().UpdateLockRoute(true, From_Locker.isControllerOwner());
+
+                    //Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
+                    if (!LockSuccess && From_Locker.isControllerOwner())
+                    {
+                        Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
+                        this.RelayFailSafe();
+                    }
+                    if (canOpenSignal) From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
                 }
                 else
                 {
-                    //Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
-                    From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
+                    //Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
+                    foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
+                    {
+                        interlockState.UpdateLock(false);
+                    }
+                    GetRouteLocker().UpdateLockRoute(false, false);
+
+                    if (!canOpenSignal)
+                    {
+                        //Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
+                        bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ReleasePositionIndex);
+                        if (!LockSuccess)
+                        {
+                            Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on anohter position", From_Locker);
+                        }
+                    }
+                    else
+                    {
+                        //Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
+                        From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
+                    }
                 }
             }
 

@@ -164,16 +164,17 @@ namespace RBUR_SignalIntegrator
             PointRouteIndex = Control_RouteCorresponding;
             foreach (Animator animator in PointSideAnimators)
             {
+                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)
+                {
+                    sleeper.ResetCount();
+                }
                 animator.enabled = true;
                 animator.SetFloat(currentRouteParamater, (float)PointRouteIndex / (float)(ControlToRouteIndexMap[0].Length-1));
             }
             if(PrevPointRouteIndex != PointRouteIndex)
             {
                 PrevPointRouteIndex = PointRouteIndex;
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                this.UpdateInterlocks();
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
         }
@@ -206,6 +207,7 @@ namespace RBUR_SignalIntegrator
             SyncUI(failSafeIndex);
             trySetPosition(switchToControllerMap[switchPosition]);
         }
+
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected override void OnDrawGizmos()

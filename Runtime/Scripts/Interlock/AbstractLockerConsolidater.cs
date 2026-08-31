@@ -106,6 +106,17 @@ namespace RBUR_SignalIntegrator
             return false;
         }
 
+        public void DebugLock()
+        {
+            Debug.Log("Log locking state " + this.name, this);
+            int idx = 0;
+            foreach (bool lockState in SettedLockStates)
+            {
+                if(lockState) Debug.Log("locked by " + lockerInstances[idx].name, lockerInstances[idx]);
+                idx++;
+            }
+        }
+
         public virtual void RelayFailSafe()//for exception
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));

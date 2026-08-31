@@ -3,10 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+using frou01.util;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
-using frou01.util;
 #endif
 
 namespace RBUR_SignalIntegrator
@@ -124,29 +124,30 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
             //Pre-control Interlock update
-            foreach (Interlocking interlock in ReferingInterlocks)
-            {
-                interlock.UpdateInterlock();
-            }
-
             setControllerOwner();
-            if (slider != null) switchPosition = (int)slider.value;
-            trySetPosition(switchToControllerMap[switchPosition]);
+            UpdateInterlocks();
 
+            if (slider != null) switchPosition = (int)slider.value;
+            //if (isLocked())
+            //{
+            //    DebugLock();
+            //}
+            trySetPosition(switchToControllerMap[switchPosition]);
             foreach (Animator animator in SwitchSideAnimator)
             {
+                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if(sleeper)
+                {
+                    sleeper.ResetCount();
+                }
                 animator.enabled = true;
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length-1));
             }
             SyncController();
 
+            //Post-control Interlock update
             if (UpdateInterlockBySwitching)
             {
-                //Post-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                UpdateInterlocks();
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
@@ -154,6 +155,12 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnDeserialization));
 
+
+            //Pre-control Interlock update
+            if (UpdateInterlockBySwitching)
+            {
+                UpdateInterlocks();
+            }
 
             bool updateControllingPosition = PannelCon_prevControllingPosition != controllingPosition;
 
@@ -165,13 +172,33 @@ namespace RBUR_SignalIntegrator
             //Post-control Interlock update
             if (updateControllingPosition)
             {
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                UpdateInterlocks();
             }
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        }
+
+        public virtual void UpdateInterlocks()
+        {
+            int loopLimit = 10;
+            bool needNextUpdate;
+            do
+            {
+                loopLimit--;
+                needNextUpdate = false;
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    needNextUpdate |= interlock.UpdateInterlock(false);
+                }
+            } while (needNextUpdate && loopLimit > 0);
+            if (loopLimit <= 0)
+            {
+                Debug.LogError(this.name + ": Interlock Update Looping. Interlock Settings is inconsistency." + this.name, this);
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    Debug.LogError(this.name + ":    " + interlock.name, interlock);
+                }
+            }
         }
 
         protected virtual void SyncUI(int switchPosition)
@@ -183,6 +210,10 @@ namespace RBUR_SignalIntegrator
             }
             foreach (Animator animator in SwitchSideAnimator)
             {
+                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)
+                {
+                    sleeper.ResetCount();
+                }
                 animator.enabled = true;
                 animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
             }
