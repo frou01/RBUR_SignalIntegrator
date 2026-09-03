@@ -9,10 +9,29 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteSelector_StartLever : UdonSharpBehaviour
     {
-        [UdonSynced][SerializeField] private protected bool switchPosition;
-        [SerializeField] private protected Animator[] SwitchSideAnimator;
-        [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
-        private protected int SelectedRoute;
+        private bool Switch_Enabled
+        {
+            get {
+                return m_switch_Enabled;
+            }
+            set {
+                m_switch_Enabled = value;
+                if (m_switch_Enabled)
+                {
+                    SwitchEnabled();
+                }
+                else
+                {
+                    if (Networking.IsOwner(this.gameObject))SwitchDisabled();
+                }
+            }
+        }
+        [UdonSynced, FieldChangeCallback(nameof(Switch_Enabled))] private bool m_switch_Enabled;
+        [UdonSynced] private bool routeSelected;
+        [SerializeField] private Animator[] SwitchSideAnimator;
+        [SerializeField] private string switchAnimationParamater = "SwitchPosition";
+        [HideInInspector][SerializeField] private RouteSelector_EndButton[] RouteEnds;
+        [HideInInspector][SerializeField] private MultiLeverController[] RouteAndSignalPreset;
         Slider slider
         {
             get
@@ -37,17 +56,46 @@ namespace RBUR_SignalIntegrator
             if (slider) slider.maxValue = 1;//0 or 1
         }
 
-        public virtual void OnValueChanged()
+        private void SwitchEnabled()
         {
-            if (slider != null) switchPosition = (int)slider.value == 1;
+
         }
+
+        private void SwitchDisabled()
+        {
+            routeSelected = false;
+            foreach (MultiLeverController routes in RouteAndSignalPreset)
+            {
+                routes.SetControlToLevers(0);
+            }
+        }
+
+        public void SelectRoute(RouteSelector_EndButton endButton)
+        {
+            if (Switch_Enabled && !routeSelected)
+            {
+                int SelectedRoute = 0;
+                foreach (RouteSelector_EndButton routeEnd in RouteEnds)
+                {
+                    if (routeEnd == endButton) break;
+                    SelectedRoute++;
+                }
+                RouteAndSignalPreset[SelectedRoute].SetControlToLevers(1);
+                routeSelected = true;
+            }
+        }
+        public void OnValueChanged()
+        {
+            if (slider != null) Switch_Enabled = (int)slider.value == 1;
+            SyncUI(Switch_Enabled, false);
+        }
+
         public override void OnDeserialization()
         {
-            SyncUI(switchPosition, true);
+            SyncUI(Switch_Enabled, true);
         }
-        protected virtual void SyncUI(bool switchPosition, bool updateSlider)
+        protected void SyncUI(bool switchPosition, bool updateSlider)
         {
-            this.switchPosition = slider.value == 1;
             if (updateSlider && slider != null)
             {
                 slider.SetValueWithoutNotify(switchPosition ? 1 : 0);

@@ -61,38 +61,9 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
 
-            //Pre-control Interlock update
-            foreach(Interlocking interlock in ReferingInterlocks)
-            {
-                interlock.UpdateInterlock();
-            }
+            if (slider != null) SetControlToLevers((int)slider.value);
 
-            setControllerOwner();
-            if (slider != null) switchPosition = (int)slider.value;
-
-            //Try control Controllers without interlock update
-            int idx = 0;
-            foreach(AbstractPanelController panelController in controlledLevers)
-            {
-                if (switchToControllerMap[idx][switchPosition] != -1 && !panelController.isLocalOverride())
-                {
-                    panelController.setControllerOwner();
-                    panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
-                }
-                idx++;
-            }
-
-            SyncUI(switchPosition, false);
-
-            SyncController();
-
-            //Post-control Interlock update
-            foreach (Interlocking interlock in ReferingInterlocks)
-            {
-                interlock.UpdateInterlock();
-            }
-
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
@@ -103,6 +74,46 @@ namespace RBUR_SignalIntegrator
             //ControlPosition synced by controlled-levers.
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        }
+
+        public void SetControlToLevers(int newSwitchPosition)
+        {
+            if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(SetControlToLevers));
+
+            if (switchPosition != newSwitchPosition)
+            {
+                this.switchPosition = newSwitchPosition;
+
+                setControllerOwner();
+                //Pre-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
+
+                //Try control Controllers without interlock update
+                int idx = 0;
+                foreach (AbstractPanelController panelController in controlledLevers)
+                {
+                    if (switchToControllerMap[idx][switchPosition] != -1 && !panelController.isLocalOverride())
+                    {
+                        panelController.setControllerOwner();
+                        panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
+                    }
+                    idx++;
+                }
+
+                SyncUI(switchPosition, false);
+
+                //Post-control Interlock update
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    interlock.UpdateInterlock();
+                }
+                SyncController();
+            }
+
+            if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(SetControlToLevers));
         }
         public virtual void UpdateInterlocks()
         {
