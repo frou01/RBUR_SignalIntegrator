@@ -45,10 +45,10 @@ namespace RBUR_SignalIntegrator
         [SerializeField] string progressParamater = "PointMovePos";
         int pointCon_prevControllingPosition = -1;
         protected int PrevPointRouteIndex = int.MinValue;
+        [SerializeField] protected float changeTimeLength = 1;
         [SerializeField] protected int PointRouteIndex;
         [SerializeField] protected float changeProgress;
-        [SerializeField] protected float changeTimeLength = 1;
-        [SerializeField] bool NetworkUpdate;
+        bool NetworkUpdate;
         protected override void Start()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(Start));
@@ -61,7 +61,11 @@ namespace RBUR_SignalIntegrator
         {
             return controllingPosition;
         }
-        protected override void applyPositionToController(int posIndex)
+        public override bool isLocalOverride()
+        {
+            return switchToControllerMap[switchPosition] != -1 || PointRouteIndex != controllingPosition;
+        }
+        private protected override void applyPositionToController(int posIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
@@ -138,7 +142,7 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this,nameof(PointUpdate));
             this.enabled = true;
-            int Control_RouteCorresponding = -1;
+            int Control_RouteCorresponding = -2;
 
             int pointIdx = 0;
             foreach (PointLever_Setter aPoint in pointInstances)
@@ -150,7 +154,7 @@ namespace RBUR_SignalIntegrator
                 {
                     if(anRoute == aPointRoute)
                     {
-                        if (Control_RouteCorresponding == -1) Control_RouteCorresponding = aControl_RouteCorresponding;
+                        if (Control_RouteCorresponding == -2) Control_RouteCorresponding = aControl_RouteCorresponding;
                         else if (Control_RouteCorresponding != aControl_RouteCorresponding)
                         {
                             Control_RouteCorresponding = -1;
@@ -178,20 +182,15 @@ namespace RBUR_SignalIntegrator
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
         }
-        public override void SyncController()
+        private protected override void SyncController()
         {
             this.enabled = true;
             NetworkUpdate = true;
             base.SyncController();
         }
-
-        public override void OnPostSerialization(SerializationResult result)
+        protected override void DisableAfterSync()
         {
-            base.OnPostSerialization(result);
-            if (result.success)
-            {
-                NetworkUpdate = false;
-            }
+            NetworkUpdate = false;
         }
         public override void SetToFailSafePosition()//for exception
         {
@@ -200,12 +199,13 @@ namespace RBUR_SignalIntegrator
             foreach (bool lockedState in SettedLockStates)
             {
                 SettedLockStates[idx] = false;
-                SettedLockIndex[idx] = failSafeIndex;
 
                 idx++;
             }
-            SyncUI(failSafeIndex);
-            trySetPosition(switchToControllerMap[switchPosition]);
+
+            SyncUI(failSafeIndex, false);
+
+            trySetPosition(switchToControllerMap[failSafeIndex]);
         }
 
 

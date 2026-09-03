@@ -4,6 +4,11 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 using frou01.util;
+using VRC.Udon.Common;
+using UnityEngine.Serialization;
+
+
+
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UnityEditor;
@@ -16,8 +21,8 @@ namespace RBUR_SignalIntegrator
     {
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
         int PannelCon_prevControllingPosition = -1;
-        [SerializeField][UdonSynced] protected int controllingPosition;//machine controlling position
-        [SerializeField] protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
+        [SerializeField] private protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public int[] getSwitchToControllerMap()
@@ -26,13 +31,14 @@ namespace RBUR_SignalIntegrator
         }
 #endif
 
-        [SerializeField] protected Animator[] SwitchSideAnimator;
-        [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
-        [SerializeField] public UdonBehaviour[] callbackBehaviours;
+        [SerializeField] private protected Animator[] SwitchSideAnimator;
+        [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
+        [FormerlySerializedAs("callbackBehaviours")]
+        [Tooltip("Auto assign by buildProcess")][SerializeField] public UdonBehaviour[] LockstateCallbackBehaviours;
 
-        protected bool UpdateInterlockBySwitching = true;
+        private protected bool UpdateInterlockBySwitching = true;
 
-        [UdonSynced][SerializeField] protected int switchPosition;
+        [UdonSynced][SerializeField] private protected int switchPosition;
         Slider slider
         {
             get
@@ -54,7 +60,9 @@ namespace RBUR_SignalIntegrator
         protected override void Start()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(Start));
+            this.enabled = false;
             base.Start();
+            if (slider) slider.maxValue = (switchToControllerMap.Length - 1);
             OnDeserialization();
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(Start));
         }
@@ -69,7 +77,7 @@ namespace RBUR_SignalIntegrator
             }
             if(isLocked() != prevLock)
             {
-                foreach (UdonBehaviour beh in callbackBehaviours)
+                foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
                 {
                     beh.SendCustomEvent("PanelLockstateUpdate");
                 }
@@ -82,66 +90,59 @@ namespace RBUR_SignalIntegrator
         {
             return controllingPosition;
         }
-        protected override void applyLockToController(bool state)
-        {
-            //Lever is not lockup. and validation is excuted on interlock.
-        }
-        protected override void applyPositionToController(int posIndex)
-        {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
-            if (posIndex != -1)
-            {
-                if (isControllerOwner() && posIndex != controllingPosition)
-                {
-                    controllingPosition = posIndex;
-                    if (PannelCon_prevControllingPosition != controllingPosition) SyncController();
-                }
-                else
-                {
-                    controllingPosition = posIndex;
-                }
-            }
-
-
-            PannelCon_prevControllingPosition = controllingPosition;
-            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
-        }
         public override bool isControllerOwner()
         {
             return Networking.IsOwner(this.gameObject);
+        }
+        public virtual bool isLocalOverride()
+        {
+            return switchToControllerMap[switchPosition] != -1;
+        }
+        private protected override void applyLockToController(bool state)
+        {
+            //There is No Other instance for apply lock. bool array has updated.
+        }
+        private protected override void applyPositionToController(int posIndex)
+        {
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if (posIndex != -1 && posIndex != controllingPosition)
+            {
+                controllingPosition = posIndex;
+                if (isControllerOwner())
+                {
+                    if (PannelCon_prevControllingPosition != controllingPosition) SyncController();
+                }
+            }
+
+            PannelCon_prevControllingPosition = controllingPosition;
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
         public override void setControllerOwner()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
         }
-        public override void SyncController()
+        private protected override void SyncController()
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(SyncController));
-            if(isControllerOwner()) this.RequestSerialization();
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(SyncController));
+            if (isControllerOwner())
+            {
+                if (!this.enabled) this.enabled = true;
+                this.RequestSerialization();
+            }
         }
         public virtual void OnValueChanged()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
-            //Pre-control Interlock update
             setControllerOwner();
+
+            //Pre-control Interlock update
             UpdateInterlocks();
 
             if (slider != null) switchPosition = (int)slider.value;
-            //if (isLocked())
-            //{
-            //    DebugLock();
-            //}
+
+            SyncUI(switchPosition, false);
+
             trySetPosition(switchToControllerMap[switchPosition]);
-            foreach (Animator animator in SwitchSideAnimator)
-            {
-                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if(sleeper)
-                {
-                    sleeper.ResetCount();
-                }
-                animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length-1));
-            }
+
             SyncController();
 
             //Post-control Interlock update
@@ -153,29 +154,42 @@ namespace RBUR_SignalIntegrator
         }
         public override void OnDeserialization()
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnDeserialization));
+            if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
 
+            SyncUI(switchPosition, true);
 
-            //Pre-control Interlock update
+            applyPosition(controllingPosition);//Force Apply Control
+
+            Debug.Log("" + this.name + " , " + controllingPosition);
+
+            //Post-control Interlock update
             if (UpdateInterlockBySwitching)
             {
                 UpdateInterlocks();
             }
 
-            bool updateControllingPosition = PannelCon_prevControllingPosition != controllingPosition;
+            if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        }
 
-            SyncUI(switchPosition);
-
-            applyPosition(controllingPosition);
-
-
-            //Post-control Interlock update
-            if (updateControllingPosition)
+        public override void OnPostSerialization(SerializationResult result)
+        {
+            if (result.success)
             {
-                UpdateInterlocks();
+                DisableAfterSync();
             }
+            else
+            {
+                SendCustomEventDelayedSeconds(nameof(_RetrySync),Random.Range(0,3));
+            }
+        }
 
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        public void _RetrySync()
+        {
+            SyncController();
+        }
+        protected virtual void DisableAfterSync()
+        {
+            this.enabled = false;
         }
 
         public virtual void UpdateInterlocks()
@@ -201,13 +215,14 @@ namespace RBUR_SignalIntegrator
             }
         }
 
-        protected virtual void SyncUI(int switchPosition)
+        protected virtual void SyncUI(int switchPosition,bool updateSlider)
         {
             this.switchPosition = switchPosition;
-            if (slider != null)
+            if (updateSlider && slider != null)
             {
                 slider.SetValueWithoutNotify(this.switchPosition);
             }
+
             foreach (Animator animator in SwitchSideAnimator)
             {
                 AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)

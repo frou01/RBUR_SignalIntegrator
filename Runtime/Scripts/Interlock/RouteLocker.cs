@@ -80,15 +80,21 @@ namespace RBUR_SignalIntegrator
         }
 
 
+        bool FailSafeLoopCancel;
         public void RelayFailSafe()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
-            if (!interlocking.FailSafeCalled)
-                foreach (AbstractLockerConsolidater locker in lockers)
-                {
-                    locker.RelayFailSafe();
-                }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
+            if (!FailSafeLoopCancel)
+            {
+                FailSafeLoopCancel = true;
+                if (!interlocking.FailSafeCalled)
+                    foreach (AbstractLockerConsolidater locker in lockers)
+                    {
+                        locker.RelayFailSafe();
+                    }
+            }
+            FailSafeLoopCancel = false;
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
     }
 }

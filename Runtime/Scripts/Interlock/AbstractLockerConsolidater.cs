@@ -11,11 +11,11 @@ namespace RBUR_SignalIntegrator
         class AbstractLockerConsolidater : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] protected bool[] SettedLockStates;
-        [HideInInspector][SerializeField] protected UdonSharpBehaviour[] lockerInstances;
-        [HideInInspector][SerializeField] protected int[] SettedLockIndex;
+        [HideInInspector][SerializeField] private protected bool[] SettedLockStates;
+        [HideInInspector][SerializeField] private protected UdonSharpBehaviour[] lockerInstances;
+        [HideInInspector][SerializeField] private protected int[] SettedLockIndex;
         [HideInInspector][SerializeField] public bool positionUpdated = false;
-        [SerializeField] protected int failSafeIndex;
+        [SerializeField] private protected int failSafeIndex;
 
         protected virtual void Start()
         {
@@ -146,20 +146,20 @@ namespace RBUR_SignalIntegrator
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public abstract int GetCurrentPosition();
-        protected abstract void applyLockToController(bool state);
-        protected abstract void applyPositionToController(int posIndex);
+        private protected abstract void applyLockToController(bool state);
+        private protected abstract void applyPositionToController(int posIndex);
         public abstract bool isControllerOwner();
         public abstract void setControllerOwner();
-        public abstract void SyncController();
+        private protected abstract void SyncController();
 #else
         public virtual int GetCurrentPosition()
         {
             return -1;
         }
-        protected virtual void applyLockToController(bool state)
+        private protected virtual void applyLockToController(bool state)
         {
         }
-        protected virtual void applyPositionToController(int posIndex)
+        private protected virtual void applyPositionToController(int posIndex)
         {
         }
         public virtual bool isControllerOwner()
@@ -169,7 +169,7 @@ namespace RBUR_SignalIntegrator
         public virtual void setControllerOwner()
         {
         }
-        public virtual void SyncController()
+        private protected virtual void SyncController()
         {
         }
 #endif
@@ -178,7 +178,7 @@ namespace RBUR_SignalIntegrator
         {
             if(posIndex != -1 && GetCurrentPosition() != posIndex)
             {
-                Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
+                //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
                 positionUpdated = true;
             }
             applyPositionToController(posIndex);

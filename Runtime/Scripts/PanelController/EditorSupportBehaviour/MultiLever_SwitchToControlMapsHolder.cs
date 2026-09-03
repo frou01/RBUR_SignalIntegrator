@@ -37,7 +37,7 @@ namespace RBUR_SignalIntegrator
 
 
             List<To_ControllerMap> SyncingMulCon_To_ControllerMap = new List<To_ControllerMap>();
-            bool isDirty = false;
+            bool isDirty = Switch_To_ControlMaps.Count > TargetMulCon.controlledLevers.Length;
             int idx = 0;
             foreach (AbstractPanelController assignedController in TargetMulCon.controlledLevers)
             {
@@ -83,7 +83,7 @@ namespace RBUR_SignalIntegrator
         {
             [SerializeField] public int onMulConOrder;
             [SerializeField] public AbstractPanelController linkedController;
-            [SerializeField] public int[] Switch_To_Control;
+            [Tooltip("index = switch, value = contro. No overwrite lever value = -1")][SerializeField] public int[] Switch_To_Control;
 
             public To_ControllerMap(int onMulConOrder, AbstractPanelController linkedController, int[] MulConSwitch_To_ControllerControlMap)
             {

@@ -15,7 +15,7 @@ namespace RBUR_SignalIntegrator
         [SerializeField] int signalLargestLevel;
         [SerializeField] protected SignalEvaluator[] Evaluators;
 
-        protected override void applyPositionToController(int posIndex)
+        private protected override void applyPositionToController(int posIndex)
         {
 
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
@@ -28,7 +28,7 @@ namespace RBUR_SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(signalAnimationParamater, (float)controllingPosition/ signalLargestLevel);
+                animator.SetFloat(signalAnimationParamater, (float)controllingPosition / signalLargestLevel);
             }
             foreach (SignalEvaluator Evaluator in Evaluators)
             {

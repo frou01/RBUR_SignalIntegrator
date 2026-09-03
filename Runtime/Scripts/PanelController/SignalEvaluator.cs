@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿using frou01.util;
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -53,6 +54,10 @@ namespace RBUR_SignalIntegrator
 
             foreach (Animator animator in SignalSideAnimators)
             {
+                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)
+                {
+                    sleeper.ResetCount();
+                }
                 animator.enabled = true;
                 animator.SetFloat(signalAnimationParamater, (float)currentOutSig / signalLargestLevel);
             }

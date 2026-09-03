@@ -7,8 +7,8 @@ namespace RBUR_SignalIntegrator
 {
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {
-        [SerializeField] protected float[] lockPositions;
-        [SerializeField] protected Controller_Base target;
+        [SerializeField] private protected float[] lockPositions;
+        [SerializeField] private protected Controller_Base target;
 
 
 
@@ -30,11 +30,11 @@ namespace RBUR_SignalIntegrator
             return res;
         }
 
-        protected override void applyLockToController(bool state)
+        private protected override void applyLockToController(bool state)
         {
             target.locked = state;
         }
-        protected override void applyPositionToController(int posIndex)
+        private protected override void applyPositionToController(int posIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             if (target.controllerPosition_Exposed[0] != lockPositions[posIndex])
@@ -52,7 +52,7 @@ namespace RBUR_SignalIntegrator
         {
             Networking.SetOwner(Networking.LocalPlayer, target.gameObject);
         }
-        public override void SyncController()
+        private protected override void SyncController()
         {
             if (isControllerOwner())
             {

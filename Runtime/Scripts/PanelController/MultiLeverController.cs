@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using frou01.util;
+using System.Threading;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,16 +13,17 @@ namespace RBUR_SignalIntegrator
     public class MultiLeverController : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [UdonSynced][SerializeField] protected int switchPosition;
-        protected int PrevSwitchPos = -1;
-        [SerializeField] protected Animator[] SwitchSideAnimator;
-        [SerializeField] protected string switchAnimationParamater = "SwitchPosition";
-        [HideInInspector][OdinSerialize][SerializeField] protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [UdonSynced][SerializeField] private protected int switchPosition;
+        [SerializeField] private protected Animator[] SwitchSideAnimator;
+        [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
+        [HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [HideInInspector][SerializeField] private protected int SwitchPositionNum;
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
-
         public void Set_switchToControllerMap(int[][] switchToControllerMap)
         {
             this.switchToControllerMap = switchToControllerMap;
+            if (switchToControllerMap.Length > 0)
+                SwitchPositionNum = switchToControllerMap[0].Length;
         }
         Slider slider
         {
@@ -42,14 +44,18 @@ namespace RBUR_SignalIntegrator
         Slider m_slider;
 
         [SerializeField] public AbstractPanelController[] controlledLevers;
-
+        protected virtual void Start()
+        {
+            if (slider) slider.maxValue = (SwitchPositionNum - 1);
+            OnDeserialization();
+        }
         public virtual void setControllerOwner()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
         }
         public virtual void SyncController()
         {
-            this.RequestSerialization();
+            if(Networking.IsOwner(this.gameObject))this.RequestSerialization();
         }
         public virtual void OnValueChanged()
         {
@@ -64,22 +70,20 @@ namespace RBUR_SignalIntegrator
             setControllerOwner();
             if (slider != null) switchPosition = (int)slider.value;
 
+            //Try control Controllers without interlock update
             int idx = 0;
             foreach(AbstractPanelController panelController in controlledLevers)
             {
-                panelController.setControllerOwner();
-                if (switchToControllerMap[idx][switchPosition] != -1)
+                if (switchToControllerMap[idx][switchPosition] != -1 && !panelController.isLocalOverride())
                 {
+                    panelController.setControllerOwner();
                     panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
                 }
                 idx++;
             }
 
-            foreach (Animator animator in SwitchSideAnimator)
-            {
-                animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
-            }
+            SyncUI(switchPosition, false);
+
             SyncController();
 
             //Post-control Interlock update
@@ -87,54 +91,59 @@ namespace RBUR_SignalIntegrator
             {
                 interlock.UpdateInterlock();
             }
-            PrevSwitchPos = switchPosition;
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnDeserialization));
+            //Update Interlock in controlled-levers.
 
-            if (PrevSwitchPos != switchPosition)
-            {
-                //Pre-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
-            }
-
-            if (slider != null)
-            {
-                slider.SetValueWithoutNotify(switchPosition);
-            }
-            foreach (Animator animator in SwitchSideAnimator)
-            {
-                animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
-            }
-
-            int idx = 0;
-            foreach (AbstractPanelController panelController in controlledLevers)
-            {
-                if (switchToControllerMap[idx][switchPosition] != -1)
-                {
-                    panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
-                }
-                idx++;
-            }
-
-            if (PrevSwitchPos != switchPosition)
-            {
-                //Post-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
-            }
-            PrevSwitchPos = switchPosition;
+            SyncUI(switchPosition, true);
+            //ControlPosition synced by controlled-levers.
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        }
+        public virtual void UpdateInterlocks()
+        {
+            int loopLimit = 10;
+            bool needNextUpdate;
+            do
+            {
+                loopLimit--;
+                needNextUpdate = false;
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    needNextUpdate |= interlock.UpdateInterlock(false);
+                }
+            } while (needNextUpdate && loopLimit > 0);
+            if (loopLimit <= 0)
+            {
+                Debug.LogError(this.name + ": Interlock Update Looping. Interlock Settings is inconsistency." + this.name, this);
+                foreach (Interlocking interlock in ReferingInterlocks)
+                {
+                    Debug.LogError(this.name + ":    " + interlock.name, interlock);
+                }
+            }
+        }
+
+        protected virtual void SyncUI(int switchPosition, bool updateSlider)
+        {
+            this.switchPosition = switchPosition;
+            if (updateSlider && slider != null)
+            {
+                slider.SetValueWithoutNotify(this.switchPosition);
+            }
+
+            foreach (Animator animator in SwitchSideAnimator)
+            {
+                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)
+                {
+                    sleeper.ResetCount();
+                }
+                animator.enabled = true;
+                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (SwitchPositionNum - 1));
+            }
         }
         public void PanelLockstateUpdate()
         {
