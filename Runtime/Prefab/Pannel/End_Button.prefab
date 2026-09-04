@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8903302791437440326}
   - component: {fileID: 2797346389615482729}
   m_Layer: 0
-  m_Name: Slider
+  m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -58,7 +58,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 735135178813388048}
   - component: {fileID: 9138529008493513331}
   m_Layer: 0
-  m_Name: Handle
+  m_Name: ButtonRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -229,7 +229,7 @@ PrefabInstance:
     - target: {fileID: 685946066586644088, guid: a5d12010931681a4fb60b43e517e1f42,
         type: 3}
       propertyPath: m_Name
-      value: button (2) Variant
+      value: End_Button
       objectReference: {fileID: 0}
     - target: {fileID: 5698658191467937400, guid: a5d12010931681a4fb60b43e517e1f42,
         type: 3}

@@ -166,7 +166,7 @@ namespace RBUR_SignalIntegrator_Editor
                 foreach (RouteSelector_StartLever routeSlector_Start in obj.GetComponentsInChildren<RouteSelector_StartLever>(true))
                 {
                     routeSlector_Start.AssignMaps();
-                    foreach (RouteSelector_EndButton end in routeSlector_Start.getRouteEnds().Cast<RouteSelector_EndButton>())
+                    foreach (RouteSelector_EndButton end in routeSlector_Start.getRouteEnds().SelectMany(val => val).ToArray())
                     {
                         end.StartLevers = end.StartLevers.AddItem(routeSlector_Start).ToArray();
                     }

@@ -14,6 +14,7 @@ namespace RBUR_SignalIntegrator
         [UdonSynced] private bool routeSelected;
         [SerializeField] private Animator[] SwitchSideAnimator;
         [SerializeField] private string switchAnimationParamater = "SwitchPosition";
+        [SerializeField] private int switchAnimationOffset;
         [HideInInspector][SerializeField] private RouteSelector_EndButton[][] RouteEnds;
         public RouteSelector_EndButton[][] getRouteEnds()
         {
@@ -46,8 +47,8 @@ namespace RBUR_SignalIntegrator
 
         protected virtual void Start()
         {
+            if (slider) slider.maxValue = RouteEnds.Length - 1;//0 or 1
             OnDeserialization();
-            if (slider) slider.maxValue = RouteEnds.Length;//0 or 1
         }
 
         private void SwitchDisabled()
@@ -108,7 +109,10 @@ namespace RBUR_SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, switchPosition / (RouteEnds.Length > 0 ? RouteEnds.Length-1 : 1));
+                animator.SetFloat(switchAnimationParamater,
+                    (float)(switchPosition + (switchAnimationOffset > 0 ? switchAnimationOffset : 0)) 
+                    /
+                    ((RouteEnds.Length > 1 ? RouteEnds.Length - 1 : 1) + Mathf.Abs(switchAnimationOffset)));
             }
         }
     }

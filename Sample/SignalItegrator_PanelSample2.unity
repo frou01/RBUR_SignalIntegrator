@@ -8482,7 +8482,7 @@ MonoBehaviour:
   toLocker_States:
   - {fileID: 1868328718}
   ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  LockPositionIndexes: 02000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []

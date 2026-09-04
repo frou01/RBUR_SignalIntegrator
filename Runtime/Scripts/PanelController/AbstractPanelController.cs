@@ -71,12 +71,16 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(tryUpdateLocking));
             bool prevLock = isLocked();
             bool res = base.tryUpdateLocking(triedFromInstance, lockState, lockPositionSelector, out triedInstanceIndex);
-            if (!isLocked())
-            {
-                trySetPosition(switchToControllerMap[switchPosition]);
-            }
             if(isLocked() != prevLock)
             {
+                if (!isLocked())
+                {
+                    trySetPosition(switchToControllerMap[switchPosition]);
+                    if (UpdateInterlockBySwitching)
+                    {
+                        UpdateInterlocks();
+                    }
+                }
                 foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
                 {
                     beh.SendCustomEvent("PanelLockstateUpdate");

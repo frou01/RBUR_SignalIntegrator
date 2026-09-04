@@ -86,10 +86,7 @@ namespace RBUR_SignalIntegrator
 
                 setControllerOwner();
                 //Pre-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                UpdateInterlocks();
 
                 //Try control Controllers without interlock update
                 int idx = 0;
@@ -106,10 +103,7 @@ namespace RBUR_SignalIntegrator
                 SyncUI(switchPosition, false);
 
                 //Post-control Interlock update
-                foreach (Interlocking interlock in ReferingInterlocks)
-                {
-                    interlock.UpdateInterlock();
-                }
+                UpdateInterlocks();
                 SyncController();
             }
 
