@@ -160,6 +160,19 @@ namespace RBUR_SignalIntegrator_Editor
                     multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.Distinct().ToArray();
                 }
             }
+
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
+                foreach (RouteSelector_StartLever routeSlector_Start in obj.GetComponentsInChildren<RouteSelector_StartLever>(true))
+                {
+                    routeSlector_Start.AssignMaps();
+                    foreach (RouteSelector_EndButton end in routeSlector_Start.getRouteEnds().Cast<RouteSelector_EndButton>())
+                    {
+                        end.StartLevers = end.StartLevers.AddItem(routeSlector_Start).ToArray();
+                    }
+                }
+            }
+
         }
     }
 }

@@ -7,11 +7,7 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteSelector_EndButton : UdonSharpBehaviour
     {
-        [HideInInspector][SerializeField] RouteSelector_StartLever[] StartLevers;
-        public void SetStarts(RouteSelector_StartLever[] StartLevers)
-        {
-            this.StartLevers = StartLevers;
-        }
+        [HideInInspector][SerializeField] public RouteSelector_StartLever[] StartLevers;
         public void OnPerform()
         {
             //Route End Button Pushed

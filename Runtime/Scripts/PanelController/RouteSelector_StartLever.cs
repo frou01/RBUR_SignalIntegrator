@@ -7,31 +7,25 @@ using VRC.Udon;
 
 namespace RBUR_SignalIntegrator
 {
+    [RequireComponent(typeof(RouteSelector_EndToPresetMapHolder))]
     public class RouteSelector_StartLever : UdonSharpBehaviour
     {
-        private bool Switch_Enabled
-        {
-            get {
-                return m_switch_Enabled;
-            }
-            set {
-                m_switch_Enabled = value;
-                if (m_switch_Enabled)
-                {
-                    SwitchEnabled();
-                }
-                else
-                {
-                    if (Networking.IsOwner(this.gameObject))SwitchDisabled();
-                }
-            }
-        }
-        [UdonSynced, FieldChangeCallback(nameof(Switch_Enabled))] private bool m_switch_Enabled;
+        [UdonSynced][SerializeField] private int Switch_Position;
         [UdonSynced] private bool routeSelected;
         [SerializeField] private Animator[] SwitchSideAnimator;
         [SerializeField] private string switchAnimationParamater = "SwitchPosition";
-        [HideInInspector][SerializeField] private RouteSelector_EndButton[] RouteEnds;
-        [HideInInspector][SerializeField] private MultiLeverController[] RouteAndSignalPreset;
+        [HideInInspector][SerializeField] private RouteSelector_EndButton[][] RouteEnds;
+        public RouteSelector_EndButton[][] getRouteEnds()
+        {
+            return RouteEnds;
+        }
+        [HideInInspector][SerializeField] private MultiLeverController[][] RouteAndSignalPreset;
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public void AssignMaps()
+        {
+            GetComponent<RouteSelector_EndToPresetMapHolder>().ApplyEndToPresetArray(out RouteEnds, out RouteAndSignalPreset);
+        }
+#endif
         Slider slider
         {
             get
@@ -53,52 +47,58 @@ namespace RBUR_SignalIntegrator
         protected virtual void Start()
         {
             OnDeserialization();
-            if (slider) slider.maxValue = 1;//0 or 1
-        }
-
-        private void SwitchEnabled()
-        {
-
+            if (slider) slider.maxValue = RouteEnds.Length;//0 or 1
         }
 
         private void SwitchDisabled()
         {
             routeSelected = false;
-            foreach (MultiLeverController routes in RouteAndSignalPreset)
+            foreach (MultiLeverController[] routeArray in RouteAndSignalPreset)
             {
-                routes.SetControlToLevers(0);
+                foreach (MultiLeverController route in routeArray)
+                {
+                    route.SetControlToLevers(0);
+                }
             }
         }
 
         public void SelectRoute(RouteSelector_EndButton endButton)
         {
-            if (Switch_Enabled && !routeSelected)
+            if (!routeSelected && RouteEnds[Switch_Position].Length > 0)
             {
+                Networking.SetOwner(Networking.LocalPlayer,this.gameObject);
                 int SelectedRoute = 0;
-                foreach (RouteSelector_EndButton routeEnd in RouteEnds)
+                foreach (RouteSelector_EndButton routeEnd in RouteEnds[Switch_Position])
                 {
                     if (routeEnd == endButton) break;
                     SelectedRoute++;
                 }
-                RouteAndSignalPreset[SelectedRoute].SetControlToLevers(1);
+                RouteAndSignalPreset[Switch_Position][SelectedRoute].SetControlToLevers(1);
                 routeSelected = true;
+                RequestSerialization();
             }
         }
         public void OnValueChanged()
         {
-            if (slider != null) Switch_Enabled = (int)slider.value == 1;
-            SyncUI(Switch_Enabled, false);
+            Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
+            if (slider != null) Switch_Position = (int)slider.value;
+            SyncUI(Switch_Position, false);
+            if(RouteEnds[Switch_Position].Length <= 0)
+            {
+                SwitchDisabled();
+            }
+            RequestSerialization();
         }
 
         public override void OnDeserialization()
         {
-            SyncUI(Switch_Enabled, true);
+            SyncUI(Switch_Position, true);
         }
-        protected void SyncUI(bool switchPosition, bool updateSlider)
+        protected void SyncUI(int switchPosition, bool updateSlider)
         {
             if (updateSlider && slider != null)
             {
-                slider.SetValueWithoutNotify(switchPosition ? 1 : 0);
+                slider.SetValueWithoutNotify(switchPosition);
             }
 
             foreach (Animator animator in SwitchSideAnimator)
@@ -108,7 +108,7 @@ namespace RBUR_SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, switchPosition ? 1f : 0f);
+                animator.SetFloat(switchAnimationParamater, switchPosition / (RouteEnds.Length > 0 ? RouteEnds.Length-1 : 1));
             }
         }
     }
