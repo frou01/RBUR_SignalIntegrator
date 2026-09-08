@@ -9845,6 +9845,7 @@ GameObject:
   - component: {fileID: 3979832869504567218}
   - component: {fileID: 2029101138226785250}
   - component: {fileID: 7238989777619438188}
+  - component: {fileID: 7238989777619438189}
   m_Layer: 0
   m_Name: PresetLever_Arr_1
   m_TagString: Untagged
@@ -9908,6 +9909,7 @@ GameObject:
   - component: {fileID: 3979832869135056480}
   - component: {fileID: 2029101138662429232}
   - component: {fileID: 7238989778257540030}
+  - component: {fileID: 7238989778257540031}
   m_Layer: 0
   m_Name: PresetLever_Arr_2
   m_TagString: Untagged
@@ -10253,7 +10255,6 @@ MonoBehaviour:
   ReferingInterlocks: []
   controlledLevers:
   - {fileID: 3979830836920148083}
-  - {fileID: 4728980181231292899}
 --- !u!1001 &1731882305197672278
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13072,6 +13073,21 @@ MonoBehaviour:
     linkedController: {fileID: 1731882305197672279}
     Switch_To_Control: ffffffff00000000
   switchPositionNum: 2
+--- !u!114 &7238989777619438189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536536969268040546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5debdb9a1d1b0c4bb2192c6d42aff5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 1672870722585221423}
+  routeLocker: {fileID: 1848272543}
+  targetMulConSwitch: 1
 --- !u!114 &7238989778257540030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13088,10 +13104,22 @@ MonoBehaviour:
   - onMulConOrder: 0
     linkedController: {fileID: 3979830836920148083}
     Switch_To_Control: 0000000001000000
-  - onMulConOrder: 1
-    linkedController: {fileID: 4728980181231292899}
-    Switch_To_Control: ffffffff01000000
   switchPositionNum: 2
+--- !u!114 &7238989778257540031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536536969703828144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5debdb9a1d1b0c4bb2192c6d42aff5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 1672870723223183613}
+  routeLocker: {fileID: 1829162339}
+  targetMulConSwitch: 1
 --- !u!1001 &7529205398957961625
 PrefabInstance:
   m_ObjectHideFlags: 0
