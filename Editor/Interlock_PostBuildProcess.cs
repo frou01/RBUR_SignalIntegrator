@@ -76,7 +76,17 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
                 {
-                    if(currentInterlock.GetFromLocker()) interlock_From_Lockers.Add(currentInterlock.GetFromLocker(), currentInterlock);
+                    if (currentInterlock.GetFromLocker())
+                    {
+                        if (interlock_From_Lockers.ContainsKey(currentInterlock.GetFromLocker())) { 
+                            Debug.LogError("interlock duplicated. Controller: " + currentInterlock.GetFromLocker().name, currentInterlock.GetFromLocker());
+                            Debug.LogError("interlock duplicated, Interlock:  " + currentInterlock.name, currentInterlock);
+                        }
+                        else
+                        {
+                            interlock_From_Lockers.Add(currentInterlock.GetFromLocker(), currentInterlock);
+                        }
+                    }
                 }
             }
 
