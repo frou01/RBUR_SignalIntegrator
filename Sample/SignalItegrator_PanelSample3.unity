@@ -597,6 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2096b556e4c2fa4689058016ae9765c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchPositionNum: 2
   Switch_To_ControlMaps:
   - onMulConOrder: 0
     linkedController: {fileID: 778747641}
@@ -604,7 +605,6 @@ MonoBehaviour:
   - onMulConOrder: 1
     linkedController: {fileID: 4728980181231292899}
     Switch_To_Control: ffffffff00000000
-  switchPositionNum: 2
 --- !u!114 &294798132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13019,6 +13019,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2096b556e4c2fa4689058016ae9765c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchPositionNum: 2
   Switch_To_ControlMaps:
   - onMulConOrder: 0
     linkedController: {fileID: 73533670}
@@ -13026,7 +13027,6 @@ MonoBehaviour:
   - onMulConOrder: 1
     linkedController: {fileID: 1731882305197672279}
     Switch_To_Control: ffffffff01000000
-  switchPositionNum: 2
 --- !u!114 &7238989777404275834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13039,6 +13039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2096b556e4c2fa4689058016ae9765c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchPositionNum: 2
   Switch_To_ControlMaps:
   - onMulConOrder: 0
     linkedController: {fileID: 1431434198}
@@ -13046,7 +13047,6 @@ MonoBehaviour:
   - onMulConOrder: 1
     linkedController: {fileID: 4728980181231292899}
     Switch_To_Control: ffffffff00000000
-  switchPositionNum: 2
 --- !u!114 &7238989777619438188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13059,6 +13059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2096b556e4c2fa4689058016ae9765c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchPositionNum: 2
   Switch_To_ControlMaps:
   - onMulConOrder: 0
     linkedController: {fileID: 4457645061710611199}
@@ -13072,7 +13073,6 @@ MonoBehaviour:
   - onMulConOrder: 3
     linkedController: {fileID: 1731882305197672279}
     Switch_To_Control: ffffffff00000000
-  switchPositionNum: 2
 --- !u!114 &7238989777619438189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13085,8 +13085,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5debdb9a1d1b0c4bb2192c6d42aff5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 1672870722585221423}
-  routeLocker: {fileID: 1848272543}
   targetMulConSwitch: 1
 --- !u!114 &7238989778257540030
 MonoBehaviour:
@@ -13100,11 +13098,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2096b556e4c2fa4689058016ae9765c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchPositionNum: 2
   Switch_To_ControlMaps:
   - onMulConOrder: 0
     linkedController: {fileID: 3979830836920148083}
     Switch_To_Control: 0000000001000000
-  switchPositionNum: 2
 --- !u!114 &7238989778257540031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13117,8 +13115,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5debdb9a1d1b0c4bb2192c6d42aff5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 1672870723223183613}
-  routeLocker: {fileID: 1829162339}
   targetMulConSwitch: 1
 --- !u!1001 &7529205398957961625
 PrefabInstance:
