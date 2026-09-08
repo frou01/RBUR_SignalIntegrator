@@ -1,5 +1,6 @@
 ﻿using frou01.util;
 using UdonSharp;
+using UnityEditor;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -100,5 +101,28 @@ namespace RBUR_SignalIntegrator
 
             return true;
         }
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public void OnDrawGizmosSelected()
+        {
+            GUIStyle guiStyle = new GUIStyle();
+            foreach (Animator animator in SignalSideAnimators)
+            {
+                Gizmos.color = new Color(0.2f, 1f, 0.2f, 1f);
+                guiStyle.normal.textColor = Gizmos.color;
+
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
+            }
+            foreach (SignalEvaluator Evaluator in childEvaluators)
+            {
+                Gizmos.color = new Color(0.5f, 1f, 0f, 1f);
+                guiStyle.normal.textColor = Gizmos.color;
+
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.02f, 0.02f);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.8f), Evaluator.name, guiStyle);
+            }
+        }
+#endif
     }
 }

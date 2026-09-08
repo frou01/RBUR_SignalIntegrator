@@ -227,7 +227,7 @@ namespace RBUR_SignalIntegrator
                 Gizmos.color = new Color(0.5f, 0f, 1f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), this.gameObject.name + ".PointAnimator", guiStyle);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
 
             ControlToRouteIndexMap = GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
@@ -238,7 +238,7 @@ namespace RBUR_SignalIntegrator
                 Gizmos.color = new Color(0.2f, 0.2f, 1f, 1f);
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.02f, 0.02f);
                 guiStyle.normal.textColor = Gizmos.color;
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.6f), this.gameObject.name + ".PointInstance " + pointIdx, guiStyle);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(pointSetter.transform), 0.6f), pointIdx + " : " + pointSetter.name, guiStyle);
 
                 Gizmos.color = new Color(0f, 1f, 0f, 1f);
                 pointSetter.DrawGizmo_From();
@@ -257,7 +257,7 @@ namespace RBUR_SignalIntegrator
                     Vector3 gizmoStart;
                     Vector3 gizmoEnd;
                     pointSetter.Gizmo_LineTarget(routes[routeIndex], out gizmoStart, out gizmoEnd);
-                    Handles.Label(gizmoEnd, this.gameObject.name + ".ControlIndex " + idx, guiStyle);
+                    Handles.Label(gizmoEnd, pointSetter.name + " : " + idx, guiStyle);
                     idx++;
                 }
                 pointIdx++;

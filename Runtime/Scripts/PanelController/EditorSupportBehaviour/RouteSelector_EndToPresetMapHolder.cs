@@ -48,8 +48,8 @@ namespace RBUR_SignalIntegrator
             if (switchNum == 0) switchNum = 1;
             foreach (SwitchToPresets switchPresets in Switch_To_EndAndPresetMaps)
             {
-                Vector4 colorVec_Switch_Start = Vector4.Lerp(colorVec_Start, colorVec_End, switchIndex / switchNum);
-                Vector4 colorVec_Switch_End = Vector4.Lerp(colorVec_Start, colorVec_End, switchIndex+1 / switchNum);
+                Vector4 colorVec_Switch_Start = Vector4.Lerp(colorVec_Start, colorVec_End, (float)switchIndex / switchNum);
+                Vector4 colorVec_Switch_End = Vector4.Lerp(colorVec_Start, colorVec_End, (float)(switchIndex +1) / switchNum);
                 int presetIndex = 0;
                 int presetNum = switchPresets.EndAndPresetMulcon.Count-1;
                 if (presetNum == 0)
@@ -58,7 +58,7 @@ namespace RBUR_SignalIntegrator
                 }
                 foreach (EndAndMulcon endAndMulcon in switchPresets.EndAndPresetMulcon)
                 {
-                    Vector4 currentCol = Vector4.Lerp(colorVec_Switch_Start, colorVec_Switch_End, presetIndex / presetNum);
+                    Vector4 currentCol = Vector4.Lerp(colorVec_Switch_Start, colorVec_Switch_End, (float)presetIndex / presetNum);
                     Gizmos.color = new Color(currentCol.x, currentCol.y, currentCol.z, currentCol.w);
                     guiStyle.normal.textColor = Gizmos.color;
 

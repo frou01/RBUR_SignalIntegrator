@@ -48,7 +48,7 @@ namespace RBUR_SignalIntegrator
                 guiStyle.normal.textColor = Gizmos.color;
 
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), this.gameObject.name + ".SignalSideAnimator", guiStyle);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
             foreach (SignalEvaluator Evaluator in Evaluators)
             {
@@ -56,7 +56,8 @@ namespace RBUR_SignalIntegrator
                 guiStyle.normal.textColor = Gizmos.color;
 
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.02f, 0.02f);
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.8f), this.gameObject.name + ".SignalEvaluator", guiStyle);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.8f), Evaluator.name, guiStyle);
+                Evaluator.OnDrawGizmosSelected();
             }
         }
 #endif
