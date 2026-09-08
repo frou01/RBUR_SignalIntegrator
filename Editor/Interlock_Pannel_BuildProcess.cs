@@ -23,10 +23,31 @@ namespace RBUR_SignalIntegrator_Editor
         {
 
             List<PointControllerLever> pointControllers = new List<PointControllerLever>();
+            List<MultiLever_ReferRouteLocker> multiLever_ReferRouteLocker = new List<MultiLever_ReferRouteLocker>();
+            List<Interlocking> interlocks = new List<Interlocking>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
                 pointControllers.AddRange(obj.GetComponentsInChildren<PointControllerLever>(true));
+                multiLever_ReferRouteLocker.AddRange(obj.GetComponentsInChildren<MultiLever_ReferRouteLocker>(true));
+                interlocks.AddRange(obj.GetComponentsInChildren<Interlocking>(true));
             }
+            foreach (MultiLever_ReferRouteLocker mulconSetter in multiLever_ReferRouteLocker)
+            {
+                MultiLeverController mulCon = mulconSetter.GetComponent<MultiLeverController>();
+                foreach(SignalControllerLever signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalControllerLever))
+                {
+                    Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
+                    if (correspondInterlock)
+                    {
+                        mulconSetter.ApplyToControlMap(mulCon, pointControllers, correspondInterlock.GetRouteLocker());
+                    }
+                    else
+                    {
+                        Debug.LogError("Interlock not found", mulCon);
+                    }
+                }
+            }
+
             foreach (PointControllerLever pointCon in pointControllers)
             {
                 pointCon.SetControlToRouteIndexMap(pointCon.GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map());
@@ -71,34 +92,31 @@ namespace RBUR_SignalIntegrator_Editor
                 }
             }
 
-            foreach (GameObject obj in scene.GetRootGameObjects())
+            foreach (Interlocking currentInterlock in interlocks)
             {
-                foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
+                //Add Interlocking Reverse reference to Controller
+                List<AbstractPanelController> controllers = new List<AbstractPanelController>();
+                foreach (Interlock_ToLockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
                 {
-                    //Add Interlocking Reverse reference to Controller
-                    List<AbstractPanelController> controllers = new List<AbstractPanelController>();
-                    foreach (Interlock_ToLockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+                    if (StateLocker.getLocker() is AbstractPanelController)
                     {
-                        if (StateLocker.getLocker() is AbstractPanelController)
-                        {
-                            controllers.Add((AbstractPanelController)StateLocker.getLocker());
-                        }
+                        controllers.Add((AbstractPanelController)StateLocker.getLocker());
                     }
-                    if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                }
+                if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
                     {
                         if (locker is AbstractPanelController)
                         {
                             controllers.Add((AbstractPanelController)locker);
                         }
                     }
-                    if (currentInterlock.GetFromLocker() is AbstractPanelController)
-                    {
-                        controllers.Add((AbstractPanelController)currentInterlock.GetFromLocker());
-                    }
-                    foreach (AbstractPanelController controller in controllers)
-                    {
-                        controller.ReferingInterlocks = controller.ReferingInterlocks.AddToArray(currentInterlock);
-                    }
+                if (currentInterlock.GetFromLocker() is AbstractPanelController)
+                {
+                    controllers.Add((AbstractPanelController)currentInterlock.GetFromLocker());
+                }
+                foreach (AbstractPanelController controller in controllers)
+                {
+                    controller.ReferingInterlocks = controller.ReferingInterlocks.AddToArray(currentInterlock);
                 }
             }
 

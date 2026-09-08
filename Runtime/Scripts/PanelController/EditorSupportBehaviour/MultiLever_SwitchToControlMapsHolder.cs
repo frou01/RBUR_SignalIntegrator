@@ -16,15 +16,15 @@ namespace RBUR_SignalIntegrator
     public class MultiLever_SwitchToControlMapsHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] List<To_ControllerMap> Switch_To_ControlMaps;
+
+        [SerializeField] public int switchPositionNum = 2;
+        [SerializeField] public List<To_ControllerMap> Switch_To_ControlMaps;
         public int[][] get_mulCon_to_Con_Map()
         {
             return Switch_To_ControlMaps
                 .Select(val => val.Switch_To_Control)//List<To_ControllerMap> -> List<int[]>
                 .ToArray();
         }
-
-        [SerializeField] int switchPositionNum;
 
         void Update()
         {
@@ -66,7 +66,17 @@ namespace RBUR_SignalIntegrator
                 {
                     if (assignedController != null)
                     {
-                        SyncingMulCon_To_ControllerMap.Add(new To_ControllerMap(idx, assignedController, new int[switchPositionNum]));
+                        int[] defaultControlMap = new int[switchPositionNum];
+                        if (assignedController is PointControllerLever)
+                        {
+                            defaultControlMap[0] = -1;
+                        }
+                        else
+                        if (assignedController is SignalControllerLever)
+                        {
+                            defaultControlMap[switchPositionNum-1] = 1;
+                        }
+                        SyncingMulCon_To_ControllerMap.Add(new To_ControllerMap(idx, assignedController, defaultControlMap));
                         isDirty |= true;
                     }
                 }
@@ -81,7 +91,7 @@ namespace RBUR_SignalIntegrator
         }
 
         [System.Serializable]
-        class To_ControllerMap
+        public class To_ControllerMap
         {
             [SerializeField] public int onMulConOrder;
             [SerializeField] public AbstractPanelController linkedController;
