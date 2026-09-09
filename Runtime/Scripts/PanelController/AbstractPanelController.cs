@@ -229,7 +229,7 @@ namespace RBUR_SignalIntegrator
 
             foreach (Animator animator in SwitchSideAnimator)
             {
-                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)
+                AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }

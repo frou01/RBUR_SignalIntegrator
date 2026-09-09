@@ -168,7 +168,7 @@ namespace RBUR_SignalIntegrator
             PointRouteIndex = Control_RouteCorresponding;
             foreach (Animator animator in PointSideAnimators)
             {
-                AnimatorSleeper sleeper = animator.GetComponentInChildren<AnimatorSleeper>(); if (sleeper)
+                AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }
