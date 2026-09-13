@@ -74,6 +74,10 @@ namespace RBUR_SignalIntegrator
                     if (routeEnd == endButton) break;
                     SelectedRoute++;
                 }
+                if(SelectedRoute == RouteEnds[Switch_Position].Length)
+                {
+                    return;
+                }
                 RouteAndSignalPreset[Switch_Position][SelectedRoute].SetControlToLevers(1);
                 routeSelected = true;
                 RequestSerialization();

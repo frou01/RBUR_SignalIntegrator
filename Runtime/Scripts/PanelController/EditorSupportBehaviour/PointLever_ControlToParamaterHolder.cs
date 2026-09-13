@@ -12,7 +12,7 @@ using static RBUR_SignalIntegrator.PointLever_ControlToRouteIndexHolder;
 namespace RBUR_SignalIntegrator
 {
     [ExecuteAlways]
-    public class PointLever_RouteIndexToParamaterHolder : MonoBehaviour
+    public class PointLever_ControlToParamaterHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] List<To_Paramater> Route_To_ParamaterMaps;

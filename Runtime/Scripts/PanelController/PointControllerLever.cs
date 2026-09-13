@@ -10,12 +10,12 @@ using VRC.Udon.Serialization.OdinSerializer;
 
 namespace RBUR_SignalIntegrator
 {
-    [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_RouteIndexToParamaterHolder))]
+    [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_ControlToParamaterHolder))]
     public class PointControllerLever : AbstractPanelController
     {
         [SerializeField] protected AbstractPointSetter[] pointInstances;
         [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)
-        [HideInInspector][OdinSerialize][SerializeField] protected float[][] RouteToParamaterMap;//2nd index:route, value:animationParamater.
+        [HideInInspector][OdinSerialize][SerializeField] protected float[][] ControlToParamaterMap;//2nd index:route, value:animationParamater.
         public void SetControlToRouteIndexMap(int[][] ControlToRouteIndexMap)
         {
             this.ControlToRouteIndexMap = ControlToRouteIndexMap;
@@ -24,13 +24,13 @@ namespace RBUR_SignalIntegrator
         {
             return this.ControlToRouteIndexMap;
         }
-        public void SetRouteToParamaterMap(float[][] RouteToParamaterMap)
+        public void SetControlToParamaterMap(float[][] RouteToParamaterMap)
         {
-            this.RouteToParamaterMap = RouteToParamaterMap;
+            this.ControlToParamaterMap = RouteToParamaterMap;
         }
         public float[][] GetRouteToParamaterMap()
         {
-            return this.RouteToParamaterMap;
+            return this.ControlToParamaterMap;
         }
         public AbstractPointSetter[] getPointInstances()
         {
@@ -119,8 +119,8 @@ namespace RBUR_SignalIntegrator
                 {
                     animator.enabled = true;
                     int mapSection = Mathf.FloorToInt(changeProgress / changeTimeLength);
-                    float mapstart = RouteToParamaterMap[animatorindex][mapSection];
-                    float mapEnd = RouteToParamaterMap[animatorindex][mapSection + mapSection == RouteToParamaterMap[animatorindex].Length ? 0 : 1];
+                    float mapstart = ControlToParamaterMap[animatorindex][mapSection];
+                    float mapEnd = ControlToParamaterMap[animatorindex][mapSection + mapSection == ControlToParamaterMap[animatorindex].Length ? 0 : 1];
                     animator.SetFloat(progressParamater, Mathf.Lerp(mapstart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
                     animatorindex++;
                 }
