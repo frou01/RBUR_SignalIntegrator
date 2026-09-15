@@ -15,11 +15,12 @@ namespace RBUR_SignalIntegrator
     public class PointLever_ControlToParamaterHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] List<To_Paramater> Route_To_ParamaterMaps;
+        [FormerlySerializedAs("Route_To_ParamaterMaps")]
+        [SerializeField] List<To_Paramater> Control_To_ParamaterMaps;
         public float[][] get_Control_to_Paramater_Map()
         {
-            return Route_To_ParamaterMaps
-                .Select(val => val.Route_To_Paramater)//List<To_ControllerMap> -> List<int[]>
+            return Control_To_ParamaterMaps
+                .Select(val => val.Control_To_Paramater)//List<To_ControllerMap> -> List<int[]>
                 .ToArray();
         }
 
@@ -33,7 +34,7 @@ namespace RBUR_SignalIntegrator
             PointControllerLever TargetPointCon;
             TargetPointCon = GetComponent<PointControllerLever>();
             Dictionary<Animator, To_Paramater> synced_Animator_To_Paramater_Map = new Dictionary<Animator, To_Paramater>();
-            foreach (To_Paramater syncedParamaterMap in Route_To_ParamaterMaps)
+            foreach (To_Paramater syncedParamaterMap in Control_To_ParamaterMaps)
             {
                 if (syncedParamaterMap.linkedAnimator != null && !synced_Animator_To_Paramater_Map.ContainsKey(syncedParamaterMap.linkedAnimator))
                     synced_Animator_To_Paramater_Map.Add(syncedParamaterMap.linkedAnimator, syncedParamaterMap);
@@ -49,17 +50,17 @@ namespace RBUR_SignalIntegrator
                 if (synced_Animator_To_Paramater_Map.TryGetValue(assignedAnimator, out to_Paramater))
                 {
                     to_Paramater.onPointConOrder = idx;
-                    if (to_Paramater.Route_To_Paramater.Length > RouteIndexNum)
+                    if (to_Paramater.Control_To_Paramater.Length > RouteIndexNum)
                     {
-                        to_Paramater.Route_To_Paramater = to_Paramater.Route_To_Paramater
+                        to_Paramater.Control_To_Paramater = to_Paramater.Control_To_Paramater
                             .Select((mapArray, i) => (toConMap: mapArray, i))//get index
                             .Where(val => val.i < RouteIndexNum)//cut index
                             .Select(val => val.toConMap).ToArray();
                         isDirty |= true;
                     }
-                    else if (to_Paramater.Route_To_Paramater.Length < RouteIndexNum)
+                    else if (to_Paramater.Control_To_Paramater.Length < RouteIndexNum)
                     {
-                        to_Paramater.Route_To_Paramater = to_Paramater.Route_To_Paramater.AddRangeToArray(new float[RouteIndexNum - to_Paramater.Route_To_Paramater.Length]);
+                        to_Paramater.Control_To_Paramater = to_Paramater.Control_To_Paramater.AddRangeToArray(new float[RouteIndexNum - to_Paramater.Control_To_Paramater.Length]);
                         isDirty |= true;
                     }
                     SyncingRoute_To_ParamaterMap.Add(to_Paramater);
@@ -94,7 +95,7 @@ namespace RBUR_SignalIntegrator
             if (isDirty)
             {
                 SyncingRoute_To_ParamaterMap.OrderBy(toConMap => toConMap.onPointConOrder);
-                Route_To_ParamaterMaps = SyncingRoute_To_ParamaterMap;
+                Control_To_ParamaterMaps = SyncingRoute_To_ParamaterMap;
                 EditorUtility.SetDirty(this);
             }
         }
@@ -104,14 +105,14 @@ namespace RBUR_SignalIntegrator
         {
             [SerializeField] public int onPointConOrder;
             [SerializeField] public Animator linkedAnimator;
-            [FormerlySerializedAs("Control_To_Paramater")]
-            [SerializeField] public float[] Route_To_Paramater;
+            [FormerlySerializedAs("Route_To_Paramater")]
+            [SerializeField] public float[] Control_To_Paramater;
 
             public To_Paramater(int onPointConOrder, Animator linkedAnimator, float[] Control_To_Paramater)
             {
                 this.onPointConOrder = onPointConOrder;
                 this.linkedAnimator = linkedAnimator;
-                this.Route_To_Paramater = Control_To_Paramater;
+                this.Control_To_Paramater = Control_To_Paramater;
             }
         }
 #endif
