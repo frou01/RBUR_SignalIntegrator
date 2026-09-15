@@ -21,6 +21,7 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
 
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(applyPositionToController) + "] : controllingPosition = " + controllingPosition, this);
             foreach (Animator animator in SignalSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)

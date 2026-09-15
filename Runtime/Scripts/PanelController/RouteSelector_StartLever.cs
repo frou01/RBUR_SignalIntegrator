@@ -51,18 +51,6 @@ namespace RBUR_SignalIntegrator
             OnDeserialization();
         }
 
-        private void SwitchDisabled()
-        {
-            routeSelected = false;
-            foreach (MultiLeverController[] routeArray in RouteAndSignalPreset)
-            {
-                foreach (MultiLeverController route in routeArray)
-                {
-                    route.SetControlToLevers(0);
-                }
-            }
-        }
-
         public void SelectRoute(RouteSelector_EndButton endButton)
         {
             if (!routeSelected && RouteEnds[Switch_Position].Length > 0)
@@ -90,7 +78,20 @@ namespace RBUR_SignalIntegrator
             SyncUI(Switch_Position, false);
             if(RouteEnds[Switch_Position].Length <= 0)
             {
-                SwitchDisabled();
+                OwnerOnly_SwitchDisabled();
+            }
+            RequestSerialization();
+        }
+
+        private void OwnerOnly_SwitchDisabled()
+        {
+            routeSelected = false;
+            foreach (MultiLeverController[] routeArray in RouteAndSignalPreset)
+            {
+                foreach (MultiLeverController route in routeArray)
+                {
+                    route.SetControlToLevers(0);
+                }
             }
             RequestSerialization();
         }

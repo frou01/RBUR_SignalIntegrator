@@ -19,6 +19,7 @@ namespace RBUR_SignalIntegrator
     //virtualization controller for machine<Point,Signal,Sign>
     public class AbstractPanelController : AbstractLockerConsolidater
     {
+        public bool Logging = false;
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
         int PannelCon_prevControllingPosition = -1;
         [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
@@ -37,6 +38,7 @@ namespace RBUR_SignalIntegrator
         [Tooltip("Auto assign by buildProcess")][SerializeField] public UdonBehaviour[] LockstateCallbackBehaviours;
 
         private protected bool UpdateInterlockBySwitching = true;
+        private protected bool suspendSync = false;
 
         [UdonSynced][SerializeField] private protected int switchPosition;
         Slider slider
@@ -112,7 +114,7 @@ namespace RBUR_SignalIntegrator
             if (posIndex != -1 && posIndex != controllingPosition)
             {
                 controllingPosition = posIndex;
-                if (isControllerOwner())
+                if (!suspendSync && isControllerOwner())
                 {
                     if (PannelCon_prevControllingPosition != controllingPosition) SyncController();
                 }
@@ -144,27 +146,27 @@ namespace RBUR_SignalIntegrator
             if (slider != null) switchPosition = (int)slider.value;
 
             SyncUI(switchPosition, false);
-
+            suspendSync = true;
             trySetPosition(switchToControllerMap[switchPosition]);
-
-            SyncController();
 
             //Post-control Interlock update
             if (UpdateInterlockBySwitching)
             {
                 UpdateInterlocks();
             }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
+            suspendSync = false;
+            SyncController();
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
         public override void OnDeserialization()
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
 
             SyncUI(switchPosition, true);
 
             applyPosition(controllingPosition);//Force Apply Control
 
-            Debug.Log("" + this.name + " , " + controllingPosition);
 
             //Post-control Interlock update
             if (UpdateInterlockBySwitching)
@@ -172,6 +174,7 @@ namespace RBUR_SignalIntegrator
                 UpdateInterlocks();
             }
 
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 

@@ -153,15 +153,17 @@ namespace RBUR_SignalIntegrator
         public void PanelLockstateUpdate()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(PanelLockstateUpdate));
-
-            int idx = 0;
-            foreach (AbstractPanelController panelController in controlledLevers)
+            if (Networking.IsOwner(this.gameObject))
             {
-                if (switchToControllerMap[idx][switchPosition] != -1)
+                int idx = 0;
+                foreach (AbstractPanelController panelController in controlledLevers)
                 {
-                    panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
+                    if (switchToControllerMap[idx][switchPosition] != -1)
+                    {
+                        panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
+                    }
+                    idx++;
                 }
-                idx++;
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PanelLockstateUpdate));
         }
