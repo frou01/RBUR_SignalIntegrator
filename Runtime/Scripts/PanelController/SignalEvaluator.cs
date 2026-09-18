@@ -10,21 +10,21 @@ namespace RBUR_SignalIntegrator
     public class SignalEvaluator : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [SerializeField] protected UdonSharpBehaviour[] senderInstance;
-        [SerializeField] protected int[] ReceiveSignal;
+        [HideInInspector][SerializeField] protected UdonSharpBehaviour[] senderInstance;
+        [HideInInspector][SerializeField] protected float[] ReceiveSignal;
 
         [Tooltip("False: Prioritize the minimum, True: Prioritize the MAXIMUM")][SerializeField] bool mode; 
         [SerializeField] protected Animator[] SignalSideAnimators;
         [SerializeField] protected string signalAnimationParamater = "SignalRelayPosition";
-        [SerializeField] protected int signalLargestLevel;
+        [SerializeField] protected float SignalMultiplier = 1;
 
         [SerializeField] protected SignalEvaluator[] childEvaluators;
 
-        public virtual void updateSignal(UdonSharpBehaviour callingInstance,int signal)
+        public virtual void updateSignal(UdonSharpBehaviour callingInstance,float signal)
         {
             updateSignal(callingInstance, signal, out int triedIndex);
         }
-        public virtual void updateSignal(UdonSharpBehaviour callingInstance, int signal, out int triedIndex)
+        public virtual void updateSignal(UdonSharpBehaviour callingInstance, float signal, out int triedIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(updateSignal));
             getCallingBehaviourIndex(callingInstance,out triedIndex);
@@ -60,12 +60,12 @@ namespace RBUR_SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(signalAnimationParamater, (float)currentOutSig / signalLargestLevel);
+                animator.SetFloat(signalAnimationParamater, currentOutSig * SignalMultiplier);
             }
 
             foreach (SignalEvaluator Evaluator in childEvaluators)
             {
-                Evaluator.updateSignal(this, currentOutSig);
+                Evaluator.updateSignal(this, currentOutSig * SignalMultiplier);
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(updateSignal));
         }
@@ -94,7 +94,7 @@ namespace RBUR_SignalIntegrator
             newSenderScripts[senderInstance.Length] = triedFrom;
             senderInstance = newSenderScripts;
 
-            int[] newReceiveSignal = new int[ReceiveSignal.Length + 1];
+            float[] newReceiveSignal = new float[ReceiveSignal.Length + 1];
             ReceiveSignal.CopyTo(newReceiveSignal, 0);
             newReceiveSignal[ReceiveSignal.Length] = 0;
             ReceiveSignal = newReceiveSignal;
