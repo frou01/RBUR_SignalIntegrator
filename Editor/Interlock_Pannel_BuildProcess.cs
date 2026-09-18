@@ -172,8 +172,8 @@ namespace RBUR_SignalIntegrator_Editor
                     {
                         multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.AddRangeToArray(panelController.ReferingInterlocks);
 
-                        if (panelController.LockstateCallbackBehaviours.Contains(UdonSharpEditorUtility.GetBackingUdonBehaviour(panelController))) break;
-                        panelController.LockstateCallbackBehaviours = panelController.LockstateCallbackBehaviours.AddItem(UdonSharpEditorUtility.GetBackingUdonBehaviour(multiLeverController)).ToArray();
+                        if (!panelController.LockstateCallbackBehaviours.Contains(UdonSharpEditorUtility.GetBackingUdonBehaviour(multiLeverController)))
+                            panelController.LockstateCallbackBehaviours = panelController.LockstateCallbackBehaviours.AddItem(UdonSharpEditorUtility.GetBackingUdonBehaviour(multiLeverController)).ToArray();
                     }
                     multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.Distinct().ToArray();
                 }

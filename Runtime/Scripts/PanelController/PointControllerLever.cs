@@ -148,21 +148,25 @@ namespace RBUR_SignalIntegrator
             foreach (PointLever_Setter aPoint in pointInstances)
             {
                 int aPointRoute = aPoint.get_current_To_Index();
+                if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPoint = " + aPoint.name, this);
+                if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPointRoute = " + aPointRoute, this);
 
                 int aControl_RouteCorresponding = 0;
                 foreach (int anRoute in ControlToRouteIndexMap[pointIdx])
                 {
                     if(anRoute == aPointRoute)
                     {
+                        if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] anRoute = " + anRoute, this);
                         if (Control_RouteCorresponding == -2) Control_RouteCorresponding = aControl_RouteCorresponding;
                         else if (Control_RouteCorresponding != aControl_RouteCorresponding)
                         {
                             Control_RouteCorresponding = -1;
-                            break;
                         }
+                        break;
                     }
                     aControl_RouteCorresponding++;
                 }
+                if (aControl_RouteCorresponding == ControlToRouteIndexMap[pointIdx].Length) Control_RouteCorresponding = -1;//Not Found
                 pointIdx++;
             }
             PointRouteIndex = Control_RouteCorresponding;
@@ -175,7 +179,9 @@ namespace RBUR_SignalIntegrator
                 animator.enabled = true;
                 animator.SetFloat(currentRouteParamater, (float)PointRouteIndex / (float)(ControlToRouteIndexMap[0].Length-1));
             }
-            if(PrevPointRouteIndex != PointRouteIndex)
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PrevPointRouteIndex = " + PrevPointRouteIndex, this);
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PointRouteIndex = " + PointRouteIndex, this);
+            if (PrevPointRouteIndex != PointRouteIndex)
             {
                 PrevPointRouteIndex = PointRouteIndex;
                 this.UpdateInterlocks();

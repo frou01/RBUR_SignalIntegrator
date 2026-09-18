@@ -11,6 +11,7 @@ namespace RBUR_SignalIntegrator
     {
         //TODO Local鎖錠
         //TODO 同期デッドロック防止：両否決
+        [SerializeField] bool logging;
 
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] AbstractLockerConsolidater From_Locker;//GAC以外も制御できるように間を挟む
@@ -59,7 +60,7 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateInterlock));
 
-            //Debug.Log(this.name + ": UpdateInterlock.Start", this);
+            if(logging) Debug.Log(this.name + ": UpdateInterlock.Start", this);
 
             foreach (AbstractLockerConsolidater locker in affectedLockers)
             {
@@ -67,7 +68,7 @@ namespace RBUR_SignalIntegrator
             }
             FailSafeCalled = false;
 
-            //Debug.Log(this.name + ": UpdateInterlock.Check_To");
+            if (logging) Debug.Log(this.name + ": UpdateInterlock.Check_To");
             bool canOpenSignal = GetRouteLocker().isRouteOpen();
             foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
             {
@@ -95,14 +96,14 @@ namespace RBUR_SignalIntegrator
                 if (isSignalOpenned)
                 {
                     bool LockSuccess = true;
-                    //Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
+                    if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
                     foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
                     {
                         LockSuccess &= interlockState.UpdateLock(true);
                     }
                     LockSuccess &= GetRouteLocker().UpdateLockRoute(true, From_Locker.isControllerOwner());
 
-                    //Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
+                    if (logging) Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
                     if (!LockSuccess && From_Locker.isControllerOwner())
                     {
                         Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
@@ -112,7 +113,7 @@ namespace RBUR_SignalIntegrator
                 }
                 else
                 {
-                    //Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
+                    if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
                     foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
                     {
                         interlockState.UpdateLock(false);
@@ -121,7 +122,7 @@ namespace RBUR_SignalIntegrator
 
                     if (!canOpenSignal)
                     {
-                        //Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
+                        if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
                         bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ReleasePositionIndex);
                         if (!LockSuccess)
                         {
@@ -130,7 +131,7 @@ namespace RBUR_SignalIntegrator
                     }
                     else
                     {
-                        //Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
+                        if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
                         From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
                     }
                 }

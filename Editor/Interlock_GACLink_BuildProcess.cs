@@ -69,24 +69,7 @@ namespace RBUR_SignalIntegrator_Editor
                 foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     //Setup EventLinkers
-                    UdonBehaviour interlockUdon = null;
-                    foreach (UdonBehaviour udonComponent in interlocking.GetComponents<UdonBehaviour>())
-                    {
-                        //if(udonComponent.programSource is UdonSharpProgramAsset)
-                        //{
-                        //    Debug.Log("find USharp_UdonComponent", udonComponent);
-                        //    Debug.Log("sourceCsScript is " + ((UdonSharpProgramAsset)udonComponent.programSource).sourceCsScript.GetClass(), udonComponent);
-                        //    if (typeof(Interlocking).IsAssignableFrom(((UdonSharpProgramAsset)udonComponent.programSource).sourceCsScript.GetClass()))
-                        //    {
-                        //        Debug.Log("find USharp_UdonComponent", udonComponent);
-                        //        interlockUdon = udonComponent;
-                        //    }
-                        //}
-                        if (UdonSharpEditorUtility.GetProxyBehaviour(udonComponent) == interlocking)
-                        {
-                            interlockUdon = udonComponent;
-                        }
-                    }
+                    UdonBehaviour interlockUdon = UdonSharpEditorUtility.GetBackingUdonBehaviour(interlocking);
                     List<GACLockerConsolidater> lockers = new List<GACLockerConsolidater>();
                     if (interlocking.GetFromLocker() is GACLockerConsolidater)
                     {
