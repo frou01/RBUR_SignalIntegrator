@@ -134,13 +134,18 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
+      propertyPath: m_Waypoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
+        type: 3}
       propertyPath: m_Waypoints.Array.data[0].tangent.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
       propertyPath: m_Waypoints.Array.data[0].tangent.z
-      value: 2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
@@ -150,12 +155,17 @@ PrefabInstance:
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
       propertyPath: m_Waypoints.Array.data[1].tangent.z
-      value: 2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
       propertyPath: m_Waypoints.Array.data[0].position.z
-      value: -10
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
+        type: 3}
+      propertyPath: m_Waypoints.Array.data[1].position.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
@@ -655,6 +665,18 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 317711606020211440, guid: ba64cc6e6403b3449be0004823c1d7c4,
+        type: 3}
+    - target: {fileID: 1177684606442506351, guid: ba64cc6e6403b3449be0004823c1d7c4,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 1177684606442506351, guid: ba64cc6e6403b3449be0004823c1d7c4,
+        type: 3}
+    - target: {fileID: 2096304231670185416, guid: ba64cc6e6403b3449be0004823c1d7c4,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 2096304231670185416, guid: ba64cc6e6403b3449be0004823c1d7c4,
         type: 3}
     - target: {fileID: 2758846492353411270, guid: ba64cc6e6403b3449be0004823c1d7c4,
         type: 3}
@@ -5496,6 +5518,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1007717633}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 580807863}
   interlock_Route: {fileID: 238045822}
@@ -5533,13 +5556,18 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
+      propertyPath: m_Waypoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
+        type: 3}
       propertyPath: m_Waypoints.Array.data[0].tangent.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
       propertyPath: m_Waypoints.Array.data[0].tangent.z
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
@@ -5549,7 +5577,7 @@ PrefabInstance:
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
       propertyPath: m_Waypoints.Array.data[1].tangent.z
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
@@ -5558,8 +5586,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
+      propertyPath: m_Waypoints.Array.data[1].position.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 71534143016334140, guid: 3895add11a55d4546b273f1996fcf18a,
+        type: 3}
       propertyPath: m_Waypoints.Array.data[1].position.z
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2326409203053431035, guid: 3895add11a55d4546b273f1996fcf18a,
         type: 3}
@@ -6324,6 +6357,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2001885753}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 269935279}
   interlock_Route: {fileID: 1848272543}
@@ -6414,6 +6448,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2071427272}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 211748126}
   interlock_Route: {fileID: 696431386}
