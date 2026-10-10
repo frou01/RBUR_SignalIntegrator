@@ -10,7 +10,10 @@ namespace RBUR_SignalIntegrator
         [SerializeField] private protected float[] lockPositions;
         [SerializeField] private protected Controller_Base target;
 
-
+        public Controller_Base getGACController()
+        {
+            return target;
+        }
 
         //Return: Controller positon (On Analog controller, return nearest lock point)
         public override int GetCurrentPosition()

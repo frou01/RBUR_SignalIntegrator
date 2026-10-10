@@ -49,9 +49,13 @@ namespace RBUR_SignalIntegrator_Editor
                     {
                         con.eventStackHolder = eventStackHolder;
                     }
-                    foreach (RouteLocker con in obj.GetComponentsInChildren<RouteLocker>())
+                    foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>())
                     {
-                        con.eventStackHolder = eventStackHolder;
+                        routeLocker.eventStackHolder = eventStackHolder;
+                        if (routeLocker.Locker_GTST == null || routeLocker.Locker_GTST.Length == 0)
+                        {
+                            routeLocker.Locker_GTST = new AbstractLockerConsolidater[routeLocker.GetTargetPoints().Length];//必要な長さの配列を確保する
+                        }
                     }
                     foreach (Interlock_ToLockerAndMeetPosition con in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>())
                     {

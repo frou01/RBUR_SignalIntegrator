@@ -70,10 +70,6 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     int LockerIdx = -1;
                     routeLocker.ControlTargetIndex = (int[])routeLocker.getTargetRoute().Clone();
-                    if (routeLocker.Locker_GTST == null || routeLocker.Locker_GTST.Length == 0)
-                    {
-                        routeLocker.Locker_GTST = new AbstractLockerConsolidater[routeLocker.GetTargetPoints().Length];
-                    }
                     foreach (AbstractPointSetter point in routeLocker.GetTargetPoints())
                     {
                         LockerIdx++;
