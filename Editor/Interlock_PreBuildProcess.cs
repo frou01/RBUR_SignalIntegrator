@@ -52,12 +52,12 @@ namespace RBUR_SignalIntegrator_Editor
                     foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>())
                     {
                         routeLocker.eventStackHolder = eventStackHolder;
-                        if (routeLocker.Locker_GTST == null || routeLocker.Locker_GTST.Length == 0)
+                        if (routeLocker.Lockers == null || routeLocker.Lockers.Length == 0)
                         {
-                            routeLocker.Locker_GTST = new AbstractLockerConsolidater[routeLocker.GetTargetPoints().Length];//必要な長さの配列を確保する
+                            routeLocker.Lockers = new AbstractLockerConsolidater[routeLocker.GetTargetPoints().Length];//必要な長さの配列を確保する
                         }
                     }
-                    foreach (Interlock_ToLockerAndMeetPosition con in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>())
+                    foreach (LockerAndMeetPosition con in obj.GetComponentsInChildren<LockerAndMeetPosition>())
                     {
                         con.eventStackHolder = eventStackHolder;
                     }

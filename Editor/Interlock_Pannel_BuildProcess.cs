@@ -80,7 +80,7 @@ namespace RBUR_SignalIntegrator_Editor
                             if (pointIdx >= 0)
                             {
                                 routeLocker.ControlTargetIndex[LockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.getTargetRoute()[LockerIdx]);
-                                routeLocker.Locker_GTST[LockerIdx] = pointController;
+                                routeLocker.Lockers[LockerIdx] = pointController;
                                 break;
                             }
                         }
@@ -92,14 +92,14 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 //Add Interlocking Reverse reference to Controller
                 List<AbstractPanelController> controllers = new List<AbstractPanelController>();
-                foreach (Interlock_ToLockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+                foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
                 {
                     if (StateLocker.getLocker() is AbstractPanelController)
                     {
                         controllers.Add((AbstractPanelController)StateLocker.getLocker());
                     }
                 }
-                if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
                     {
                         if (locker is AbstractPanelController)
                         {
@@ -122,14 +122,14 @@ namespace RBUR_SignalIntegrator_Editor
                 {
                     //Add Affected Interlocks to Interlocking 
                     List<Interlocking> ReverseReferencedInterlocks = new List<Interlocking>();
-                    foreach (Interlock_ToLockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+                    foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
                     {
                         if (StateLocker.getLocker() is AbstractPanelController)
                         {
                             ReverseReferencedInterlocks.AddRange(((AbstractPanelController)StateLocker.getLocker()).ReferingInterlocks);
                         }
                     }
-                    if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
                     {
                         if (locker is AbstractPanelController)
                         {

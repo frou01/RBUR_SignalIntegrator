@@ -30,16 +30,12 @@ namespace RBUR_SignalIntegrator_Editor
             Debug.Log("InterlockLink Start Process");
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                foreach (RouteChecker routeChecker in obj.GetComponentsInChildren<RouteChecker>(true))
-                {
-                    routeChecker.SetupCallback();
-                }
 
                 foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     interlocking.SetupLocker();
                 }
-                foreach (Interlock_ToLockerAndMeetPosition stateLinker in obj.GetComponentsInChildren<Interlock_ToLockerAndMeetPosition>(true))
+                foreach (LockerAndMeetPosition stateLinker in obj.GetComponentsInChildren<LockerAndMeetPosition>(true))
                 {
                     stateLinker.SetupLocker();
                 }
@@ -52,17 +48,17 @@ namespace RBUR_SignalIntegrator_Editor
                 foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     if(currentInterlock.GetRouteLocker() != null) currentInterlock.GetRouteLocker().setParentInterlock(currentInterlock);
-                    foreach (Interlock_ToLockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
+                    foreach (LockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
                     {
                         stateLinker.setParentInterlock(currentInterlock);
                     }
 
                     List<AbstractLockerConsolidater> controllers = new List<AbstractLockerConsolidater>();
-                    foreach (Interlock_ToLockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+                    foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
                     {
                         controllers.Add(StateLocker.getLocker());
                     }
-                    if (currentInterlock.GetRouteLocker() != null) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Locker_GTST)
+                    if (currentInterlock.GetRouteLocker() != null) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
                     {
                         controllers.Add(locker);
                     }

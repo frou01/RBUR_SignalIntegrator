@@ -42,15 +42,15 @@ namespace RBUR_SignalIntegrator_Editor
                     int idx = -1;
                     foreach (AbstractPointSetter points in routeLocker.GetTargetPoints())
                     {
-                        //ポイントのAnimatorを制御しているController_Baseを抽出し、
+                        //ポイントのAnimatorを制御しているController_Baseを抽出し、それに対応するGACLockerConsolidaterを抽出して、RouteLockerに登録する
                         idx++;
                         Animator pointAnimator = points.GetComponent<Animator>();
                         if (!pointAnimator) continue;
 
                         Controller_Base pointController = null;
-                        foreach(Controller_Base checkingController in controllers)
+                        foreach (Controller_Base checkingController in controllers)
                         {
-                            if(pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator))
+                            if (pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator))
                             {
                                 pointController = checkingController;
                                 break;
@@ -67,16 +67,19 @@ namespace RBUR_SignalIntegrator_Editor
                                 break;
                             }
                         }
-                        if(pointLocker == null)
+                        if (pointLocker == null)
                         {
                             Debug.LogError("Correspond GACLockerConsolidater not found", pointController);
                         }
                         else
                         {
-                            routeLocker.Locker_GTST[idx] = pointLocker;
+                            routeLocker.Lockers[idx] = pointLocker;
                         }
                     }
                 }
+            }
+            foreach (GameObject obj in scene.GetRootGameObjects())
+            {
                 foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
                 {
                     //Setup EventLinkers
@@ -86,14 +89,14 @@ namespace RBUR_SignalIntegrator_Editor
                     {
                         lockers.Add((GACLockerConsolidater)interlocking.GetFromLocker());
                     }
-                    if(interlocking.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Locker_GTST)
-                    {
-                        if (locker is GACLockerConsolidater)
+                    if (interlocking.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Lockers)
                         {
-                            lockers.Add((GACLockerConsolidater)locker);
+                            if (locker is GACLockerConsolidater)
+                            {
+                                lockers.Add((GACLockerConsolidater)locker);
+                            }
                         }
-                    }
-                    foreach (Interlock_ToLockerAndMeetPosition StateLocker in interlocking.GetInterlockStateLinker())
+                    foreach (LockerAndMeetPosition StateLocker in interlocking.GetInterlockStateLinker())
                     {
                         if (StateLocker.getLocker() is GACLockerConsolidater)
                         {

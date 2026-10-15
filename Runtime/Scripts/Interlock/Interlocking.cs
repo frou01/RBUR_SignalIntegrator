@@ -2,6 +2,7 @@
 using frou01.GrabController;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -9,16 +10,16 @@ namespace RBUR_SignalIntegrator
 {
     public class Interlocking : UdonSharpBehaviour
     {
-        //TODO Local鎖錠
-        //TODO 同期デッドロック防止：両否決
         [SerializeField] bool logging;
 
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] AbstractLockerConsolidater From_Locker;//GAC以外も制御できるように間を挟む
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
-        [SerializeField] Interlock_ToLockerAndMeetPosition[] toLocker_States;//進路以外の進行要件
-        [SerializeField] int ReleasePositionIndex;
-        [SerializeField] int[] LockPositionIndexes;
+        [SerializeField] LockerAndMeetPosition[] toLocker_States;//進路以外の進行要件
+        [FormerlySerializedAs("ReleasePositionIndex")]
+        [SerializeField] int ClosePositionIndex;
+        [FormerlySerializedAs("LockPositionIndexes")]
+        [SerializeField] int[] OpenPositionIndexes;
         [HideInInspector][SerializeField] public bool FailSafeCalled;
         [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;
         [HideInInspector][SerializeField] public AbstractLockerConsolidater[] affectedLockers;
@@ -27,7 +28,7 @@ namespace RBUR_SignalIntegrator
             if (!interlock_Route) interlock_Route = GetComponentInChildren<RouteLocker>();
             return interlock_Route;
         }
-        public Interlock_ToLockerAndMeetPosition[] GetInterlockStateLinker()
+        public LockerAndMeetPosition[] GetInterlockStateLinker()
         {
             return toLocker_States;
         }
@@ -36,50 +37,45 @@ namespace RBUR_SignalIntegrator
             return From_Locker;
         }
 
-        public void OnDeserialization_()
+        public void OnDeserialization_()// for SyncEventLinker
         {
             UpdateInterlock();
         }
-        public void OnOwnershipTransferred_BecomeLocal()
+        public void OnOwnershipTransferred_BecomeLocal()// for SyncEventLinker
         {
             UpdateInterlock();
         }
-        public void OnPickup_()
+        public void OnPickup_()// for PickUpEventLinker
         {
             UpdateInterlock();
         }
-        public void OnDrop_()
+        public void OnDrop_()// for PickUpEventLinker
         {
             UpdateInterlock();
         }
-        bool Initial_Fetched;
+
+        bool Initial_Fetching = true;
         bool Prev_SignalOpenned;
         bool Prev_canOpenSignal;
         [RecursiveMethod]
-        public bool UpdateInterlock(bool updateAffected)
+        public bool UpdateInterlock(bool update_AffectedInterlock)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateInterlock));
 
-            if(logging) Debug.Log(this.name + ": UpdateInterlock.Start", this);
+            if (logging) Debug.Log(this.name + ": UpdateInterlock.Start", this);
 
-            foreach (AbstractLockerConsolidater locker in affectedLockers)
-            {
-                locker.positionUpdated = false;
-            }
-            FailSafeCalled = false;
 
             if (logging) Debug.Log(this.name + ": UpdateInterlock.Check_To");
+
+            //Fetching State
             bool canOpenSignal = GetRouteLocker().isRouteOpen();
-            foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
+            bool isSignalOpenned = false;
+            foreach (LockerAndMeetPosition interlockState in toLocker_States)
             {
                 canOpenSignal &= interlockState.Check();
             }
-
-
-
-            bool isSignalOpenned = false;
             int currentSignalPos = From_Locker.GetCurrentPosition();
-            foreach (int OpenPosition in LockPositionIndexes)
+            foreach (int OpenPosition in OpenPositionIndexes)
             {
                 if (currentSignalPos == OpenPosition)
                 {
@@ -87,9 +83,19 @@ namespace RBUR_SignalIntegrator
                     break;
                 }
             }
-            if (!Initial_Fetched || (isSignalOpenned != Prev_SignalOpenned) || (canOpenSignal != Prev_canOpenSignal))
+
+            if (Initial_Fetching || (isSignalOpenned != Prev_SignalOpenned) || (canOpenSignal != Prev_canOpenSignal))//Edge Only
             {
-                Initial_Fetched = true;
+                Initial_Fetching = false;//For detouring on first call.
+
+                //Initialize controller for update detection.
+                foreach (AbstractLockerConsolidater locker in affectedLockers)
+                {
+                    locker.positionUpdated = false;
+                }
+                //Flag for Affected Object Search
+                FailSafeCalled = false;
+
                 Prev_SignalOpenned = isSignalOpenned;
                 Prev_canOpenSignal = canOpenSignal;
 
@@ -97,7 +103,7 @@ namespace RBUR_SignalIntegrator
                 {
                     bool LockSuccess = true;
                     if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
-                    foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
+                    foreach (LockerAndMeetPosition interlockState in toLocker_States)
                     {
                         LockSuccess &= interlockState.UpdateLock(true);
                     }
@@ -109,12 +115,12 @@ namespace RBUR_SignalIntegrator
                         Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
                         this.RelayFailSafe();
                     }
-                    if (canOpenSignal) From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
+                    if (canOpenSignal) From_Locker.tryUpdateLocking(this, false, ClosePositionIndex);
                 }
                 else
                 {
                     if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
-                    foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
+                    foreach (LockerAndMeetPosition interlockState in toLocker_States)
                     {
                         interlockState.UpdateLock(false);
                     }
@@ -123,7 +129,7 @@ namespace RBUR_SignalIntegrator
                     if (!canOpenSignal)
                     {
                         if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
-                        bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ReleasePositionIndex);
+                        bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ClosePositionIndex);
                         if (!LockSuccess)
                         {
                             Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on anohter position", From_Locker);
@@ -132,12 +138,12 @@ namespace RBUR_SignalIntegrator
                     else
                     {
                         if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
-                        From_Locker.tryUpdateLocking(this, false, ReleasePositionIndex);
+                        From_Locker.tryUpdateLocking(this, false, ClosePositionIndex);
                     }
                 }
             }
 
-            if (updateAffected)
+            if (update_AffectedInterlock)
             {
                 int loopLimit = 10;
                 bool needNextUpdate;
@@ -180,13 +186,14 @@ namespace RBUR_SignalIntegrator
 
         public void RelayFailSafe()
         {
+            //Search all Intelock/
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!FailSafeCalled)
             {
                 FailSafeCalled = true;
                 From_Locker.SetToFailSafePosition();
                 From_Locker.RelayFailSafe();
-                foreach (Interlock_ToLockerAndMeetPosition interlockState in toLocker_States)
+                foreach (LockerAndMeetPosition interlockState in toLocker_States)
                 {
                     interlockState.RelayFailSafe();
                 }
