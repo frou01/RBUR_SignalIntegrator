@@ -1,4 +1,4 @@
-
+﻿
 using UnityEngine;
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using frou01.RigidBodyTrain;
@@ -13,18 +13,21 @@ using static RBUR_SignalIntegrator.PointLever_ControlToRouteIndexHolder;
 
 namespace RBUR_SignalIntegrator
 {
+    /// <summary>
+    /// 進路てこに対し、Interlockの進路条件を取得しててこ設定に変換する
+    /// </summary>
     public class MultiLever_ReferRouteLocker : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] int targetMulConSwitch;
 
-        private static int GetControlFromRoute(PointControllerLever pointController,AbstractPointSetter pointSetter,int routeIndex)
+        private static int GetControlFromRoute(PointControllerLever pointController, AbstractPointSetter pointSetter, int routeIndex)
         {
             List<Control_To_RouteIndexMap> controlToRoute = pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps;
             Control_To_RouteIndexMap targetedMap = controlToRoute.First(val => val.linkedPoint == pointSetter);
             if (targetedMap != null)
             {
-                return targetedMap.Control_To_RouteIndex.Select((x,i)=>(x,i)).FirstOrDefault(map => map.x == routeIndex).i;
+                return targetedMap.Control_To_RouteIndex.Select((x, i) => (x, i)).FirstOrDefault(map => map.x == routeIndex).i;
             }
             else
             {
@@ -55,10 +58,10 @@ namespace RBUR_SignalIntegrator
             foreach (SignalControllerLever signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalControllerLever))
             {
                 Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
-                ApplyToControlMap(mulCon,pointControllers, correspondInterlock.GetRouteLocker());
+                ApplyToControlMap(mulCon, pointControllers, correspondInterlock.GetRouteLocker());
             }
         }
-        public void ApplyToControlMap(MultiLeverController controller, List<PointControllerLever> pointControllers,RouteLocker routeLocker)
+        public void ApplyToControlMap(MultiLeverController controller, List<PointControllerLever> pointControllers, RouteLocker routeLocker)
         {
             if (controller && routeLocker)
             {
@@ -78,7 +81,7 @@ namespace RBUR_SignalIntegrator
                             EditorUtility.SetDirty(controller);
                         }
                         int controlTarget = GetControlFromRoute(pointCorrespondController, targetPoint, targetRoutes[pointIdx]);
-                        if(controlTarget != -1)
+                        if (controlTarget != -1)
                         {
                             SetControlToMap(switchMapHolder, pointCorrespondController, controlTarget, targetMulConSwitch);
                         }

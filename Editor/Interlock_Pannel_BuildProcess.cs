@@ -1,4 +1,4 @@
-using frou01.RigidBodyTrain;
+﻿using frou01.RigidBodyTrain;
 using HarmonyLib;
 using RBUR_SignalIntegrator;
 using System;
@@ -61,7 +61,7 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 foreach (MultiLeverController MulCon in obj.GetComponentsInChildren<MultiLeverController>(true))
                 {
-                    MulCon.Set_switchToControllerMap(MulCon.GetComponent<MultiLever_SwitchToControlMapsHolder>().get_mulCon_to_Con_Map());
+                    MulCon.GetComponent<MultiLever_SwitchToControlMapsHolder>().apply_mulCon_to_Con_Map();
                 }
             }
             foreach (GameObject obj in scene.GetRootGameObjects())

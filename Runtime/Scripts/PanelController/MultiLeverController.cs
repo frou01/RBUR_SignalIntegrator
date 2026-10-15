@@ -16,9 +16,10 @@ namespace RBUR_SignalIntegrator
         [UdonSynced][SerializeField] private protected int switchPosition;
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
+        [HideInInspector][SerializeField] public AbstractPanelController[] controlledLevers;
         [HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [HideInInspector][SerializeField] private protected int SwitchPositionNum;
-        [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
+        [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
         public void Set_switchToControllerMap(int[][] switchToControllerMap)
         {
             this.switchToControllerMap = switchToControllerMap;
@@ -43,7 +44,6 @@ namespace RBUR_SignalIntegrator
         }
         Slider m_slider;
 
-        [SerializeField] public AbstractPanelController[] controlledLevers;
         protected virtual void Start()
         {
             if (slider) slider.maxValue = (SwitchPositionNum - 1);
