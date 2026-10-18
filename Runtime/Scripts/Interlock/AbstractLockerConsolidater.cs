@@ -64,7 +64,15 @@ namespace RBUR_SignalIntegrator
             applyLockToController(locked);
             if (locked)
             {
-                if (lockIndex != -1) applyPosition(lockIndex);
+                if (lockIndex != -1)
+                {
+                    if (GetCurrentPosition() != lockIndex)
+                    {
+                        //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
+                        positionUpdated = true;
+                    }
+                    applyPositionToController(lockIndex);
+                }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
             return !lockFault;
@@ -138,8 +146,14 @@ namespace RBUR_SignalIntegrator
 
                 idx++;
             }
-            applyPosition(failSafeIndex);
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
+            if (failSafeIndex != -1 && GetCurrentPosition() != failSafeIndex)
+            {
+                //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
+                positionUpdated = true;
+            }
+            applyPositionToController(failSafeIndex);
+
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
         }
 
         //Return: Controller positon (On Analog controller, return nearest lock point)
@@ -176,12 +190,6 @@ namespace RBUR_SignalIntegrator
 
         protected void applyPosition(int posIndex)
         {
-            if(posIndex != -1 && GetCurrentPosition() != posIndex)
-            {
-                //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
-                positionUpdated = true;
-            }
-            applyPositionToController(posIndex);
         }
         protected void CheckFaultAndGetLockIndex(out bool lockFault, out int lockIndex)
         {

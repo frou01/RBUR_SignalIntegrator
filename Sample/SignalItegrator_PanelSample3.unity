@@ -302,11 +302,11 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
   controlledLevers:
   - {fileID: 73533670}
   - {fileID: 1731882305197672279}
+  SwitchPositionNum: 0
+  ReferingInterlocks: []
 --- !u!114 &73533672
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -671,80 +671,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4728980181231292898}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &403259794
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1024101049}
-    m_Modifications:
-    - target: {fileID: 8504737417751306726, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_Name
-      value: lever_ShuntSign_2p_L
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.4000001
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.19999993
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.00000011920929
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.70710677
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 694464cf21ac3be46bdedd6c31e0ab72, type: 3}
---- !u!4 &403259795 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9028931323518679900, guid: 694464cf21ac3be46bdedd6c31e0ab72,
-    type: 3}
-  m_PrefabInstance: {fileID: 403259794}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &411219063 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5430797824484194491, guid: 3895add11a55d4546b273f1996fcf18a,
@@ -863,80 +789,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1048849379}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &472777630
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1024101049}
-    m_Modifications:
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.4000001
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.100000024
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.000000059604645
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.70710677
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3135436542576703486, guid: a9db60661d03d614e801f6728d508362,
-        type: 3}
-      propertyPath: m_Name
-      value: lever_MainSignal_3p_L
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a9db60661d03d614e801f6728d508362, type: 3}
---- !u!4 &472777631 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2362312005536214340, guid: a9db60661d03d614e801f6728d508362,
-    type: 3}
-  m_PrefabInstance: {fileID: 472777630}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &478753239 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2551420409256144549, guid: 7a201aa92c568814284037b369d08e56,
@@ -980,7 +832,6 @@ Transform:
   - {fileID: 1581490968}
   - {fileID: 2103742557}
   - {fileID: 1942721279}
-  - {fileID: 1024101049}
   - {fileID: 1372869104}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1117,7 +968,7 @@ MonoBehaviour:
   TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &564722058
 GameObject:
@@ -1412,7 +1263,7 @@ MonoBehaviour:
   TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &643552200
 GameObject:
@@ -1500,8 +1351,8 @@ MonoBehaviour:
   From_Locker: {fileID: 1431434198}
   interlock_Route: {fileID: 1725361158}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -1810,11 +1661,11 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
   controlledLevers:
   - {fileID: 778747641}
   - {fileID: 4728980181231292899}
+  SwitchPositionNum: 0
+  ReferingInterlocks: []
 --- !u!114 &778747645
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -6885,93 +6736,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6791280182035380708}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1024101048
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 500647294}
-    m_Modifications:
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.6143274
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.9596267
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.66446304
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.24184473
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.66446304
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.24184473
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1133040072119013317, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_Name
-      value: panel_sample
-      objectReference: {fileID: 0}
-    - target: {fileID: 1133040072119013317, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      propertyPath: m_TagString
-      value: EditorOnly
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 403259795}
-    - targetCorrespondingSourceObject: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 472777631}
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1e1243a6693f2b847ab98637edcaced7, type: 3}
---- !u!4 &1024101049 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 356502754784417151, guid: 1e1243a6693f2b847ab98637edcaced7,
-    type: 3}
-  m_PrefabInstance: {fileID: 1024101048}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1040840682 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3487897008556694865, guid: f33cc1e1aa55e1d489ab2d9ddf37e5b3,
@@ -7823,11 +7587,11 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
   controlledLevers:
   - {fileID: 1431434198}
   - {fileID: 4728980181231292899}
+  SwitchPositionNum: 0
+  ReferingInterlocks: []
 --- !u!114 &1431434200
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -7991,8 +7755,8 @@ MonoBehaviour:
   interlock_Route: {fileID: 2061719700}
   toLocker_States:
   - {fileID: 1868328718}
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 02000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 02000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -8082,8 +7846,8 @@ MonoBehaviour:
   From_Locker: {fileID: 3979830836920148083}
   interlock_Route: {fileID: 1829162339}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -8435,7 +8199,7 @@ MonoBehaviour:
   TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1001 &1750302169
 PrefabInstance:
@@ -8619,7 +8383,7 @@ MonoBehaviour:
   TargetRoute: 01000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &1848272540
 GameObject:
@@ -8707,7 +8471,7 @@ MonoBehaviour:
   TargetRoute: 0000000001000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &1868328715
 GameObject:
@@ -8975,8 +8739,8 @@ MonoBehaviour:
   From_Locker: {fileID: 778747641}
   interlock_Route: {fileID: 636827583}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -9168,8 +8932,8 @@ MonoBehaviour:
   toLocker_States:
   - {fileID: 579346109}
   - {fileID: 1891880064}
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -9289,6 +9053,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 8ba1fabb401adbb44add7579a6933cdd, type: 2}
+    - target: {fileID: 745732779830066946, guid: 221f82cd6805cfa4dab1abc84bf4d103,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.000000014097054
+      objectReference: {fileID: 0}
     - target: {fileID: 1675833620167824556, guid: 221f82cd6805cfa4dab1abc84bf4d103,
         type: 3}
       propertyPath: m_Name
@@ -9572,7 +9341,7 @@ MonoBehaviour:
   TargetRoute: 
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &2103742556
 GameObject:
@@ -9660,8 +9429,8 @@ MonoBehaviour:
   From_Locker: {fileID: 73533670}
   interlock_Route: {fileID: 520425864}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -10810,10 +10579,10 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
   controlledLevers:
   - {fileID: 3979830836920148083}
+  SwitchPositionNum: 0
+  ReferingInterlocks: []
 --- !u!114 &3979830836920148085
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -11608,11 +11377,11 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
   controlledLevers:
   - {fileID: 4457645061710611199}
   - {fileID: 4920066874882511089}
+  SwitchPositionNum: 0
+  ReferingInterlocks: []
 --- !u!95 &4473286241712138691 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5522470732166479734, guid: 856af4f000569a84682a474d2c189a2f,
@@ -12714,12 +12483,12 @@ MonoBehaviour:
   senderInstance:
   - {fileID: 4457645061710611199}
   - {fileID: 4920066874882511089}
-  ReceiveSignal: 0000000000000000
+  ReceiveSignal: []
   mode: 1
   SignalSideAnimators:
   - {fileID: 6815736638202260795}
   signalAnimationParamater: SignalRelayPosition
-  signalLargestLevel: 1
+  SignalMultiplier: 1
   childEvaluators: []
 --- !u!114 &7187805593716076729
 MonoBehaviour:

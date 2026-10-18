@@ -46,7 +46,7 @@ namespace RBUR_SignalIntegrator
         int pointCon_prevControllingPosition = -1;
         protected int PrevPointRouteIndex = int.MinValue;
         [SerializeField] protected float changeTimeLength = 1;
-        [SerializeField] protected int PointRouteIndex;
+        [SerializeField] protected int CurrentPointRouteMapIndex;
         [SerializeField] protected float changeProgress;
         bool NetworkUpdate;
         protected override void Start()
@@ -63,7 +63,7 @@ namespace RBUR_SignalIntegrator
         }
         public override bool isLocalOverride()
         {
-            return switchToControllerMap[switchPosition] != -1 || PointRouteIndex != controllingPosition;
+            return base.isLocalOverride() || CurrentPointRouteMapIndex != controllingPosition;
         }
         private protected override void applyPositionToController(int posIndex)
         {
@@ -83,7 +83,7 @@ namespace RBUR_SignalIntegrator
                 }
                 pointCon_prevControllingPosition = controllingPosition;
             }
-            if (PointRouteIndex != controllingPosition)
+            if (CurrentPointRouteMapIndex != controllingPosition)
             {
                 int prevChanging = Mathf.RoundToInt(changeProgress / changeTimeLength);
                 int Changing;
@@ -169,7 +169,7 @@ namespace RBUR_SignalIntegrator
                 if (aControl_RouteCorresponding == ControlToRouteIndexMap[pointIdx].Length) Control_RouteCorresponding = -1;//Not Found
                 pointIdx++;
             }
-            PointRouteIndex = Control_RouteCorresponding;
+            CurrentPointRouteMapIndex = Control_RouteCorresponding;
             foreach (Animator animator in PointSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
@@ -177,13 +177,13 @@ namespace RBUR_SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(currentRouteParamater, (float)PointRouteIndex / (float)(ControlToRouteIndexMap[0].Length-1));
+                animator.SetFloat(currentRouteParamater, (float)CurrentPointRouteMapIndex / (float)(ControlToRouteIndexMap[0].Length-1));
             }
             if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PrevPointRouteIndex = " + PrevPointRouteIndex, this);
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PointRouteIndex = " + PointRouteIndex, this);
-            if (PrevPointRouteIndex != PointRouteIndex)
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PointRouteIndex = " + CurrentPointRouteMapIndex, this);
+            if (PrevPointRouteIndex != CurrentPointRouteMapIndex)
             {
-                PrevPointRouteIndex = PointRouteIndex;
+                PrevPointRouteIndex = CurrentPointRouteMapIndex;
                 this.UpdateInterlocks();
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
@@ -197,21 +197,6 @@ namespace RBUR_SignalIntegrator
         protected override void DisableAfterSync()
         {
             NetworkUpdate = false;
-        }
-        public override void SetToFailSafePosition()//for exception
-        {
-            setControllerOwner();
-            int idx = 0;
-            foreach (bool lockedState in SettedLockStates)
-            {
-                SettedLockStates[idx] = false;
-
-                idx++;
-            }
-
-            SyncUI(failSafeIndex, false);
-
-            trySetPosition(switchToControllerMap[failSafeIndex]);
         }
 
 
