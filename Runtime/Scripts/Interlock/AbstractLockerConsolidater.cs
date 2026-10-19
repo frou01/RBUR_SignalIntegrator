@@ -11,38 +11,54 @@ namespace RBUR_SignalIntegrator
         class AbstractLockerConsolidater : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] private protected bool[] SettedLockStates;
-        [HideInInspector][SerializeField] private protected UdonSharpBehaviour[] lockerInstances;
-        [HideInInspector][SerializeField] private protected int[] SettedLockIndex;
-        [HideInInspector][SerializeField] public bool positionUpdated = false;
+        [HideInInspector][SerializeField] private protected bool[] SettedLockStates = new bool[0];
+        [HideInInspector][SerializeField] private protected UdonSharpBehaviour[] lockerInstances = new UdonSharpBehaviour[0];
+        [HideInInspector][SerializeField] private protected int[] SettedLockIndex = new int[0];
+        [HideInInspector][SerializeField] private bool PositionUpdatedByLocking = false;
+
+        public void ResetUpdatedDetectorFlag()
+        {
+            PositionUpdatedByLocking = false;
+        }
+
+        public bool GetUpdatedDetectorFlag()
+        {
+            return PositionUpdatedByLocking;
+        }
+
+
+
         [SerializeField] private protected int failSafeIndex;
 
         protected virtual void Start()
         {
 
         }
-        //Return: Success?
+
+        /// <summary>
+        /// Tries to update the locking state for a given instance.
+        /// </summary>
+        /// <param name="triedFrom">The instance attempting to update the lock.</param>
+        /// <param name="lockState">The desired lock state.</param>
+        /// <param name="lockPositionSelector">The position selector for the lock.</param>
+        /// <returns>True if the update was successful, false otherwise(lock position conflict).</returns>
         public bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector)
         {
-            return tryUpdateLocking(triedFrom, lockState, lockPositionSelector,out int idx);
-        }
-        //Return: Success?
-        public virtual bool trySetPosition(int lockPositionSelector)
-        {
-            if (isLocked()) return false;
-            else
-            {
-                if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(trySetPosition));
-                applyPosition(lockPositionSelector);
-                if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(trySetPosition));
-                return true;
-            }
+            return UpdateLocking(triedFrom, lockState, lockPositionSelector,out int idx);
         }
 
         //Return: Success?
-        public virtual bool tryUpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector,out int triedInstanceIndex)
+        /// <summary>
+        /// Tries to update the locking state for a given instance.
+        /// </summary>
+        /// <param name="triedFromInstance">The instance attempting to update the lock.</param>
+        /// <param name="lockState">The desired lock state.</param>
+        /// <param name="lockPositionSelector">The position selector for the lock.</param>
+        /// <param name="triedInstanceIndex">The index of the instance attempting the update.</param>
+        /// <returns>True if the update was successful, false otherwise(lock position conflict).</returns>
+        protected virtual bool UpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector,out int triedInstanceIndex)
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(tryUpdateLocking));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLocking));
             getCallingBehaviourIndex(triedFromInstance, out triedInstanceIndex);
             if (lockerInstances.Length == triedInstanceIndex)
             {
@@ -68,18 +84,38 @@ namespace RBUR_SignalIntegrator
                 {
                     if (GetCurrentPosition() != lockIndex)
                     {
-                        //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
-                        positionUpdated = true;
+                        PositionUpdatedByLocking = true;
                     }
                     applyPositionToController(lockIndex);
                 }
             }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(tryUpdateLocking));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLocking));
             return !lockFault;
         }
 
-        //Return: Success?(Not already added?)
+        /// <summary>
+        /// Sets the position of the controller if it is not locked. Returns true if successful, false if the controller is locked.
+        /// </summary>
+        /// <param name="positionSelector">The position selector for position set on the controller object.</param>
+        /// <returns>True if the position was successfully set, false if the controller is currently locked.</returns>
+        public virtual bool trySetPosition(int positionSelector)
+        {
+            if (isLocked()) return false;
+            else
+            {
+                if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(trySetPosition));
+                applyPositionToController(positionSelector);
+                if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(trySetPosition));
+                return true;
+            }
+        }
 
+        //Return: Success?(Not already added?)
+        /// <summary>
+        /// Adds a new locker instance to the list of locker instances if it is not already present. Returns true if the instance was added, false if it was already present.
+        /// </summary>
+        /// <param name="triedFrom">The locker instance to add.</param>
+        /// <returns>True if the instance was added, false if it was already present.</returns>
         public virtual bool AddNewLocker(UdonSharpBehaviour triedFrom)
         {
             foreach (UdonSharpBehaviour locker in lockerInstances)
@@ -105,6 +141,10 @@ namespace RBUR_SignalIntegrator
             return true;
         }
 
+        /// <summary>
+        /// Checks if the controller is currently locked.
+        /// </summary>
+        /// <returns>True if the controller is locked, false otherwise.</returns>
         public virtual bool isLocked()
         {
             foreach(bool lockState in SettedLockStates)
@@ -114,17 +154,23 @@ namespace RBUR_SignalIntegrator
             return false;
         }
 
+        /// <summary>
+        /// Logs the current locking state of the controller and its locker instances.
+        /// </summary>
         public void DebugLock()
         {
             Debug.Log("Log locking state " + this.name, this);
             int idx = 0;
             foreach (bool lockState in SettedLockStates)
             {
-                if(lockState) Debug.Log("locked by " + lockerInstances[idx].name, lockerInstances[idx]);
+                if(lockState && lockerInstances[idx]) Debug.Log("locked by " + lockerInstances[idx].name, lockerInstances[idx]);
                 idx++;
             }
         }
 
+        /// <summary>
+        /// Relays a fail-safe event to all related locker instances.
+        /// </summary>
         public virtual void RelayFailSafe()//for exception
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
@@ -134,6 +180,9 @@ namespace RBUR_SignalIntegrator
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
+        /// <summary>
+        /// Sets the controller to its fail-safe position.
+        /// </summary>
         public virtual void SetToFailSafePosition()//for exception
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(SetToFailSafePosition));
@@ -149,31 +198,51 @@ namespace RBUR_SignalIntegrator
             if (failSafeIndex != -1 && GetCurrentPosition() != failSafeIndex)
             {
                 //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
-                positionUpdated = true;
+                PositionUpdatedByLocking = true;
             }
             applyPositionToController(failSafeIndex);
 
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
         }
 
-        //Return: Controller positon (On Analog controller, return nearest lock point)
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
+        /// <summary>
+        /// Get the current position of the controller.
+        /// </summary>
+        /// <returns>The current position of the controller.</returns>
         public abstract int GetCurrentPosition();
-        private protected abstract void applyLockToController(bool state);
-        private protected abstract void applyPositionToController(int posIndex);
+        /// <summary>
+        /// Applies the lock state to the controller-Object.
+        /// </summary>
+        /// <param name="state">The lock state to apply.</param>
+        protected abstract void applyLockToController(bool state);
+        /// <summary>
+        /// Applies the position to the controller-Object.
+        /// </summary>
+        /// <param name="posIndex">The position index to apply.</param>
+        protected abstract void applyPositionToController(int posIndex);
+
+        /// <returns>Is the controller is currently the owner?</returns>
         public abstract bool isControllerOwner();
+        /// <summary>
+        /// Sets the LocalPlayer as the owner of the controller-Object.
+        /// </summary>
         public abstract void setControllerOwner();
-        private protected abstract void SyncController();
+
+        /// <summary>
+        /// synchronizes the controller-Object state across the network. This method should be implemented to handle the specifics of how the controller's state is synchronized in your application.
+        /// </summary>
+        protected abstract void SyncController();
 #else
         public virtual int GetCurrentPosition()
         {
             return -1;
         }
-        private protected virtual void applyLockToController(bool state)
+        protected virtual void applyLockToController(bool state)
         {
         }
-        private protected virtual void applyPositionToController(int posIndex)
+        protected virtual void applyPositionToController(int posIndex)
         {
         }
         public virtual bool isControllerOwner()
@@ -183,14 +252,10 @@ namespace RBUR_SignalIntegrator
         public virtual void setControllerOwner()
         {
         }
-        private protected virtual void SyncController()
+        protected virtual void SyncController()
         {
         }
 #endif
-
-        protected void applyPosition(int posIndex)
-        {
-        }
         protected void CheckFaultAndGetLockIndex(out bool lockFault, out int lockIndex)
         {
             lockFault = false;

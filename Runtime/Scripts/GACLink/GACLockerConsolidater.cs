@@ -33,11 +33,11 @@ namespace RBUR_SignalIntegrator
             return res;
         }
 
-        private protected override void applyLockToController(bool state)
+        protected override void applyLockToController(bool state)
         {
             target.locked = state;
         }
-        private protected override void applyPositionToController(int posIndex)
+        protected override void applyPositionToController(int posIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             if (target.controllerPosition_Exposed[0] != lockPositions[posIndex])
@@ -55,7 +55,7 @@ namespace RBUR_SignalIntegrator
         {
             Networking.SetOwner(Networking.LocalPlayer, target.gameObject);
         }
-        private protected override void SyncController()
+        protected override void SyncController()
         {
             if (isControllerOwner())
             {

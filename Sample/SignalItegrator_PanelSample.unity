@@ -1195,7 +1195,7 @@ MonoBehaviour:
   TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &564722058
 GameObject:
@@ -1498,12 +1498,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 643552202}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 1211032579}
   interlock_Route: {fileID: 1725361158}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -7029,13 +7030,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1547974026}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 4920066874882511089}
   interlock_Route: {fileID: 2061719700}
   toLocker_States:
   - {fileID: 1868328718}
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 02000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 02000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -7126,12 +7128,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1581490969}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 2136281918}
   interlock_Route: {fileID: 1829162339}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -7489,7 +7492,7 @@ MonoBehaviour:
   TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &1776586661 stripped
 GameObject:
@@ -7588,7 +7591,7 @@ MonoBehaviour:
   TargetRoute: 01000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &1832501513 stripped
 GameObject:
@@ -7682,7 +7685,7 @@ MonoBehaviour:
   TargetRoute: 0000000001000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &1859700355 stripped
 GameObject:
@@ -7966,13 +7969,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2001885753}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 4457645061710611199}
   interlock_Route: {fileID: 1848272543}
   toLocker_States:
   - {fileID: 579346109}
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -7995,6 +7999,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 8ba1fabb401adbb44add7579a6933cdd, type: 2}
+    - target: {fileID: 745732779830066946, guid: 221f82cd6805cfa4dab1abc84bf4d103,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.000000014097054
+      objectReference: {fileID: 0}
     - target: {fileID: 1675833620167824556, guid: 221f82cd6805cfa4dab1abc84bf4d103,
         type: 3}
       propertyPath: m_Name
@@ -8278,7 +8287,7 @@ MonoBehaviour:
   TargetRoute: 
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
-  lockers: []
+  m_lockers: []
   interlocking: {fileID: 0}
 --- !u!1 &2103742556
 GameObject:
@@ -8361,12 +8370,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2103742558}
+  logging: 0
   eventStackHolder: {fileID: 0}
   From_Locker: {fileID: 2129388627}
   interlock_Route: {fileID: 520425864}
   toLocker_States: []
-  ReleasePositionIndex: 0
-  LockPositionIndexes: 01000000
+  ClosePositionIndex: 0
+  OpenPositionIndexes: 01000000
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
@@ -8994,6 +9004,11 @@ PrefabInstance:
     - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
       propertyPath: Control_To_ParamaterMaps.Array.data[1].Control_To_Paramater.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
+        type: 3}
+      propertyPath: Control_To_ParamaterMaps.Array.data[1].Control_To_Paramater.Array.data[1]
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -9742,15 +9757,16 @@ MonoBehaviour:
   SettedLockStates: 
   lockerInstances: []
   SettedLockIndex: 
-  positionUpdated: 0
+  PositionUpdatedByLocking: 0
   failSafeIndex: 0
+  Logging: 0
   ReferingInterlocks: []
+  currentUserControl: 0
   controllingPosition: 0
-  switchToControllerMap: ffffffff
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
   LockstateCallbackBehaviours: []
-  switchPosition: 0
+  TargeterInstances: []
+  ControlTargetsArray: 
+  UserDirectIndex: 0
   SignalSideAnimators: []
   signalAnimationParamater: SignalRelayPosition
   signalLargestLevel: 2
@@ -10174,6 +10190,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
+      propertyPath: Control_To_ParamaterMaps.Array.data[1].Control_To_Paramater.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
+        type: 3}
       propertyPath: Control_To_ParamaterMaps.Array.data[1].Control_To_Paramater.Array.data[1]
       value: 1
       objectReference: {fileID: 0}
@@ -10212,15 +10233,16 @@ MonoBehaviour:
   SettedLockStates: 
   lockerInstances: []
   SettedLockIndex: 
-  positionUpdated: 0
+  PositionUpdatedByLocking: 0
   failSafeIndex: 0
+  Logging: 0
   ReferingInterlocks: []
+  currentUserControl: 0
   controllingPosition: 0
-  switchToControllerMap: ffffffff
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
   LockstateCallbackBehaviours: []
-  switchPosition: 0
+  TargeterInstances: []
+  ControlTargetsArray: 
+  UserDirectIndex: 0
   SignalSideAnimators: []
   signalAnimationParamater: SignalRelayPosition
   signalLargestLevel: 2
@@ -10829,12 +10851,12 @@ MonoBehaviour:
   senderInstance:
   - {fileID: 4457645061710611199}
   - {fileID: 4920066874882511089}
-  ReceiveSignal: 0000000000000000
+  ReceiveSignal: []
   mode: 1
   SignalSideAnimators:
   - {fileID: 6815736638202260795}
   signalAnimationParamater: SignalRelayPosition
-  signalLargestLevel: 1
+  SignalMultiplier: 1
   childEvaluators: []
 --- !u!114 &7187805593716076729
 MonoBehaviour:

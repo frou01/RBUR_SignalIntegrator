@@ -11,8 +11,8 @@ namespace RBUR_SignalIntegrator
         [SerializeField] protected AbstractPointSetter[] TargetPoints;
         [SerializeField] protected int[] TargetRoute;
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] public int[] ControlTargetIndex;
-        [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] m_lockers;
+        [HideInInspector][SerializeField] public int[] ControlTargetIndex = new int[0];
+        [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] m_lockers = new AbstractLockerConsolidater[0];
         [HideInInspector][SerializeField] protected Interlocking interlocking;
 
         /// <summary>

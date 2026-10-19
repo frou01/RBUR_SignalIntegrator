@@ -12,6 +12,7 @@ namespace RBUR_SignalIntegrator
     {
         //TODO currentUserControlに現時点のユーザー側制御を送り込む
         //TODO 参照はReciever->Controllerの片方向にする
+        //TODO これAbstractClassいらないね
         [SerializeField] private protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";

@@ -325,13 +325,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: positionUpdated
+      Data: PositionUpdatedByLocking
     - Name: $v
       Entry: 7
       Data: 24|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: positionUpdated
+      Data: PositionUpdatedByLocking
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 25|System.RuntimeType, mscorlib
@@ -898,13 +898,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: TargetingInstances
+      Data: TargeterInstances
     - Name: $v
       Entry: 7
       Data: 59|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: TargetingInstances
+      Data: TargeterInstances
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 14
@@ -958,13 +958,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: TargetsArray
+      Data: ControlTargetsArray
     - Name: $v
       Entry: 7
       Data: 63|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: TargetsArray
+      Data: ControlTargetsArray
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 20

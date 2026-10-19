@@ -15,17 +15,18 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] AbstractLockerConsolidater From_Locker;//GAC以外も制御できるように間を挟む
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
-        [SerializeField] LockerAndMeetPosition[] toLocker_States;//進路以外の進行要件
+        [SerializeField] LockerAndMeetPosition[] toLocker_States = new LockerAndMeetPosition[0];//進路以外の進行要件
         [FormerlySerializedAs("ReleasePositionIndex")]
         [SerializeField] int ClosePositionIndex;
         [FormerlySerializedAs("LockPositionIndexes")]
         [SerializeField] int[] OpenPositionIndexes;
         [HideInInspector][SerializeField] public bool FailSafeCalled;
-        [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;
-        [HideInInspector][SerializeField] public AbstractLockerConsolidater[] affectedLockers;
+        [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;//自身を含む関係する鎖錠
+        [HideInInspector][SerializeField] public AbstractLockerConsolidater[] affectedLockers;//直接自身に関係する鎖錠
         public RouteLocker GetRouteLocker()
         {
             if (!interlock_Route) interlock_Route = GetComponentInChildren<RouteLocker>();
+            if (interlock_Route) interlock_Route.setParentInterlock(this);
             return interlock_Route;
         }
         public LockerAndMeetPosition[] GetInterlockStateLinker()
@@ -57,6 +58,13 @@ namespace RBUR_SignalIntegrator
         bool Initial_Fetching = true;
         bool Prev_SignalOpenned;
         bool Prev_canOpenSignal;
+        /// <summary>
+        /// 鎖錠の更新を行う。From_Lockerの状態と、toLocker_States、RouteLocker(進路鎖錠)の状態を確認する
+        /// From_LockerがOpen位置であればtoLocker_StatesとRouteLockerを位置変更及びロックする。From_Lockerが閉鎖位置であれば、toLocker_StatesとRouteLockerを解放する。
+        /// toLocker_StatesとRouteLockerいずれかが適合位置でない場合、From_Lockerを閉鎖位置にロックする。
+        /// </summary>
+        /// <param name="update_AffectedInterlock">関係する鎖錠も更新するかどうか</param>
+        /// <returns>関係するLockerについて、位置の変更を行ったかどうか</returns>
         [RecursiveMethod]
         public bool UpdateInterlock(bool update_AffectedInterlock)
         {
@@ -88,10 +96,11 @@ namespace RBUR_SignalIntegrator
             {
                 Initial_Fetching = false;//For detouring on first call.
 
+
                 //Initialize controller for update detection.
                 foreach (AbstractLockerConsolidater locker in affectedLockers)
                 {
-                    locker.positionUpdated = false;
+                    locker.ResetUpdatedDetectorFlag();
                 }
                 //Flag for Affected Object Search
                 FailSafeCalled = false;
@@ -169,7 +178,7 @@ namespace RBUR_SignalIntegrator
             bool LockerUpdated = false;
             foreach(AbstractLockerConsolidater locker in affectedLockers)
             {
-                if (locker.positionUpdated)
+                if (locker.GetUpdatedDetectorFlag())
                 {
                     LockerUpdated = true;
                     break;

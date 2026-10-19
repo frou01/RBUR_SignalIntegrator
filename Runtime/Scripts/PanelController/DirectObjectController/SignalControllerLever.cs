@@ -15,7 +15,7 @@ namespace RBUR_SignalIntegrator
         [SerializeField] int signalLargestLevel;
         [SerializeField] protected SignalEvaluator[] Evaluators;
 
-        private protected override void applyPositionToController(int posIndex)
+        protected override void applyPositionToController(int posIndex)
         {
 
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));

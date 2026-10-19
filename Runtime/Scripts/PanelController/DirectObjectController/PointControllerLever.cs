@@ -65,7 +65,7 @@ namespace RBUR_SignalIntegrator
         {
             return base.isLocalOverride() || CurrentPointRouteMapIndex != controllingPosition;
         }
-        private protected override void applyPositionToController(int posIndex)
+        protected override void applyPositionToController(int posIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
             base.applyPositionToController(posIndex);
@@ -188,7 +188,7 @@ namespace RBUR_SignalIntegrator
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
         }
-        private protected override void SyncController()
+        protected override void SyncController()
         {
             this.enabled = true;
             NetworkUpdate = true;
