@@ -8,7 +8,7 @@ namespace RBUR_SignalIntegrator
     {
         [FormerlySerializedAs("debugLog_onAddStack")]
         [SerializeField] bool debugLog = false;
-        protected string StackString;
+        protected string StackString = "";
         protected string indent;
 
         bool nestBottom = true;

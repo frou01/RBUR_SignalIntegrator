@@ -98,7 +98,7 @@ namespace RBUR_SignalIntegrator
         /// </summary>
         /// <param name="positionSelector">The position selector for position set on the controller object.</param>
         /// <returns>True if the position was successfully set, false if the controller is currently locked.</returns>
-        public virtual bool trySetPosition(int positionSelector)
+        public bool trySetPosition(int positionSelector)
         {
             if (isLocked()) return false;
             else

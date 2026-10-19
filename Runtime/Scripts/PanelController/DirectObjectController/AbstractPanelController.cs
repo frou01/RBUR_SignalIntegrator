@@ -177,10 +177,11 @@ namespace RBUR_SignalIntegrator
         /// Set the control target from the targeter instance. If the targeter instance is not registered, it will be added to the list of targeter instances.
         /// </summary>
         /// <param name="TargeterInstance">The targeter instance to set the control target for.</param>
-        /// <param name="ControlTarget">Control target is the target value to be set for the specified targeter instance.</param>
+        /// <param name="ControlTarget">Control target is the target value to be set for the specified targeter instance. -1 means no control.</param>
         /// <param name="UserDirect">Indicates whether the control is being set directly by the user. Panel controller store the user direct instance index.</param>
         public virtual void TrySetControlTarget(UdonSharpBehaviour TargeterInstance, int ControlTarget,bool UserDirect)
         {
+            if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(TrySetControlTarget));
             int targeterIDX;
             getTargeterIndex(TargeterInstance, out targeterIDX);
             if (TargeterInstances.Length == targeterIDX)
@@ -207,6 +208,11 @@ namespace RBUR_SignalIntegrator
                 suspendSync = false;
                 SyncController();
             }
+            else
+            {
+                trySetPosition(EvaluateControlTarget());
+            }
+            if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(TrySetControlTarget));
         }
         
         /// <summary>
@@ -216,9 +222,9 @@ namespace RBUR_SignalIntegrator
         /// <returns>True if the instance was added, false if it was already present.</returns>
         public virtual bool AddNewTargeter(UdonSharpBehaviour triedFrom)
         {
-            foreach (UdonSharpBehaviour locker in lockerInstances)
+            foreach (UdonSharpBehaviour targeter in TargeterInstances)
             {
-                if (triedFrom == locker) return false;
+                if (triedFrom == targeter) return false;
             }
 
             UdonSharpBehaviour[] newTargeterInstances = new UdonSharpBehaviour[TargeterInstances.Length + 1];
