@@ -27,7 +27,6 @@ namespace RBUR_SignalIntegrator
     {
         public bool Logging = false;
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
-        int PannelCon_prevControllingPosition = -1;
 
         [HideInInspector] public int currentUserControl;
         [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
@@ -35,8 +34,14 @@ namespace RBUR_SignalIntegrator
         [FormerlySerializedAs("callbackBehaviours")]
         [Tooltip("Auto assign by buildProcess")][SerializeField] public UdonBehaviour[] LockstateCallbackBehaviours;
 
-        private protected bool UpdateInterlockBySwitching = true;//Point controller is not need to update interlock when switching, it will be update by the point machine.
-        private protected bool suspendSync = false;
+        private int sendControllingPosition = -1;
+        private bool NetworkUpdate;
+        protected bool GetNetworkUpdate()
+        {
+            return NetworkUpdate;
+        }
+
+        private protected bool disableTillPlayerJoin = false;
 
 
         protected override void Start()
@@ -48,129 +53,12 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(Start));
         }
 
-        /// <summary>
-        /// Tries to update the locking state for a given instance.
-        /// if the lock state changes, it will also attempt to set the position based on the evaluated control target and notify any registered callback behaviours about the lock state update.
-        /// </summary>
-        /// <param name="triedFromInstance">The instance attempting to update the lock.</param>
-        /// <param name="lockState">The desired lock state.</param>
-        /// <param name="lockPositionSelector">The position selector for the lock.</param>
-        /// <param name="triedInstanceIndex">The index of the instance attempting the update.</param>
-        /// <returns>True if the update was successful, false otherwise(lock position conflict).</returns>
-        protected override bool UpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector, out int triedInstanceIndex)
+        protected virtual void Update()
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLocking));
-            bool prevLock = isLocked();
-            bool res = base.UpdateLocking(triedFromInstance, lockState, lockPositionSelector, out triedInstanceIndex);
-            if(isLocked() != prevLock)
+            if (VRCPlayerApi.GetPlayerCount() == 1)
             {
-                if (!isLocked())
-                {
-                    int nextControlTarget = EvaluateControlTarget();
-                    if (nextControlTarget != controllingPosition)
-                    {
-                        trySetPosition(nextControlTarget);
-                        if (UpdateInterlockBySwitching)
-                            UpdateInterlocks();
-                    }
-                }
-                foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
-                {
-                    beh.SendCustomEvent("PanelLockstateUpdate");
-                }
+                disableTillPlayerJoin = true;
             }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLocking));
-
-            return res;
-        }
-        protected override void applyLockToController(bool state)
-        {
-            //There is No Other instance for apply lock. bool array has updated.
-        }
-
-        /// <summary>
-        /// Apply the controlling position to the controller. 
-        /// If the position index is different from the current controlling position, it will update the controlling position and synchronize it across the network if the local player is the owner of this object.
-        /// Override this method in derived classes to implement specific behavior for applying the position to the related-Objects.
-        /// </summary>
-        /// <param name="posIndex">The position index to apply to the controller.</param>
-        protected override void applyPositionToController(int posIndex)
-        {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
-            if (posIndex != -1 && posIndex != controllingPosition)
-            {
-                controllingPosition = posIndex;
-                if (!suspendSync && isControllerOwner())
-                {
-                    if (PannelCon_prevControllingPosition != controllingPosition) SyncController();
-                }
-            }
-
-            PannelCon_prevControllingPosition = controllingPosition;
-            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
-        }
-
-        //Getters
-        public override int GetCurrentPosition()
-        {
-            return controllingPosition;
-        }
-        public override bool isControllerOwner()
-        {
-            return Networking.IsOwner(this.gameObject);
-        }
-
-        //Networking control methods
-        public override void setControllerOwner()
-        {
-            Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
-        }
-        protected override void SyncController()
-        {
-            if (isControllerOwner())
-            {
-                if (!this.enabled) this.enabled = true;
-                this.RequestSerialization();
-            }
-        }
-
-        //Networking callbacks
-        public override void OnDeserialization()
-        {
-            if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
-
-            applyPositionToController(controllingPosition);//Force Apply Control
-
-
-            //Post-control Interlock update
-            if (UpdateInterlockBySwitching)
-            {
-                UpdateInterlocks();
-            }
-
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
-            if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
-        }
-
-        public override void OnPostSerialization(SerializationResult result)
-        {
-            if (result.success)
-            {
-                DisableAfterSync();
-            }
-            else
-            {
-                SendCustomEventDelayedSeconds(nameof(_RetrySync),Random.Range(0,3));
-            }
-        }
-        public void _RetrySync()
-        {
-            SyncController();
-        }
-        protected virtual void DisableAfterSync()
-        {
-            this.enabled = false;
         }
 
 
@@ -178,6 +66,8 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] private protected UdonSharpBehaviour[] TargeterInstances;
         [HideInInspector][SerializeField] private protected int[] ControlTargetsArray;
         [HideInInspector][SerializeField] private protected int UserDirectIndex = -1;
+        private bool hasCachedControl = false;
+        int cachedControlTarget = -1;
 
         /// <summary>
         /// Set the control target from the targeter instance. If the targeter instance is not registered, it will be added to the list of targeter instances.
@@ -185,9 +75,11 @@ namespace RBUR_SignalIntegrator
         /// <param name="TargeterInstance">The targeter instance to set the control target for.</param>
         /// <param name="ControlTarget">Control target is the target value to be set for the specified targeter instance. -1 means no control.</param>
         /// <param name="UserDirect">Indicates whether the control is being set directly by the user. Panel controller store the user direct instance index.</param>
-        public virtual void TrySetControlTarget(UdonSharpBehaviour TargeterInstance, int ControlTarget,bool UserDirect)
+        /// <returns>True if the control target was set successfully, false otherwise.</returns>
+        public virtual bool TrySetControlTarget(UdonSharpBehaviour TargeterInstance, int ControlTarget, bool UserDirect)
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(TrySetControlTarget));
+            hasCachedControl = false;
             int targeterIDX;
             getTargeterIndex(TargeterInstance, out targeterIDX);
             if (TargeterInstances.Length == targeterIDX)
@@ -198,29 +90,17 @@ namespace RBUR_SignalIntegrator
             if (UserDirect)
             {
                 UserDirectIndex = targeterIDX;
-
-                //If the user direct control is set, immediately update Interlock and apply the control target.
-                //Pre-control Interlock update
-                suspendSync = true;
-                UpdateInterlocks();
-
-                trySetPosition(EvaluateControlTarget());
-
-                //Post-control Interlock update
-                if (UpdateInterlockBySwitching)
-                {
-                    UpdateInterlocks();
-                }
-                suspendSync = false;
-                SyncController();
             }
-            else
+            if (!isLocked())
             {
-                trySetPosition(EvaluateControlTarget());
+                applyPositionToController(EvaluateControlTarget());
             }
+
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(TrySetControlTarget));
+
+            return ControlTarget == EvaluateControlTarget();
         }
-        
+
         /// <summary>
         /// Adds a new targeter instance to the list of targeter instances if it is not already present. Returns true if the instance was added, false if it was already present.
         /// </summary>
@@ -271,17 +151,22 @@ namespace RBUR_SignalIntegrator
         /// <returns>The evaluated control target.</returns>
         public virtual int EvaluateControlTarget()
         {
+            if (hasCachedControl)
+            {
+                return cachedControlTarget;
+            }
             int controlTarget = -1;
             foreach (int anTarget in ControlTargetsArray)
             {
-                if(anTarget != -1)
+                if (anTarget != -1)
                 {
                     controlTarget = anTarget;
                     break;
                 }
             }
-            
-            return controlTarget;
+            cachedControlTarget = controlTarget;
+            hasCachedControl = true;
+            return cachedControlTarget;
         }
 
         /// <summary>
@@ -299,9 +184,121 @@ namespace RBUR_SignalIntegrator
                 return -1;
             }
         }
-        public virtual bool isLocalOverride()
+
+
+        /// <summary>
+        /// Tries to update the locking state for a given instance.
+        /// if the lock state changes, it will also attempt to set the position based on the evaluated control target and notify any registered callback behaviours about the lock state update.
+        /// </summary>
+        /// <param name="triedFromInstance">The instance attempting to update the lock.</param>
+        /// <param name="lockState">The desired lock state.</param>
+        /// <param name="lockPositionSelector">The position selector for the lock.</param>
+        /// <param name="triedInstanceIndex">The index of the instance attempting the update.</param>
+        /// <returns>True if the update was successful, false otherwise(lock position conflict).</returns>
+        protected override bool UpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector, out int triedInstanceIndex)
         {
-            return EvaluateUserDirectControl() != -1;
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLocking));
+            bool prevLock = isLocked();
+            bool res = base.UpdateLocking(triedFromInstance, lockState, lockPositionSelector, out triedInstanceIndex);
+            if(isLocked() != prevLock)
+            {
+                if (!isLocked())
+                {
+                    int nextControlTarget = EvaluateControlTarget();
+                    if (nextControlTarget != controllingPosition)
+                    {
+                        applyPositionToController(nextControlTarget);
+                        SetUpdatedDetectorFlag();
+                    }
+                }
+                foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
+                {
+                    beh.SendCustomEvent("PanelLockstateUpdate");
+                }
+            }
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLocking));
+
+            return res;
+        }
+        protected override void applyLockToController(bool state)
+        {
+            //There is No Other instance for apply lock. bool array has updated.
+        }
+
+        /// <summary>
+        /// Apply the controlling position to the controller. 
+        /// If the position index is different from the current controlling position, it will update the controlling position and synchronize it across the network if the local player is the owner of this object.
+        /// Override this method in derived classes to implement specific behavior for applying the position to the related-Objects.
+        /// </summary>
+        /// <param name="posIndex">The position index to apply to the controller.</param>
+        protected override void applyPositionToController(int posIndex)
+        {
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if (posIndex != -1)
+            {
+                controllingPosition = posIndex;
+            }
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+        }
+
+        //Getters
+        public override int GetCurrentPosition()
+        {
+            return controllingPosition;
+        }
+        public override bool isControllerOwner()
+        {
+            return Networking.IsOwner(this.gameObject);
+        }
+
+        //Networking control methods
+        public override void setControllerOwner()
+        {
+            Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
+        }
+        protected override void SyncController()
+        {
+            NetworkUpdate = true;
+            if (isControllerOwner() && sendControllingPosition != controllingPosition)
+            {
+                if (!this.enabled) this.enabled = true;
+                this.RequestSerialization();
+            }
+        }
+
+        //Networking callbacks
+        public override void OnDeserialization()
+        {
+            if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
+
+            applyPositionToController(controllingPosition);//Force Apply Control
+            sendControllingPosition = controllingPosition;
+
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
+            if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+        }
+
+        public override void OnPostSerialization(SerializationResult result)
+        {
+            if (result.success)
+            {
+                sendControllingPosition = controllingPosition;
+                NetworkUpdate = false;
+                PostSync();
+            }
+            else
+            {
+                SendCustomEventDelayedSeconds(nameof(_RetrySync),Random.Range(0,3));
+            }
+        }
+        public void _RetrySync()
+        {
+            SyncController();
+        }
+        protected virtual void PostSync()
+        {
+            this.enabled = false;
         }
 
         protected virtual void UpdateInterlocks()

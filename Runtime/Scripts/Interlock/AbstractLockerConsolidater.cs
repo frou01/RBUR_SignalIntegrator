@@ -21,6 +21,11 @@ namespace RBUR_SignalIntegrator
             PositionUpdatedByLocking = false;
         }
 
+        protected void SetUpdatedDetectorFlag()
+        {
+            PositionUpdatedByLocking = true;
+        }
+
         public bool GetUpdatedDetectorFlag()
         {
             return PositionUpdatedByLocking;
@@ -84,30 +89,13 @@ namespace RBUR_SignalIntegrator
                 {
                     if (GetCurrentPosition() != lockIndex)
                     {
-                        PositionUpdatedByLocking = true;
+                        SetUpdatedDetectorFlag();
                     }
                     applyPositionToController(lockIndex);
                 }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLocking));
             return !lockFault;
-        }
-
-        /// <summary>
-        /// Sets the position of the controller if it is not locked. Returns true if successful, false if the controller is locked.
-        /// </summary>
-        /// <param name="positionSelector">The position selector for position set on the controller object.</param>
-        /// <returns>True if the position was successfully set, false if the controller is currently locked.</returns>
-        public bool trySetPosition(int positionSelector)
-        {
-            if (isLocked()) return false;
-            else
-            {
-                if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(trySetPosition));
-                applyPositionToController(positionSelector);
-                if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(trySetPosition));
-                return true;
-            }
         }
 
         //Return: Success?(Not already added?)

@@ -23,6 +23,13 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] public bool FailSafeCalled;
         [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;//自身を含む関係する鎖錠
         [HideInInspector][SerializeField] public AbstractLockerConsolidater[] affectedLockers;//直接自身に関係する鎖錠
+
+        public void Start()
+        {
+            if (From_Locker) From_Locker.AddNewLocker(this);
+            if (interlock_Route) interlock_Route.setParentInterlock(this);
+            UpdateInterlock(false);
+        }
         public RouteLocker GetRouteLocker()
         {
             if (!interlock_Route) interlock_Route = GetComponentInChildren<RouteLocker>();
@@ -152,7 +159,17 @@ namespace RBUR_SignalIntegrator
                 }
             }
 
-            if (update_AffectedInterlock)
+            bool LockerUpdated = false;
+            foreach (AbstractLockerConsolidater locker in affectedLockers)
+            {
+                if (locker.GetUpdatedDetectorFlag())
+                {
+                    LockerUpdated = true;
+                    break;
+                }
+            }
+
+            if (LockerUpdated && update_AffectedInterlock)
             {
                 int loopLimit = 10;
                 bool needNextUpdate;
@@ -172,16 +189,6 @@ namespace RBUR_SignalIntegrator
                     {
                         Debug.LogError(this.name + ":    L" + interlock.name, interlock);
                     }
-                }
-            }
-
-            bool LockerUpdated = false;
-            foreach(AbstractLockerConsolidater locker in affectedLockers)
-            {
-                if (locker.GetUpdatedDetectorFlag())
-                {
-                    LockerUpdated = true;
-                    break;
                 }
             }
 

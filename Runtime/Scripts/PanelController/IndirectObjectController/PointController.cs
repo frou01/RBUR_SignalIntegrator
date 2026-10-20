@@ -48,22 +48,17 @@ namespace RBUR_SignalIntegrator
         [SerializeField] protected float changeTimeLength = 1;
         [SerializeField] protected int CurrentPointRouteMapIndex;
         [SerializeField] protected float changeProgress;
-        bool NetworkUpdate;
         protected override void Start()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(Start));
-            UpdateInterlockBySwitching = false;
             base.Start();
             PointUpdate();
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(Start));
         }
+
         public override int GetCurrentPosition()
         {
             return controllingPosition;
-        }
-        public override bool isLocalOverride()
-        {
-            return base.isLocalOverride() || CurrentPointRouteMapIndex != controllingPosition;
         }
         protected override void applyPositionToController(int posIndex)
         {
@@ -73,8 +68,9 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
             if (pointCon_prevControllingPosition != controllingPosition)
             {
                 foreach (AbstractPointSetter pointSetter in pointInstances)
@@ -127,11 +123,7 @@ namespace RBUR_SignalIntegrator
             }
             else
             {
-                if (NetworkUpdate && !isControllerOwner())
-                {
-                    NetworkUpdate = false;
-                }
-                if (!NetworkUpdate)
+                if (!GetNetworkUpdate() || !isControllerOwner())
                 {
                     this.enabled = false;
                 }
@@ -190,13 +182,11 @@ namespace RBUR_SignalIntegrator
         }
         protected override void SyncController()
         {
-            this.enabled = true;
-            NetworkUpdate = true;
             base.SyncController();
         }
-        protected override void DisableAfterSync()
+        protected override void PostSync()
         {
-            NetworkUpdate = false;
+            //Dont sleep after sync. check on Update() if the controller is in the middle of point change.
         }
 
 

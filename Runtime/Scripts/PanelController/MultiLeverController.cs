@@ -92,10 +92,10 @@ namespace RBUR_SignalIntegrator
                 int idx = 0;
                 foreach (AbstractIndirectController panelController in controlledLevers)
                 {
-                    if (switchToControllerMap[idx][switchPosition] != -1 && !panelController.isLocalOverride())
+                    if (switchToControllerMap[idx][switchPosition] != -1)
                     {
-                        panelController.setControllerOwner();
-                        panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
+                        //panelController.setControllerOwner();
+                        //panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
                     }
                     idx++;
                 }
@@ -160,7 +160,7 @@ namespace RBUR_SignalIntegrator
                 {
                     if (switchToControllerMap[idx][switchPosition] != -1)
                     {
-                        panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
+                        //panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
                     }
                     idx++;
                 }

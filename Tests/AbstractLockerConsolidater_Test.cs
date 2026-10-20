@@ -181,48 +181,6 @@ public class AbstractLockerConsolidater_Test
     }
 
     [Test]
-    public void TrySetPosition_WhenUnlocked_AppliesRequestedPosition()
-    {
-        SetLockData(
-            new UdonSharpBehaviour[0],
-            new bool[0],
-            new int[0]);
-
-        bool result = _consolidater.trySetPosition(10);
-
-        Assert.IsTrue(result);
-        Assert.AreEqual(10, _consolidater.LastAppliedPosition);
-    }
-
-    [Test]
-    public void TrySetPosition_WhenLocked_DoesNotApplyPosition()
-    {
-        SetLockData(
-            new UdonSharpBehaviour[] { _locker1 },
-            new[] { true },
-            new[] { 5 });
-
-        bool result = _consolidater.trySetPosition(10);
-
-        Assert.IsFalse(result);
-        Assert.IsFalse(_consolidater.PositionWasApplied);
-    }
-
-    [Test]
-    public void TrySetPosition_LeavesEventStackBalanced()
-    {
-        SetLockData(
-            new UdonSharpBehaviour[0],
-            new bool[0],
-            new int[0]);
-
-        bool result = _consolidater.trySetPosition(10);
-
-        Assert.IsTrue(result);
-        Assert.AreEqual(string.Empty, _eventStackHolder.GetCurrentStackString());
-    }
-
-    [Test]
     public void TryUpdateLocking_WithNewLocker_AddsAndLocks()
     {
         SetLockData(
