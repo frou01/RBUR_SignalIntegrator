@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -34,10 +34,10 @@ namespace RBUR_SignalIntegrator
         public class To_ControllerMap
         {
             [SerializeField] public int onMulConOrder;
-            [SerializeField] public AbstractPanelController linkedController;
+            [SerializeField] public AbstractIndirectController linkedController;
             [Tooltip("index = switch, value = contro. No overwrite lever value = -1")][SerializeField] public int[] Switch_To_Control;
 
-            public To_ControllerMap(int onMulConOrder, AbstractPanelController linkedController, int[] MulConSwitch_To_ControllerControlMap)
+            public To_ControllerMap(int onMulConOrder, AbstractIndirectController linkedController, int[] MulConSwitch_To_ControllerControlMap)
             {
                 this.onMulConOrder = onMulConOrder;
                 this.linkedController = linkedController;

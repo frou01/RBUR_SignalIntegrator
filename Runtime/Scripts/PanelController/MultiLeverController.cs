@@ -16,7 +16,7 @@ namespace RBUR_SignalIntegrator
         [UdonSynced][SerializeField] private protected int switchPosition;
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
-        [HideInInspector][SerializeField] public AbstractPanelController[] controlledLevers;
+        [HideInInspector][SerializeField] public AbstractIndirectController[] controlledLevers;
         [HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [HideInInspector][SerializeField] private protected int SwitchPositionNum;
         [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
@@ -90,7 +90,7 @@ namespace RBUR_SignalIntegrator
 
                 //Try control Controllers without interlock update
                 int idx = 0;
-                foreach (AbstractPanelController panelController in controlledLevers)
+                foreach (AbstractIndirectController panelController in controlledLevers)
                 {
                     if (switchToControllerMap[idx][switchPosition] != -1 && !panelController.isLocalOverride())
                     {
@@ -156,7 +156,7 @@ namespace RBUR_SignalIntegrator
             if (Networking.IsOwner(this.gameObject))
             {
                 int idx = 0;
-                foreach (AbstractPanelController panelController in controlledLevers)
+                foreach (AbstractIndirectController panelController in controlledLevers)
                 {
                     if (switchToControllerMap[idx][switchPosition] != -1)
                     {

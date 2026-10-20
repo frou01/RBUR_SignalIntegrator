@@ -8,12 +8,13 @@ using VRC.Udon;
 
 namespace RBUR_SignalIntegrator
 {
-    public class RelayLever_PannelUIReciever : AbstractLever_Control_Reciever
+    public class RelayLever_PannelUIReciever : UdonSharpBehaviour
     {
         //TODO currentUserControlに現時点のユーザー側制御を送り込む
         //TODO 参照はReciever->Controllerの片方向にする
         //TODO これAbstractClassいらないね
         [SerializeField] private protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [SerializeField] private protected AbstractIndirectController targetController;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
         [SerializeField][UdonSynced] private protected int switchPosition;
@@ -30,13 +31,9 @@ namespace RBUR_SignalIntegrator
             set { m_slider = value; }
         }
         Slider m_slider;
-        protected override void Start()
+        private void Start()
         {
             if (slider) slider.maxValue = (switchToControllerMap.Length - 1);
-        }
-        public override int GetCurrentControl()
-        {
-            return switchToControllerMap[switchPosition];
         }
 
         public override void OnDeserialization()
@@ -49,6 +46,8 @@ namespace RBUR_SignalIntegrator
             if (slider != null) switchPosition = (int)slider.value;
 
             SyncUI(false);
+
+            targetController.TrySetControlTarget(this,switchToControllerMap[switchPosition],true);
 
             RequestSerialization();
         }

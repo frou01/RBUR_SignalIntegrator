@@ -22,19 +22,19 @@ namespace RBUR_SignalIntegrator_Editor
         public void OnProcessScene(Scene scene, BuildReport report)
         {
 
-            List<PointControllerLever> pointControllers = new List<PointControllerLever>();
+            List<PointController> pointControllers = new List<PointController>();
             List<MultiLever_ReferRouteLocker> multiLever_ReferRouteLocker = new List<MultiLever_ReferRouteLocker>();
             List<Interlocking> interlocks = new List<Interlocking>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                pointControllers.AddRange(obj.GetComponentsInChildren<PointControllerLever>(true));
+                pointControllers.AddRange(obj.GetComponentsInChildren<PointController>(true));
                 multiLever_ReferRouteLocker.AddRange(obj.GetComponentsInChildren<MultiLever_ReferRouteLocker>(true));
                 interlocks.AddRange(obj.GetComponentsInChildren<Interlocking>(true));
             }
             foreach (MultiLever_ReferRouteLocker mulconSetter in multiLever_ReferRouteLocker)
             {
                 MultiLeverController mulCon = mulconSetter.GetComponent<MultiLeverController>();
-                foreach(SignalControllerLever signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalControllerLever))
+                foreach(SignalController signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalController))
                 {
                     Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
                     if (correspondInterlock)
@@ -48,7 +48,7 @@ namespace RBUR_SignalIntegrator_Editor
                 }
             }
 
-            foreach (PointControllerLever pointCon in pointControllers)
+            foreach (PointController pointCon in pointControllers)
             {
                 pointCon.SetControlToRouteIndexMap(pointCon.GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map());
                 pointCon.SetControlToParamaterMap(pointCon.GetComponent<PointLever_ControlToParamaterHolder>().get_Control_to_Paramater_Map());
@@ -73,7 +73,7 @@ namespace RBUR_SignalIntegrator_Editor
                     foreach (AbstractPointSetter point in routeLocker.GetTargetPoints())
                     {
                         LockerIdx++;
-                        foreach (PointControllerLever pointController in pointControllers)
+                        foreach (PointController pointController in pointControllers)
                         {
                             int pointIdx = Array.IndexOf(pointController.getPointInstances(), point);
 
@@ -91,26 +91,26 @@ namespace RBUR_SignalIntegrator_Editor
             foreach (Interlocking currentInterlock in interlocks)
             {
                 //Add Interlocking Reverse reference to Controller
-                List<AbstractPanelController> controllers = new List<AbstractPanelController>();
+                List<AbstractIndirectController> controllers = new List<AbstractIndirectController>();
                 foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
                 {
-                    if (StateLocker.getLocker() is AbstractPanelController)
+                    if (StateLocker.getLocker() is AbstractIndirectController)
                     {
-                        controllers.Add((AbstractPanelController)StateLocker.getLocker());
+                        controllers.Add((AbstractIndirectController)StateLocker.getLocker());
                     }
                 }
                 if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
                     {
-                        if (locker is AbstractPanelController)
+                        if (locker is AbstractIndirectController)
                         {
-                            controllers.Add((AbstractPanelController)locker);
+                            controllers.Add((AbstractIndirectController)locker);
                         }
                     }
-                if (currentInterlock.GetFromLocker() is AbstractPanelController)
+                if (currentInterlock.GetFromLocker() is AbstractIndirectController)
                 {
-                    controllers.Add((AbstractPanelController)currentInterlock.GetFromLocker());
+                    controllers.Add((AbstractIndirectController)currentInterlock.GetFromLocker());
                 }
-                foreach (AbstractPanelController controller in controllers)
+                foreach (AbstractIndirectController controller in controllers)
                 {
                     controller.ReferingInterlocks = controller.ReferingInterlocks.AddToArray(currentInterlock);
                 }
@@ -124,21 +124,21 @@ namespace RBUR_SignalIntegrator_Editor
                     List<Interlocking> ReverseReferencedInterlocks = new List<Interlocking>();
                     foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
                     {
-                        if (StateLocker.getLocker() is AbstractPanelController)
+                        if (StateLocker.getLocker() is AbstractIndirectController)
                         {
-                            ReverseReferencedInterlocks.AddRange(((AbstractPanelController)StateLocker.getLocker()).ReferingInterlocks);
+                            ReverseReferencedInterlocks.AddRange(((AbstractIndirectController)StateLocker.getLocker()).ReferingInterlocks);
                         }
                     }
                     if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
                     {
-                        if (locker is AbstractPanelController)
+                        if (locker is AbstractIndirectController)
                         {
-                            ReverseReferencedInterlocks.AddRange(((AbstractPanelController)locker).ReferingInterlocks);
+                            ReverseReferencedInterlocks.AddRange(((AbstractIndirectController)locker).ReferingInterlocks);
                         }
                     }
-                    if (currentInterlock.GetFromLocker() is AbstractPanelController)
+                    if (currentInterlock.GetFromLocker() is AbstractIndirectController)
                     {
-                        ReverseReferencedInterlocks.AddRange(((AbstractPanelController)currentInterlock.GetFromLocker()).ReferingInterlocks);
+                        ReverseReferencedInterlocks.AddRange(((AbstractIndirectController)currentInterlock.GetFromLocker()).ReferingInterlocks);
                     }
                     ReverseReferencedInterlocks = ReverseReferencedInterlocks.Distinct().ToList();
 
@@ -148,7 +148,7 @@ namespace RBUR_SignalIntegrator_Editor
 
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                foreach (AbstractPanelController controller in obj.GetComponentsInChildren<AbstractPanelController>(true))
+                foreach (AbstractIndirectController controller in obj.GetComponentsInChildren<AbstractIndirectController>(true))
                 {
                     List<Interlocking> ReferingInterlocks = new List<Interlocking>();
                     foreach(Interlocking interlock in controller.ReferingInterlocks)
@@ -164,7 +164,7 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 foreach (MultiLeverController multiLeverController in obj.GetComponentsInChildren<MultiLeverController>(true))
                 {
-                    foreach (AbstractPanelController panelController in multiLeverController.controlledLevers)
+                    foreach (AbstractIndirectController panelController in multiLeverController.controlledLevers)
                     {
                         multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.AddRangeToArray(panelController.ReferingInterlocks);
 

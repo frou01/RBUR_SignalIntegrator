@@ -11,7 +11,7 @@ using VRC.Udon.Serialization.OdinSerializer;
 namespace RBUR_SignalIntegrator
 {
     [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_ControlToParamaterHolder))]
-    public class PointControllerLever : AbstractPanelController
+    public class PointController : AbstractIndirectController
     {
         [SerializeField] protected AbstractPointSetter[] pointInstances;
         [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)

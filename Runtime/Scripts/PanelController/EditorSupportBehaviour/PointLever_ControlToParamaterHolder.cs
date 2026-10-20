@@ -1,4 +1,4 @@
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+﻿#if !COMPILER_UDONSHARP && UNITY_EDITOR
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +31,8 @@ namespace RBUR_SignalIntegrator
             if (!routeIndexes) return;
             routeIndexes.Update();
             int RouteIndexNum = routeIndexes.RouteIndexNum;
-            PointControllerLever TargetPointCon;
-            TargetPointCon = GetComponent<PointControllerLever>();
+            PointController TargetPointCon;
+            TargetPointCon = GetComponent<PointController>();
             Dictionary<Animator, To_Paramater> synced_Animator_To_Paramater_Map = new Dictionary<Animator, To_Paramater>();
             foreach (To_Paramater syncedParamaterMap in Control_To_ParamaterMaps)
             {

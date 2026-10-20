@@ -1,4 +1,4 @@
-using frou01.RigidBodyTrain;
+﻿using frou01.RigidBodyTrain;
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using HarmonyLib;
 using System.Collections.Generic;
@@ -26,8 +26,8 @@ namespace RBUR_SignalIntegrator
 
         public void Update()
         {
-            PointControllerLever TargetPointControllerLever;
-            TargetPointControllerLever = GetComponent<PointControllerLever>();
+            PointController TargetPointControllerLever;
+            TargetPointControllerLever = GetComponent<PointController>();
             Dictionary<AbstractPointSetter, Control_To_RouteIndexMap> synced_controller_controlPositions_Map = new Dictionary<AbstractPointSetter, Control_To_RouteIndexMap>();
             foreach (Control_To_RouteIndexMap syncedControllerMap in control_To_RouteIndexMaps)
             {

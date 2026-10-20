@@ -23,7 +23,7 @@ namespace RBUR_SignalIntegrator
     /// virtualization controller for machine<Point,Signal,Sign>
     /// Consolidate the control from multiple sources and apply it to the machine.
     /// </summary>
-    public class AbstractPanelController : AbstractLockerConsolidater
+    public class AbstractIndirectController : AbstractLockerConsolidater
     {
         public bool Logging = false;
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
@@ -35,7 +35,7 @@ namespace RBUR_SignalIntegrator
         [FormerlySerializedAs("callbackBehaviours")]
         [Tooltip("Auto assign by buildProcess")][SerializeField] public UdonBehaviour[] LockstateCallbackBehaviours;
 
-        private protected bool UpdateInterlockBySwitching = true;
+        private protected bool UpdateInterlockBySwitching = true;//Point controller is not need to update interlock when switching, it will be update by the point machine.
         private protected bool suspendSync = false;
 
 
@@ -66,7 +66,13 @@ namespace RBUR_SignalIntegrator
             {
                 if (!isLocked())
                 {
-                    trySetPosition(EvaluateControlTarget());
+                    int nextControlTarget = EvaluateControlTarget();
+                    if (nextControlTarget != controllingPosition)
+                    {
+                        trySetPosition(nextControlTarget);
+                        if (UpdateInterlockBySwitching)
+                            UpdateInterlocks();
+                    }
                 }
                 foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
                 {
@@ -234,7 +240,7 @@ namespace RBUR_SignalIntegrator
 
             int[] newTargetsArray = new int[ControlTargetsArray.Length + 1];
             ControlTargetsArray.CopyTo(newTargetsArray, 0);
-            newTargetsArray[ControlTargetsArray.Length] = 0;
+            newTargetsArray[ControlTargetsArray.Length] = -1;
             ControlTargetsArray = newTargetsArray;
 
             return true;
@@ -298,7 +304,7 @@ namespace RBUR_SignalIntegrator
             return EvaluateUserDirectControl() != -1;
         }
 
-        public virtual void UpdateInterlocks()
+        protected virtual void UpdateInterlocks()
         {
             int loopLimit = 10;
             bool needNextUpdate;

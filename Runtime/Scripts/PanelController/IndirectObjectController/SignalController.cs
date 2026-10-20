@@ -8,7 +8,7 @@ using UnityEditor;
 
 namespace RBUR_SignalIntegrator
 {
-    public class SignalControllerLever : AbstractPanelController
+    public class SignalController : AbstractIndirectController
     {
         [SerializeField] Animator[] SignalSideAnimators;
         [SerializeField] string signalAnimationParamater = "SignalRelayPosition";

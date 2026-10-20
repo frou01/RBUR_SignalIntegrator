@@ -319,7 +319,7 @@ MonoBehaviour:
       Data: 22|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.AbstractPanelController[], RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.AbstractIndirectController[], RBUR_SignalIntegrator_ASMDEF
     - Name: 
       Entry: 8
       Data: 

@@ -21,7 +21,7 @@ namespace RBUR_SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] int targetMulConSwitch;
 
-        private static int GetControlFromRoute(PointControllerLever pointController, AbstractPointSetter pointSetter, int routeIndex)
+        private static int GetControlFromRoute(PointController pointController, AbstractPointSetter pointSetter, int routeIndex)
         {
             List<Control_To_RouteIndexMap> controlToRoute = pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps;
             Control_To_RouteIndexMap targetedMap = controlToRoute.First(val => val.linkedPoint == pointSetter);
@@ -34,7 +34,7 @@ namespace RBUR_SignalIntegrator
                 return -1;
             }
         }
-        private static void SetControlToMap(MultiLever_SwitchToControlMapsHolder switchMapHolder, PointControllerLever pointController, int TargetControl, int targetMulConSwitch)
+        private static void SetControlToMap(MultiLever_SwitchToControlMapsHolder switchMapHolder, PointController pointController, int TargetControl, int targetMulConSwitch)
         {
             List<Control_To_RouteIndexMap> controlToRoute = pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps;
             To_ControllerMap map = switchMapHolder.Switch_To_ControlMaps.FirstOrDefault(val => val.linkedController == pointController);
@@ -47,21 +47,21 @@ namespace RBUR_SignalIntegrator
         public void ApplyToControlMap()
         {
             Scene scene = gameObject.scene;
-            List<PointControllerLever> pointControllers = new List<PointControllerLever>();
+            List<PointController> pointControllers = new List<PointController>();
             List<Interlocking> interlocks = new List<Interlocking>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                pointControllers.AddRange(obj.GetComponentsInChildren<PointControllerLever>(true));
+                pointControllers.AddRange(obj.GetComponentsInChildren<PointController>(true));
                 interlocks.AddRange(obj.GetComponentsInChildren<Interlocking>(true));
             }
             MultiLeverController mulCon = GetComponent<MultiLeverController>();
-            foreach (SignalControllerLever signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalControllerLever))
+            foreach (SignalController signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalController))
             {
                 Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
                 ApplyToControlMap(mulCon, pointControllers, correspondInterlock.GetRouteLocker());
             }
         }
-        public void ApplyToControlMap(MultiLeverController controller, List<PointControllerLever> pointControllers, RouteLocker routeLocker)
+        public void ApplyToControlMap(MultiLeverController controller, List<PointController> pointControllers, RouteLocker routeLocker)
         {
             if (controller && routeLocker)
             {
@@ -69,7 +69,7 @@ namespace RBUR_SignalIntegrator
                 int[] targetRoutes = routeLocker.getTargetRoute();
                 foreach (AbstractPointSetter targetPoint in routeLocker.GetTargetPoints())
                 {
-                    PointControllerLever pointCorrespondController = pointControllers.FirstOrDefault(val => val.getPointInstances().Contains(targetPoint));
+                    PointController pointCorrespondController = pointControllers.FirstOrDefault(val => val.getPointInstances().Contains(targetPoint));
                     if (pointCorrespondController)
                     {
                         MultiLever_SwitchToControlMapsHolder switchMapHolder = controller.GetComponent<MultiLever_SwitchToControlMapsHolder>();

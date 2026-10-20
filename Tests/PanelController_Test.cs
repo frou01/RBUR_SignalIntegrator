@@ -429,7 +429,7 @@ public class PanelController_Test
 /// Provides access to protected members and test-specific functionality.
 /// Uses Reflection to bypass VRC SDK requirements.
 /// </summary>
-public class TestPanelController : AbstractPanelController
+public class TestPanelController : AbstractIndirectController
 {
     public int LastAppliedPosition { get; private set; }
 
@@ -515,14 +515,14 @@ public class TestPanelController : AbstractPanelController
 
     private void SetField(string fieldName, object value)
     {
-        FieldInfo field = typeof(AbstractPanelController).GetField(
+        FieldInfo field = typeof(AbstractIndirectController).GetField(
             fieldName,
             BindingFlags.Instance | BindingFlags.NonPublic);
 
         if (field == null)
         {
             throw new InvalidOperationException(
-                typeof(AbstractPanelController).Name + "." + fieldName + " が見つかりません。");
+                typeof(AbstractIndirectController).Name + "." + fieldName + " が見つかりません。");
         }
 
         field.SetValue(this, value);
@@ -530,21 +530,21 @@ public class TestPanelController : AbstractPanelController
 
     private T GetField<T>(string fieldName) where T : class
     {
-        FieldInfo field = typeof(AbstractPanelController).GetField(
+        FieldInfo field = typeof(AbstractIndirectController).GetField(
             fieldName,
             BindingFlags.Instance | BindingFlags.NonPublic);
 
         if (field == null)
         {
             throw new InvalidOperationException(
-                typeof(AbstractPanelController).Name + "." + fieldName + " が見つかりません。");
+                typeof(AbstractIndirectController).Name + "." + fieldName + " が見つかりません。");
         }
 
         T value = field.GetValue(this) as T;
         if (value == null)
         {
             throw new InvalidOperationException(
-                typeof(AbstractPanelController).Name + "." + fieldName + " が null です。");
+                typeof(AbstractIndirectController).Name + "." + fieldName + " が null です。");
         }
 
         return value;
@@ -552,14 +552,14 @@ public class TestPanelController : AbstractPanelController
 
     private object GetFieldValue(string fieldName)
     {
-        FieldInfo field = typeof(AbstractPanelController).GetField(
+        FieldInfo field = typeof(AbstractIndirectController).GetField(
             fieldName,
             BindingFlags.Instance | BindingFlags.NonPublic);
 
         if (field == null)
         {
             throw new InvalidOperationException(
-                typeof(AbstractPanelController).Name + "." + fieldName + " が見つかりません。");
+                typeof(AbstractIndirectController).Name + "." + fieldName + " が見つかりません。");
         }
 
         return field.GetValue(this);
