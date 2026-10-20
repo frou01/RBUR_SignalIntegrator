@@ -8,7 +8,7 @@ using VRC.Udon;
 
 namespace RBUR_SignalIntegrator
 {
-    public class RelayLever_PannelUIReciever : UdonSharpBehaviour
+    public class Lever_PannelUIReciever : UdonSharpBehaviour
     {
         //TODO currentUserControlに現時点のユーザー側制御を送り込む
         //TODO 参照はReciever->Controllerの片方向にする
