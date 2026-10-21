@@ -66,7 +66,7 @@ namespace RBUR_SignalIntegrator
                 {
                     return;
                 }
-                RouteAndSignalPreset[Switch_Position][SelectedRoute].SetControlToLevers(1);
+                RouteAndSignalPreset[Switch_Position][SelectedRoute].SetControlToLevers(1,true);
                 routeSelected = true;
                 RequestSerialization();
             }
@@ -90,7 +90,7 @@ namespace RBUR_SignalIntegrator
             {
                 foreach (MultiLeverController route in routeArray)
                 {
-                    route.SetControlToLevers(0);
+                    route.SetControlToLevers(0, true);
                 }
             }
             RequestSerialization();

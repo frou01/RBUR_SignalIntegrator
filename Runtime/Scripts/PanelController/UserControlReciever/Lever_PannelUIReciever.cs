@@ -51,7 +51,10 @@ namespace RBUR_SignalIntegrator
 
             SyncUI(false);
 
-            targetController.TrySetControlTarget(this,switchToControllerMap[switchPosition],true);
+            if (targetController.TrySetControlTarget(this, switchToControllerMap[switchPosition], true))
+            {
+                targetController.UpdateInterlocks();
+            }
 
             RequestSerialization();
         }

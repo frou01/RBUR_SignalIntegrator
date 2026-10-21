@@ -45,7 +45,6 @@ public class IndirectController_Test
         _locker2 = new MockLocker("Locker2");
 
         _indirectController.ReferingInterlocks = new Interlocking[0];
-        _indirectController.LockstateCallbackBehaviours = new UdonBehaviour[0];
 
         // Start() を明示的に呼んで初期化を完了させる
         _indirectController.StartPublic();
@@ -726,10 +725,6 @@ public class TestIndirectController : AbstractIndirectController
         }
 
         return (int)field.GetValue(this);
-    }
-
-    protected override void PostApplyControl()
-    {
     }
 }
 

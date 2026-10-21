@@ -35,13 +35,7 @@ namespace RBUR_SignalIntegrator
             {
                 Evaluator.updateSignal(this, controllingPosition);
             }
-            PostApplyControl();
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
-        }
-
-        protected override void PostApplyControl()
-        {
-            UpdateInterlocks();
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

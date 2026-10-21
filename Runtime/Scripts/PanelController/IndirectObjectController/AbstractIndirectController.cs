@@ -37,9 +37,6 @@ namespace RBUR_SignalIntegrator
         [HideInInspector] public int currentUserControl;
         [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
 
-        [FormerlySerializedAs("callbackBehaviours")]
-        [Tooltip("Auto assign by buildProcess")][SerializeField] public UdonBehaviour[] LockstateCallbackBehaviours;
-
         private int sendControllingPosition = -1;
         private bool NetworkUpdate;
         protected bool GetNetworkUpdate()
@@ -100,9 +97,9 @@ namespace RBUR_SignalIntegrator
             int nextControlTarget = EvaluateControlTarget();
             if (!isLocked() && GetCurrentPosition()!= nextControlTarget)
             {
-                applyPositionToController(nextControlTarget);
                 if (isControllerOwner())
                 {
+                    applyPositionToController(nextControlTarget);
                     SyncController();
                 }
             }
@@ -223,10 +220,6 @@ namespace RBUR_SignalIntegrator
                         SetFlagPosChangeOnLockDetector();
                     }
                 }
-                foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
-                {
-                    beh.SendCustomEvent("PanelLockstateUpdate");
-                }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLocking));
 
@@ -252,13 +245,6 @@ namespace RBUR_SignalIntegrator
             }
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
-
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-        protected abstract void PostApplyControl();
-#else 
-        protected virtual void PostApplyControl(){
-        }
-#endif
 
         //Getters
         public override int GetCurrentPosition()
@@ -292,6 +278,10 @@ namespace RBUR_SignalIntegrator
             if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
 
             applyPositionToController(controllingPosition);//Force Apply Control
+            if(sendControllingPosition != controllingPosition)
+            {
+                UpdateInterlocks();
+            }
             sendControllingPosition = controllingPosition;
 
             if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
@@ -320,7 +310,7 @@ namespace RBUR_SignalIntegrator
             this.enabled = false;
         }
 
-        protected virtual void UpdateInterlocks()
+        public virtual void UpdateInterlocks()
         {
             int loopLimit = 10;
             bool needNextUpdate;

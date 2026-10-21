@@ -61,7 +61,9 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
 
-            if (slider != null) SetControlToLevers((int)slider.value);
+            if (slider != null) switchPosition = (int)slider.value;
+            SyncUI(switchPosition, false);
+            if (slider != null) SetControlToLevers(switchPosition, true);
 
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
@@ -72,43 +74,60 @@ namespace RBUR_SignalIntegrator
 
             SyncUI(switchPosition, true);
             //ControlPosition synced by controlled-levers.
+            SetControlToLevers(this.switchPosition , false);
 
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 
-        public void SetControlToLevers(int newSwitchPosition)
+        int prevAppliedPos = -2;
+        public void SetControlToLevers(int newSwitchPosition,bool TakeOwner)
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(SetControlToLevers));
 
-            if (switchPosition != newSwitchPosition)
+            if (switchPosition != prevAppliedPos)
             {
-                this.switchPosition = newSwitchPosition;
-
-                setControllerOwner();
-                //Pre-control Interlock update
-                UpdateInterlocks();
+                prevAppliedPos = switchPosition;
+                if(TakeOwner) setControllerOwner();
 
                 //Try control Controllers without interlock update
                 int idx = 0;
                 foreach (AbstractIndirectController panelController in controlledLevers)
                 {
-                    if (switchToControllerMap[idx][switchPosition] != -1)
-                    {
-                        //panelController.setControllerOwner();
-                        //panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
-                    }
+                    int nextControl = switchToControllerMap[idx][switchPosition];
+
+                    if(TakeOwner && nextControl != -1) panelController.setControllerOwner();
+                    panelController.TrySetControlTarget(this, switchToControllerMap[idx][switchPosition], false);
                     idx++;
                 }
 
-                SyncUI(switchPosition, false);
 
-                //Post-control Interlock update
                 UpdateInterlocks();
+
                 SyncController();
             }
 
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(SetControlToLevers));
         }
+
+        protected virtual void SyncUI(int switchPosition, bool updateSlider)
+        {
+            if (updateSlider && slider != null)
+            {
+                slider.SetValueWithoutNotify(this.switchPosition);
+            }
+
+            foreach (Animator animator in SwitchSideAnimator)
+            {
+                AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
+                {
+                    sleeper.ResetCount();
+                }
+                animator.enabled = true;
+                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (SwitchPositionNum - 1));
+            }
+        }
+
+
         public virtual void UpdateInterlocks()
         {
             int loopLimit = 10;
@@ -130,42 +149,6 @@ namespace RBUR_SignalIntegrator
                     Debug.LogError(this.name + ":    " + interlock.name, interlock);
                 }
             }
-        }
-
-        protected virtual void SyncUI(int switchPosition, bool updateSlider)
-        {
-            this.switchPosition = switchPosition;
-            if (updateSlider && slider != null)
-            {
-                slider.SetValueWithoutNotify(this.switchPosition);
-            }
-
-            foreach (Animator animator in SwitchSideAnimator)
-            {
-                AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
-                {
-                    sleeper.ResetCount();
-                }
-                animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (SwitchPositionNum - 1));
-            }
-        }
-        public void PanelLockstateUpdate()
-        {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(PanelLockstateUpdate));
-            if (Networking.IsOwner(this.gameObject))
-            {
-                int idx = 0;
-                foreach (AbstractIndirectController panelController in controlledLevers)
-                {
-                    if (switchToControllerMap[idx][switchPosition] != -1)
-                    {
-                        //panelController.trySetPosition(switchToControllerMap[idx][switchPosition]);
-                    }
-                    idx++;
-                }
-            }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PanelLockstateUpdate));
         }
     }
 }

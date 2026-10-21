@@ -60,10 +60,6 @@ namespace RBUR_SignalIntegrator
         {
             return controllingPosition;
         }
-        protected override void PostApplyControl()
-        {
-            UpdateInterlocks();
-        }
         protected override void applyPositionToController(int posIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
@@ -180,7 +176,7 @@ namespace RBUR_SignalIntegrator
             if (PrevPointRouteIndex != CurrentPointRouteMapIndex)
             {
                 PrevPointRouteIndex = CurrentPointRouteMapIndex;
-                PostApplyControl();
+                UpdateInterlocks();
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
         }
