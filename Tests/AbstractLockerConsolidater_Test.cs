@@ -324,9 +324,9 @@ public class AbstractLockerConsolidater_Test
     {
         _consolidater.SetUpdatedDetectorFlag(true);
 
-        _consolidater.ResetUpdatedDetectorFlag();
+        _consolidater.ResetFlagPosChangeOnLockDetector();
 
-        Assert.IsFalse(_consolidater.GetUpdatedDetectorFlag());
+        Assert.IsFalse(_consolidater.GetFlagPosChangeOnLockDetector());
     }
 
     [Test]
@@ -360,7 +360,7 @@ public class AbstractLockerConsolidater_Test
         Assert.AreEqual(0, _consolidater.GetLockIndex(0));
         Assert.AreEqual(0, _consolidater.GetLockIndex(1));
         Assert.AreEqual(0, _consolidater.LastAppliedPosition);
-        Assert.IsTrue(_consolidater.GetUpdatedDetectorFlag());
+        Assert.IsTrue(_consolidater.GetFlagPosChangeOnLockDetector());
     }
 }
 

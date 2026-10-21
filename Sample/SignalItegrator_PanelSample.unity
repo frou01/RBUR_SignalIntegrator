@@ -285,12 +285,17 @@ PrefabInstance:
     - target: {fileID: 102575204263503604, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1536536969497886317, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
       propertyPath: m_Name
       value: MulCon Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536536969497886317, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
@@ -571,11 +576,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6641030928422040957}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2294616383643998336, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975, type: 3}
 --- !u!4 &401330156 stripped
 Transform:
@@ -916,6 +917,12 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 7437335403391484807, guid: c156d8540eb49134d96d3e98d2a1c042,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7437335403391484807, guid: c156d8540eb49134d96d3e98d2a1c042,
+        type: 3}
     - target: {fileID: 8904292091278309465, guid: c156d8540eb49134d96d3e98d2a1c042,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -1109,7 +1116,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 500647295}
-  debugLog: 0
+  debugLog: 1
 --- !u!1 &520425861
 GameObject:
   m_ObjectHideFlags: 0
@@ -8880,6 +8887,12 @@ PrefabInstance:
       propertyPath: PointSideAnimators.Array.data[1]
       value: 
       objectReference: {fileID: 2061646817}
+    - target: {fileID: 3272083400076900756, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 3272083400076900756, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
+        type: 3}
     - target: {fileID: 4048452681864049938, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -9004,7 +9017,7 @@ PrefabInstance:
     - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
       propertyPath: Control_To_ParamaterMaps.Array.data[1].Control_To_Paramater.Array.data[0]
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
@@ -10062,6 +10075,12 @@ PrefabInstance:
       propertyPath: PointSideAnimators.Array.data[1]
       value: 
       objectReference: {fileID: 1498330039}
+    - target: {fileID: 3272083400076900756, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 3272083400076900756, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
+        type: 3}
     - target: {fileID: 4048452681864049938, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -10196,7 +10215,7 @@ PrefabInstance:
     - target: {fileID: 9169787904953004739, guid: 5bdeb6dc4accad249b84fe7ee7ea4d3d,
         type: 3}
       propertyPath: Control_To_ParamaterMaps.Array.data[1].Control_To_Paramater.Array.data[1]
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10848,9 +10867,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6815736638202260798}
   eventStackHolder: {fileID: 0}
-  senderInstance:
-  - {fileID: 4457645061710611199}
-  - {fileID: 4920066874882511089}
+  senderInstance: []
   ReceiveSignal: []
   mode: 1
   SignalSideAnimators:
@@ -11215,6 +11232,12 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 7437335403391484807, guid: c156d8540eb49134d96d3e98d2a1c042,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7437335403391484807, guid: c156d8540eb49134d96d3e98d2a1c042,
+        type: 3}
     - target: {fileID: 8904292091278309465, guid: c156d8540eb49134d96d3e98d2a1c042,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -11668,6 +11691,12 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 7437335403391484807, guid: c156d8540eb49134d96d3e98d2a1c042,
+        type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7437335403391484807, guid: c156d8540eb49134d96d3e98d2a1c042,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

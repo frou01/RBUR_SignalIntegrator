@@ -16,17 +16,17 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] private protected int[] SettedLockIndex = new int[0];
         [HideInInspector][SerializeField] private bool PositionUpdatedByLocking = false;
 
-        public void ResetUpdatedDetectorFlag()
+        public void ResetFlagPosChangeOnLockDetector()
         {
             PositionUpdatedByLocking = false;
         }
 
-        protected void SetUpdatedDetectorFlag()
+        protected void SetFlagPosChangeOnLockDetector()
         {
             PositionUpdatedByLocking = true;
         }
 
-        public bool GetUpdatedDetectorFlag()
+        public bool GetFlagPosChangeOnLockDetector()
         {
             return PositionUpdatedByLocking;
         }
@@ -89,7 +89,9 @@ namespace RBUR_SignalIntegrator
                 {
                     if (GetCurrentPosition() != lockIndex)
                     {
-                        SetUpdatedDetectorFlag();
+                        SetFlagPosChangeOnLockDetector();
+
+                        Debug.Log("SetUpdatedDetectorFlag " + this.name + ", GetCurrentPosition: " + GetCurrentPosition() + ", lockIndex: " + lockIndex, this);
                     }
                     applyPositionToController(lockIndex);
                 }

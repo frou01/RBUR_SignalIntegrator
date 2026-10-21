@@ -10,8 +10,8 @@ namespace RBUR_SignalIntegrator
     public class SignalEvaluator : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] protected UdonSharpBehaviour[] senderInstance;
-        [HideInInspector][SerializeField] protected float[] ReceiveSignal;
+        [HideInInspector][SerializeField] protected UdonSharpBehaviour[] senderInstance = new UdonSharpBehaviour[0];
+        [HideInInspector][SerializeField] protected float[] ReceiveSignal = new float[0];
 
         [Tooltip("False: Prioritize the minimum, True: Prioritize the MAXIMUM")][SerializeField] bool mode; 
         [SerializeField] protected Animator[] SignalSideAnimators;
@@ -82,11 +82,17 @@ namespace RBUR_SignalIntegrator
                 }
             }
         }
+
         public virtual bool AddNewSender(UdonSharpBehaviour triedFrom)
         {
+            if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(AddNewSender));
             foreach (UdonSharpBehaviour locker in senderInstance)
             {
-                if (triedFrom == locker) return false;
+                if (triedFrom == locker)
+                {
+                    if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(AddNewSender));
+                    return false;
+                }
             }
 
             UdonSharpBehaviour[] newSenderScripts = new UdonSharpBehaviour[senderInstance.Length + 1];
@@ -94,11 +100,12 @@ namespace RBUR_SignalIntegrator
             newSenderScripts[senderInstance.Length] = triedFrom;
             senderInstance = newSenderScripts;
 
-            float[] newReceiveSignal = new float[ReceiveSignal.Length + 1];
+            float[] newReceiveSignal = new float[senderInstance.Length];
             ReceiveSignal.CopyTo(newReceiveSignal, 0);
             newReceiveSignal[ReceiveSignal.Length] = 0;
             ReceiveSignal = newReceiveSignal;
 
+            if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(AddNewSender));
             return true;
         }
 

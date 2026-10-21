@@ -85,6 +85,8 @@ GameObject:
   m_Component:
   - component: {fileID: 975482886689210536}
   - component: {fileID: 4158452818522840678}
+  - component: {fileID: 3272083400076900756}
+  - component: {fileID: 9190119953965506729}
   m_Layer: 0
   m_Name: Slider
   m_TagString: Untagged
@@ -163,7 +165,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1054795953820116318}
+      - m_Target: {fileID: 9190119953965506729}
         m_TargetAssemblyTypeName: RBUR_SignalIntegrator.SimplePanelSwitch, RBUR_SignalIntegrator_ASMDEF
         m_MethodName: SendCustomEvent
         m_Mode: 5
@@ -175,6 +177,59 @@ MonoBehaviour:
           m_StringArgument: OnValueChanged
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3272083400076900756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263591931412963008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b366686626dcf4d4e90834a89eaa8f46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 9190119953965506729}
+  switchToControllerMap: 00000000ffffffff01000000
+  targetController: {fileID: 2281800180568411896}
+  SwitchSideAnimator:
+  - {fileID: 4401638272681535061}
+  switchAnimationParamater: SwitchPosition
+  switchPosition: 1
+--- !u!114 &9190119953965506729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263591931412963008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 3
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: f619602fac3ddee46b08149f4de515c8, type: 2}
+  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
 --- !u!1 &1645302281881041568
 GameObject:
   m_ObjectHideFlags: 0
@@ -913,7 +968,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: RouteToParamaterMap
+    - Name: ControlToParamaterMap
       Entry: 6
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 1054795953820116318}
@@ -921,23 +976,23 @@ MonoBehaviour:
   SettedLockStates: 
   lockerInstances: []
   SettedLockIndex: 
-  positionUpdated: 0
+  PositionUpdatedByLocking: 0
   failSafeIndex: 1
+  Logging: 0
   ReferingInterlocks: []
+  currentUserControl: 0
   controllingPosition: 0
-  switchToControllerMap: 00000000ffffffff01000000
-  SwitchSideAnimator:
-  - {fileID: 4401638272681535061}
-  switchAnimationParamater: SwitchPosition
   LockstateCallbackBehaviours: []
-  switchPosition: 1
+  TargeterInstances: []
+  ControlTargetsArray: 
+  UserDirectIndex: -1
   pointInstances: []
   PointSideAnimators:
   - {fileID: 4401638272681535061}
   currentRouteParamater: PointRoute
   progressParamater: PointMovePos
   changeTimeLength: 4
-  PointRouteIndex: 0
+  CurrentPointRouteMapIndex: 0
   changeProgress: 0
 --- !u!114 &1054795953820116318
 MonoBehaviour:
@@ -1004,10 +1059,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d97e3d5f3ecccaf438bf4052d08e0cf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Route_To_ParamaterMaps:
+  Control_To_ParamaterMaps:
   - onPointConOrder: 0
     linkedAnimator: {fileID: 4401638272681535061}
-    Route_To_Paramater:
+    Control_To_Paramater:
     - 0
     - 1
 --- !u!1001 &2597509935439403115

@@ -23,7 +23,13 @@ namespace RBUR_SignalIntegrator
     /// virtualization controller for machine<Point,Signal,Sign>
     /// Consolidate the control from multiple sources and apply it to the machine.
     /// </summary>
-    public class AbstractIndirectController : AbstractLockerConsolidater
+
+
+    public
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+    abstract
+#endif
+        class AbstractIndirectController : AbstractLockerConsolidater
     {
         public bool Logging = false;
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
@@ -91,14 +97,19 @@ namespace RBUR_SignalIntegrator
             {
                 UserDirectIndex = targeterIDX;
             }
-            if (!isLocked())
+            int nextControlTarget = EvaluateControlTarget();
+            if (!isLocked() && GetCurrentPosition()!= nextControlTarget)
             {
-                applyPositionToController(EvaluateControlTarget());
+                applyPositionToController(nextControlTarget);
+                if (isControllerOwner())
+                {
+                    SyncController();
+                }
             }
 
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(TrySetControlTarget));
 
-            return ControlTarget == EvaluateControlTarget();
+            return ControlTarget == nextControlTarget;
         }
 
         /// <summary>
@@ -205,10 +216,11 @@ namespace RBUR_SignalIntegrator
                 if (!isLocked())
                 {
                     int nextControlTarget = EvaluateControlTarget();
-                    if (nextControlTarget != controllingPosition)
+                    if (nextControlTarget != -1 && nextControlTarget != controllingPosition)
                     {
+                        Debug.Log("SetUpdatedDetectorFlag " + this.name + ", GetCurrentPosition: " + GetCurrentPosition() + ", nextControlTarget: " + nextControlTarget, this);
                         applyPositionToController(nextControlTarget);
-                        SetUpdatedDetectorFlag();
+                        SetFlagPosChangeOnLockDetector();
                     }
                 }
                 foreach (UdonBehaviour beh in LockstateCallbackBehaviours)
@@ -240,6 +252,13 @@ namespace RBUR_SignalIntegrator
             }
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        protected abstract void PostApplyControl();
+#else 
+        protected virtual void PostApplyControl(){
+        }
+#endif
 
         //Getters
         public override int GetCurrentPosition()
@@ -330,7 +349,6 @@ namespace RBUR_SignalIntegrator
         protected virtual void OnDrawGizmosSelected()
         {
         }
-
 #endif
     }
 }

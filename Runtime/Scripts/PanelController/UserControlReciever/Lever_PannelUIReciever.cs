@@ -15,7 +15,7 @@ namespace RBUR_SignalIntegrator
         //TODO これAbstractClassいらないね
         [SerializeField] private protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] private protected AbstractIndirectController targetController;//index:switch, value:controller. -1 is mid(not lever local control)
-        [SerializeField] private protected Animator[] SwitchSideAnimator;
+        [SerializeField] private protected Animator[] SwitchSideAnimator = new Animator[0];
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
         [SerializeField][UdonSynced] private protected int switchPosition;
         Slider slider
@@ -34,16 +34,20 @@ namespace RBUR_SignalIntegrator
         private void Start()
         {
             if (slider) slider.maxValue = (switchToControllerMap.Length - 1);
+            OnDeserialization();
         }
 
         public override void OnDeserialization()
         {
             SyncUI(true);
+            targetController.TrySetControlTarget(this, switchToControllerMap[switchPosition], true);
         }
         public virtual void OnValueChanged()//Call by UI
         {
-
             if (slider != null) switchPosition = (int)slider.value;
+
+            Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
+            Networking.SetOwner(Networking.LocalPlayer, targetController.gameObject);
 
             SyncUI(false);
 

@@ -501,7 +501,25 @@ public class IndirectController_Test
         _indirectController.tryUpdateLocking(_locker1, false, 5);
 
         // 位置が同じなので UpdatedDetectorFlag は立たない
-        Assert.IsFalse(_indirectController.GetUpdatedDetectorFlag());
+        Assert.IsFalse(_indirectController.GetFlagPosChangeOnLockDetector());
+    }
+
+    [Test]
+    public void UpdateLocking_WhenLockStateChangesAndNoActiveController_DoesNotCallSetUpdatedFlag()
+    {
+        SetLockData(
+            new UdonSharpBehaviour[] { _locker1 },
+            new[] { true },
+            new[] { 5 });
+        SetTargeterData(
+            new UdonSharpBehaviour[] { _locker1 },
+            new[] { -1 });
+        _indirectController.SetCurrentPosition(0);
+
+        _indirectController.tryUpdateLocking(_locker1, false, 5);
+
+        // 位置が同じなので UpdatedDetectorFlag は立たない
+        Assert.IsFalse(_indirectController.GetFlagPosChangeOnLockDetector());
     }
 
     // ========== EvaluateControlTarget() Caching Tests ==========
@@ -695,11 +713,6 @@ public class TestIndirectController : AbstractIndirectController
         return GetNetworkUpdate();
     }
 
-    public void SetUpdatedDetectorFlag()
-    {
-        base.SetUpdatedDetectorFlag();
-    }
-
     public int GetSendControllingPositionPublic()
     {
         FieldInfo field = typeof(AbstractIndirectController).GetField(
@@ -713,6 +726,10 @@ public class TestIndirectController : AbstractIndirectController
         }
 
         return (int)field.GetValue(this);
+    }
+
+    protected override void PostApplyControl()
+    {
     }
 }
 

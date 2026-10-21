@@ -107,7 +107,7 @@ namespace RBUR_SignalIntegrator
                 //Initialize controller for update detection.
                 foreach (AbstractLockerConsolidater locker in affectedLockers)
                 {
-                    locker.ResetUpdatedDetectorFlag();
+                    locker.ResetFlagPosChangeOnLockDetector();
                 }
                 //Flag for Affected Object Search
                 FailSafeCalled = false;
@@ -162,11 +162,15 @@ namespace RBUR_SignalIntegrator
             bool LockerUpdated = false;
             foreach (AbstractLockerConsolidater locker in affectedLockers)
             {
-                if (locker.GetUpdatedDetectorFlag())
+                if (locker.GetFlagPosChangeOnLockDetector())
                 {
                     LockerUpdated = true;
                     break;
                 }
+            }
+            foreach (AbstractLockerConsolidater locker in affectedLockers)
+            {
+                locker.ResetFlagPosChangeOnLockDetector();//フラグを降ろしておかないと関係他鎖錠の更新時に壊れる事になる
             }
 
             if (LockerUpdated && update_AffectedInterlock)
