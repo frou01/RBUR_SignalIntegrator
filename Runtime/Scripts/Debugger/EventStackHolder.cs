@@ -37,7 +37,6 @@ namespace RBUR_SignalIntegrator
             pointedStack += "()";
             pointedStack += "\n";
 
-            StackString = StackString.Remove(StackString.Length - pointedStack.Length);
             if (nestBottom)
             {
                 if (debugLog)
@@ -46,6 +45,7 @@ namespace RBUR_SignalIntegrator
                 }
                 nestBottom = false;
             }
+            StackString = StackString.Remove(StackString.Length - pointedStack.Length);
             indent = indent.Remove(indent.Length - "    ".Length);
         }
         public string GetCurrentStackString()

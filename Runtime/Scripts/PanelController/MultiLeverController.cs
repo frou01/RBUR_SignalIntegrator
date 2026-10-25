@@ -16,7 +16,7 @@ namespace RBUR_SignalIntegrator
         [UdonSynced][SerializeField] private protected int switchPosition;
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
-        [HideInInspector][SerializeField] public AbstractIndirectController[] controlledLevers;
+        [HideInInspector][SerializeField] public AbstractIndirectController[] controlledLevers;//privateにするべき
         [HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [HideInInspector][SerializeField] private protected int SwitchPositionNum;
         [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
@@ -84,9 +84,9 @@ namespace RBUR_SignalIntegrator
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(SetControlToLevers));
 
-            if (switchPosition != prevAppliedPos)
+            if (newSwitchPosition != prevAppliedPos)
             {
-                prevAppliedPos = switchPosition;
+                switchPosition = prevAppliedPos = newSwitchPosition;
                 if(TakeOwner) setControllerOwner();
 
                 //Try control Controllers without interlock update
