@@ -73,12 +73,11 @@ namespace RBUR_SignalIntegrator
                     if (pointCorrespondController)
                     {
                         MultiLever_SwitchToControlMapsHolder switchMapHolder = controller.GetComponent<MultiLever_SwitchToControlMapsHolder>();
+                        Undo.RecordObject(switchMapHolder, "Fetching Point Controller/Route settings");
                         if (!controller.controlledLevers.Contains(pointCorrespondController))
                         {
-                            controller.controlledLevers = controller.controlledLevers.AddItem(pointCorrespondController).ToArray();
                             int[] MultileverControlMap = Enumerable.Repeat(-1, switchMapHolder.switchPositionNum).ToArray();
                             switchMapHolder.Switch_To_ControlMaps.Add(new To_ControllerMap(-1, pointCorrespondController, MultileverControlMap));
-                            EditorUtility.SetDirty(controller);
                         }
                         int controlTarget = GetControlFromRoute(pointCorrespondController, targetPoint, targetRoutes[pointIdx]);
                         if (controlTarget != -1)

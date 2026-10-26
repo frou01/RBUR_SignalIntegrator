@@ -16,16 +16,39 @@ namespace RBUR_SignalIntegrator
         [UdonSynced][SerializeField] private protected int switchPosition;
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
-        [HideInInspector][SerializeField] public AbstractIndirectController[] controlledLevers;//privateにするべき
+        [HideInInspector][SerializeField] private AbstractIndirectController[] m_controlledLevers;
+        [HideInInspector] public AbstractIndirectController[] controlledLevers
+        {
+            get
+            {
+                if (m_controlledLevers != null)
+                {
+                    AbstractIndirectController[] b_controlledLevers = m_controlledLevers;
+                    m_controlledLevers = null;
+                    return b_controlledLevers;
+                }
+                else
+                {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+                    return GetComponent<MultiLever_SwitchToControlMapsHolder>().GetControllers();
+#else
+                    return new AbstractIndirectController[0];
+#endif
+                }
+            }
+        }
         [HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [HideInInspector][SerializeField] private protected int SwitchPositionNum;
         [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
-        public void Set_switchToControllerMap(int[][] switchToControllerMap)
+        public virtual void Set_switchToControllerMap(AbstractIndirectController[] controlledLevers , int[][] switchToControllerMap)
         {
+            this.m_controlledLevers = controlledLevers;
             this.switchToControllerMap = switchToControllerMap;
             if (switchToControllerMap.Length > 0)
                 SwitchPositionNum = switchToControllerMap[0].Length;
         }
+
+
         Slider slider
         {
             get
@@ -80,7 +103,7 @@ namespace RBUR_SignalIntegrator
         }
 
         int prevAppliedPos = -2;
-        public void SetControlToLevers(int newSwitchPosition,bool TakeOwner)
+        public virtual void SetControlToLevers(int newSwitchPosition,bool TakeOwner)
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(SetControlToLevers));
 
@@ -91,7 +114,7 @@ namespace RBUR_SignalIntegrator
 
                 //Try control Controllers without interlock update
                 int idx = 0;
-                foreach (AbstractIndirectController panelController in controlledLevers)
+                foreach (AbstractIndirectController panelController in m_controlledLevers)
                 {
                     int nextControl = switchToControllerMap[idx][switchPosition];
 

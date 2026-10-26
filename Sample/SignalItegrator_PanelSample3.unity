@@ -233,9 +233,7 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  controlledLevers:
-  - {fileID: 0}
-  - {fileID: 1731882305197672279}
+  m_controlledLevers: []
   SwitchPositionNum: 0
   ReferingInterlocks: []
 --- !u!114 &73533672
@@ -910,7 +908,7 @@ MonoBehaviour:
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
-  interlocking: {fileID: 0}
+  interlocking: {fileID: 2103742559}
 --- !u!1 &564722058
 GameObject:
   m_ObjectHideFlags: 0
@@ -3173,9 +3171,7 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  controlledLevers:
-  - {fileID: 0}
-  - {fileID: 4728980181231292899}
+  m_controlledLevers: []
   SwitchPositionNum: 0
   ReferingInterlocks: []
 --- !u!114 &778747645
@@ -11177,9 +11173,7 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  controlledLevers:
-  - {fileID: 0}
-  - {fileID: 4728980181231292899}
+  m_controlledLevers: []
   SwitchPositionNum: 0
   ReferingInterlocks: []
 --- !u!114 &1431434200
@@ -12199,7 +12193,7 @@ MonoBehaviour:
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
-  interlocking: {fileID: 0}
+  interlocking: {fileID: 2001885754}
 --- !u!1 &1855077852
 GameObject:
   m_ObjectHideFlags: 0
@@ -13164,12 +13158,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2061719699}
-  TargetPoints: []
-  TargetRoute: 
+  TargetPoints:
+  - {fileID: 1498330035}
+  - {fileID: 2061646812}
+  TargetRoute: 0000000000000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
-  interlocking: {fileID: 0}
+  interlocking: {fileID: 2001885754}
 --- !u!1 &2103742556
 GameObject:
   m_ObjectHideFlags: 0
@@ -14324,9 +14320,7 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  controlledLevers:
-  - {fileID: 0}
-  - {fileID: 4728980181231292899}
+  m_controlledLevers: []
   SwitchPositionNum: 0
   ReferingInterlocks: []
 --- !u!114 &3979830836920148085
@@ -15067,9 +15061,7 @@ MonoBehaviour:
   switchPosition: 0
   SwitchSideAnimator: []
   switchAnimationParamater: SwitchPosition
-  controlledLevers:
-  - {fileID: 0}
-  - {fileID: 4920066874882511089}
+  m_controlledLevers: []
   SwitchPositionNum: 0
   ReferingInterlocks: []
 --- !u!95 &4473286241712138691 stripped

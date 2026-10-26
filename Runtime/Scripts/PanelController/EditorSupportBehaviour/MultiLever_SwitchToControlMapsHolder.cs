@@ -23,11 +23,15 @@ namespace RBUR_SignalIntegrator
             MultiLeverController TargetMulCon = GetComponent<MultiLeverController>();
             if (TargetMulCon)
             {
-                TargetMulCon.Set_switchToControllerMap(Switch_To_ControlMaps
-                .Select(val => val.Switch_To_Control)//List<To_ControllerMap> -> List<int[]>
-                .ToArray());
-                TargetMulCon.controlledLevers = Switch_To_ControlMaps.Select(val => val.linkedController).ToArray();
+                TargetMulCon.Set_switchToControllerMap(Switch_To_ControlMaps.Select(val => val.linkedController).ToArray(),
+                    Switch_To_ControlMaps
+                    .Select(val => val.Switch_To_Control)//List<To_ControllerMap> -> List<int[]>
+                    .ToArray());
             }
+        }
+        public AbstractIndirectController[] GetControllers()
+        {
+            return Switch_To_ControlMaps.Select(val => val.linkedController).ToArray();
         }
 
         [System.Serializable]
