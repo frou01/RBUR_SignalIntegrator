@@ -30,10 +30,10 @@ public class IndirectController_Test
     {
         _testRoot = new GameObject("IndirectController_Test");
 
-        _indirectController = CreateChild("IndirectController")
+        _indirectController = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"IndirectController")
             .AddComponent<TestIndirectController>();
 
-        _eventStackHolder = CreateChild("EventStackHolder")
+        _eventStackHolder = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "EventStackHolder")
             .AddComponent<EventStackHolder>();
 
         _indirectController.eventStackHolder = _eventStackHolder;
@@ -57,13 +57,6 @@ public class IndirectController_Test
         {
             UnityEngine.Object.DestroyImmediate(_testRoot);
         }
-    }
-
-    private GameObject CreateChild(string name)
-    {
-        GameObject child = new GameObject(name);
-        child.transform.SetParent(_testRoot.transform);
-        return child;
     }
 
     private void SetLockData(
@@ -111,7 +104,7 @@ public class IndirectController_Test
     public void TrySetControlTarget_WithExistingTargeter_UpdatesControl()
     {
         // Create a real UdonSharpBehaviour mock wrapper for existing targeters
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { 5 });
@@ -125,7 +118,7 @@ public class IndirectController_Test
     [Test]
     public void TrySetControlTarget_WithUserDirectControl_SetsUserDirectIndexAndAppliesPosition()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { 0 });
@@ -141,8 +134,8 @@ public class IndirectController_Test
     [Test]
     public void TrySetControlTarget_MultipleTargetersSwitchUserDirect()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { -1, 0 });
@@ -175,7 +168,7 @@ public class IndirectController_Test
     [Test]
     public void AddNewTargeter_WithNewInstance_AddsTargeterAndInitializesControl()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(new UdonSharpBehaviour[0], new int[0]);
 
         bool result = _indirectController.AddNewTargeter(realLocker1);
@@ -189,7 +182,7 @@ public class IndirectController_Test
     [Test]
     public void AddNewTargeter_WithDuplicateInstance_ReturnsFalse()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { 10 });
@@ -203,8 +196,8 @@ public class IndirectController_Test
     [Test]
     public void AddNewTargeter_PreservesExistingDataAndInitializesNewElements()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { 5 });
@@ -233,8 +226,8 @@ public class IndirectController_Test
     [Test]
     public void EvaluateControlTarget_WithAllTargetsMinusOne_ReturnsMinusOne()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { -1, -1 });
@@ -247,8 +240,8 @@ public class IndirectController_Test
     [Test]
     public void EvaluateControlTarget_ReturnsFirstNonMinusOneTarget()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { -1, 10 });
@@ -261,8 +254,8 @@ public class IndirectController_Test
     [Test]
     public void EvaluateControlTarget_WithMultipleValidTargets_ReturnsFirst()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { 5, 10 });
@@ -277,8 +270,8 @@ public class IndirectController_Test
     [Test]
     public void EvaluateUserDirectControl_WithNoUserDirect_ReturnsMinusOne()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { 5, 10 });
@@ -292,8 +285,8 @@ public class IndirectController_Test
     [Test]
     public void EvaluateUserDirectControl_WithValidUserDirectIndex_ReturnsCorrectTarget()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { 5, 15 });
@@ -307,7 +300,7 @@ public class IndirectController_Test
     [Test]
     public void EvaluateUserDirectControl_WithOutOfRangeIndex_ReturnsMinusOne()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { 5 });
@@ -398,7 +391,7 @@ public class IndirectController_Test
     [Test]
     public void TrySetControlTarget_NotLockedAppliesPosition_ReturnsTrue()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { -1 });
@@ -417,7 +410,7 @@ public class IndirectController_Test
     [Test]
     public void TrySetControlTarget_LockedDoesNotApplyPosition()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { -1 });
@@ -435,7 +428,7 @@ public class IndirectController_Test
     [Test]
     public void TrySetControlTarget_CacheClearedOnNewControl()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1 },
             new[] { 10 });
@@ -469,7 +462,7 @@ public class IndirectController_Test
     [Test]
     public void UpdateLocking_WhenLockStateChangesToFalse_AppliesEvaluatedControlTarget()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
         SetLockData(
             new UdonSharpBehaviour[] { _locker1 },
             new[] { true },
@@ -526,8 +519,8 @@ public class IndirectController_Test
     [Test]
     public void EvaluateControlTarget_CacheHit_ReturnsCachedValue()
     {
-        var realLocker1 = CreateChild("RealLocker1").AddComponent<TestIndirectController>();
-        var realLocker2 = CreateChild("RealLocker2").AddComponent<TestIndirectController>();
+        var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker1").AddComponent<TestIndirectController>();
+        var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"RealLocker2").AddComponent<TestIndirectController>();
         SetTargeterData(
             new UdonSharpBehaviour[] { realLocker1, realLocker2 },
             new[] { 5, 10 });

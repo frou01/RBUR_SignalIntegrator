@@ -18,17 +18,17 @@ public class AbstractLockerConsolidater_Test
     {
         _testRoot = new GameObject("AbstractLockerConsolidater_Test");
 
-        _consolidater = CreateChild("Consolidater")
+        _consolidater = CreateChild(_testRoot, "Consolidater")
             .AddComponent<TestLockerConsolidater>();
 
-        _eventStackHolder = CreateChild("EventStackHolder")
+        _eventStackHolder = CreateChild(_testRoot, "EventStackHolder")
             .AddComponent<EventStackHolder>();
 
         _consolidater.eventStackHolder = _eventStackHolder;
-        SetLockData(new UdonSharpBehaviour[0], new bool[0], new int[0]);
+        SetLockData(_consolidater,new UdonSharpBehaviour[0], new bool[0], new int[0]);
 
-        _locker1 = CreateInterlocking("Locker1");
-        _locker2 = CreateInterlocking("Locker2");
+        _locker1 = CreateInterlocking(_testRoot,"Locker1");
+        _locker2 = CreateInterlocking(_testRoot,"Locker2");
     }
 
     [TearDown]
@@ -40,23 +40,23 @@ public class AbstractLockerConsolidater_Test
         }
     }
 
-    private GameObject CreateChild(string name)
+    public static GameObject CreateChild(GameObject root, string name)
     {
         GameObject child = new GameObject(name);
-        child.transform.SetParent(_testRoot.transform);
+        child.transform.SetParent(root.transform);
         return child;
     }
 
-    private Interlocking CreateInterlocking(string name)
+    public static Interlocking CreateInterlocking(GameObject root, string name)
     {
-        GameObject interlockingObject = CreateChild(name);
+        GameObject interlockingObject = CreateChild(root, name);
         Interlocking interlocking = interlockingObject.AddComponent<Interlocking>();
 
         RouteLocker routeLocker = interlockingObject.AddComponent<RouteLocker>();
         routeLocker.Lockers = new AbstractLockerConsolidater[0];
         routeLocker.setParentInterlock(interlocking);
 
-        GameObject fromLockerObject = CreateChild(name + "_FromLocker");
+        GameObject fromLockerObject = CreateChild(root, name + "_FromLocker");
         TestLockerConsolidater fromLocker = fromLockerObject.AddComponent<TestLockerConsolidater>();
         fromLocker.SetLockData(new UdonSharpBehaviour[0], new bool[0], new int[0]);
 
@@ -68,7 +68,7 @@ public class AbstractLockerConsolidater_Test
         return interlocking;
     }
 
-    private void SetLockData(
+    public static void SetLockData(TestLockerConsolidater consolidater,
         UdonSharpBehaviour[] lockers,
         bool[] lockStates,
         int[] lockIndices)
@@ -81,7 +81,7 @@ public class AbstractLockerConsolidater_Test
         Assert.That(lockIndices.Length, Is.EqualTo(lockers.Length),
             "ロッカー配列とロック位置配列の要素数が一致していません。");
 
-        _consolidater.SetLockData(lockers, lockStates, lockIndices);
+        consolidater.SetLockData(lockers, lockStates, lockIndices);
     }
 
     private static void SetRequiredField(object target, string fieldName, object value)
@@ -97,7 +97,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void IsLocked_WithNoLocks_ReturnsFalse()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { false, false },
             new[] { 0, 0 });
@@ -108,7 +108,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void IsLocked_WithAnyLock_ReturnsTrue()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { false, true },
             new[] { 0, 5 });
@@ -119,7 +119,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void IsLocked_WithEmptyArrays_ReturnsFalse()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[0],
             new bool[0],
             new int[0]);
@@ -130,7 +130,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void AddNewLocker_WithNewInstance_AddsLockerAndInitializesArrays()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[0],
             new bool[0],
             new int[0]);
@@ -148,7 +148,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void AddNewLocker_WithDuplicateInstance_ReturnsFalse()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1 },
             new[] { false },
             new[] { 0 });
@@ -162,7 +162,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void AddNewLocker_PreservesExistingDataAndInitializesNewElements()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1 },
             new[] { true },
             new[] { 5 });
@@ -183,7 +183,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void TryUpdateLocking_WithNewLocker_AddsAndLocks()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[0],
             new bool[0],
             new int[0]);
@@ -199,7 +199,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void TryUpdateLocking_UnlockingExistingLocker_ReleasesLock()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1 },
             new[] { true },
             new[] { 5 });
@@ -213,7 +213,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void TryUpdateLocking_WithSameLockPosition_Succeeds()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1 },
             new[] { true },
             new[] { 5 });
@@ -228,7 +228,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void TryUpdateLocking_SameLockerChangesPosition_Succeeds()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1 },
             new[] { true },
             new[] { 5 });
@@ -243,7 +243,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void TryUpdateLocking_ConflictingPositions_ReturnsFalse_ThenUnlockingOneResolvesConflict()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { false, false },
             new[] { 0, 0 });
@@ -266,7 +266,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void TryUpdateLocking_LeavesEventStackBalanced()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[0],
             new bool[0],
             new int[0]);
@@ -280,7 +280,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void CheckFaultAndGetLockIndex_WithNoLocks_ReturnsNoFaultAndMinusOne()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { false, false },
             new[] { 0, 0 });
@@ -294,7 +294,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void CheckFaultAndGetLockIndex_WithLocksAtSamePosition_ReturnsNoFault()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { true, true },
             new[] { 5, 5 });
@@ -308,7 +308,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void CheckFaultAndGetLockIndex_WithLocksAtDifferentPositions_ReturnsFault()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { true, true },
             new[] { 5, 10 });
@@ -332,7 +332,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void RelayFailSafe_DispatchesToRegisteredInterlocking()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1 },
             new[] { false },
             new[] { 0 });
@@ -345,7 +345,7 @@ public class AbstractLockerConsolidater_Test
     [Test]
     public void SetToFailSafePosition_ClearsLocksAndAppliesFailSafePosition()
     {
-        SetLockData(
+        SetLockData(_consolidater,
             new UdonSharpBehaviour[] { _locker1, _locker2 },
             new[] { true, true },
             new[] { 5, 5 });

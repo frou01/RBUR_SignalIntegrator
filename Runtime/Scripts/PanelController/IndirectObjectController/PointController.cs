@@ -13,7 +13,7 @@ namespace RBUR_SignalIntegrator
     [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_ControlToParamaterHolder))]
     public class PointController : AbstractIndirectController
     {
-        [SerializeField] protected AbstractPointSetter[] pointInstances;
+        [SerializeField] protected AbstractPointSetter[] pointInstances;//TODO: PointLever_ControlToRouteIndexHolderを優先に書き直す
         [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)
         [HideInInspector][OdinSerialize][SerializeField] protected float[][] ControlToParamaterMap;//2nd index:route, value:animationParamater.
         public void SetControlToRouteIndexMap(int[][] ControlToRouteIndexMap)
@@ -32,11 +32,15 @@ namespace RBUR_SignalIntegrator
         {
             return this.ControlToParamaterMap;
         }
+        public void setPointInstances(AbstractPointSetter[] points)
+        {
+            this.pointInstances = points;
+        }
         public AbstractPointSetter[] getPointInstances()
         {
             return pointInstances;
         }
-        [SerializeField] Animator[] PointSideAnimators;
+        [SerializeField] Animator[] PointSideAnimators;//TODO: PointLever_ControlToParamaterHolderを優先に書き直す
         public Animator[] attachedPointAnimator()
         {
             return PointSideAnimators;
