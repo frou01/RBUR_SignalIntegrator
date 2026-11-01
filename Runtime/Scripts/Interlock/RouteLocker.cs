@@ -15,7 +15,7 @@ namespace RBUR_SignalIntegrator
         [FormerlySerializedAs("TargetPoints")]
         [SerializeField] protected AbstractPointSetter[] m_TargetPoints;
         
-        public AbstractPointSetter[] TargetPoints//TODO 値入力用コンポーネントを別に用意して分岐器-進路を外部設定にするべき。EditorGUI.BeginChangeCheck()を使えば探索を組める。
+        public AbstractPointSetter[] TargetPoints//TODO: カスタムエディタを用意して分岐器-進路を外部設定にするべき。EditorGUI.BeginChangeCheck()を使えば探索を組める。
         {
             get
             {
