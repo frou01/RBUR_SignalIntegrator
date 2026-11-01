@@ -180,48 +180,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
+    - Name: m_SwitchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 1|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
       Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -275,8 +239,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switchPositionNum: 2
   Switch_To_ControlMaps:
-  - onMulConOrder: 0
-    linkedController: {fileID: 1105354726}
+  - linkedController: {fileID: 1105354726}
     Switch_To_Control: 0000000001000000
 --- !u!114 &73533674
 MonoBehaviour:
@@ -522,7 +485,7 @@ PrefabInstance:
     - target: {fileID: 1941534657245948520, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
       propertyPath: m_text
-      value: Dep p1
+      value: DepP1L
       objectReference: {fileID: 0}
     - target: {fileID: 1941534657245948520, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
@@ -902,9 +865,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 520425863}
-  TargetPoints:
+  m_TargetPoints:
   - {fileID: 2061646812}
-  TargetRoute: 00000000
+  m_TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
@@ -2556,7 +2519,7 @@ GameObject:
   - component: {fileID: 579346109}
   - component: {fileID: 579346108}
   m_Layer: 0
-  m_Name: State_P1U
+  m_Name: State_S1L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2625,7 +2588,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 579346108}
   eventStackHolder: {fileID: 0}
-  locker: {fileID: 0}
+  locker: {fileID: 1855077853}
   MeetPositionIndex: 00000000
   interlocking: {fileID: 0}
 --- !u!1 &626700149 stripped
@@ -2738,9 +2701,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 636827582}
-  TargetPoints:
+  m_TargetPoints:
   - {fileID: 1498330035}
-  TargetRoute: 00000000
+  m_TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
@@ -2836,6 +2799,90 @@ MonoBehaviour:
   FailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
+--- !u!1 &688773875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 688773876}
+  - component: {fileID: 688773878}
+  - component: {fileID: 688773877}
+  m_Layer: 0
+  m_Name: State_Dep1L
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &688773876
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688773875}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1547974025}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &688773877
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688773875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 1
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: dc42e438dc623d34dbd5da0225f99bb2, type: 2}
+  serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+--- !u!114 &688773878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688773875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb78ef1f75d46f64a814271acae160d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 688773877}
+  eventStackHolder: {fileID: 0}
+  locker: {fileID: 1072270164}
+  MeetPositionIndex: 00000000
+  interlocking: {fileID: 0}
 --- !u!1 &690977681
 GameObject:
   m_ObjectHideFlags: 0
@@ -3118,48 +3165,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
+    - Name: m_SwitchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 1|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
       Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -3213,11 +3224,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switchPositionNum: 2
   Switch_To_ControlMaps:
-  - onMulConOrder: 0
-    linkedController: {fileID: 1072270164}
+  - linkedController: {fileID: 1072270164}
     Switch_To_Control: 0000000001000000
-  - onMulConOrder: 1
-    linkedController: {fileID: 4728980181231292899}
+  - linkedController: {fileID: 4728980181231292899}
     Switch_To_Control: ffffffff00000000
 --- !u!1 &787602885 stripped
 GameObject:
@@ -11120,48 +11129,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
+    - Name: m_SwitchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 1|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
       Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -11215,11 +11188,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switchPositionNum: 2
   Switch_To_ControlMaps:
-  - onMulConOrder: 0
-    linkedController: {fileID: 1855077853}
+  - linkedController: {fileID: 1855077853}
     Switch_To_Control: 0000000001000000
-  - onMulConOrder: 1
-    linkedController: {fileID: 4728980181231292899}
+  - linkedController: {fileID: 4728980181231292899}
     Switch_To_Control: ffffffff00000000
 --- !u!4 &1442469216 stripped
 Transform:
@@ -11420,6 +11391,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2061719698}
+  - {fileID: 688773876}
   - {fileID: 1868328716}
   m_Father: {fileID: 500647294}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11604,7 +11576,7 @@ PrefabInstance:
     - target: {fileID: 572690526087485167, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
       propertyPath: m_Name
-      value: lamp_P1U
+      value: lamp_S1L
       objectReference: {fileID: 0}
     - target: {fileID: 916845720950885461, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
@@ -11659,7 +11631,7 @@ PrefabInstance:
     - target: {fileID: 1941534657245948520, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
       propertyPath: m_text
-      value: P1U
+      value: S1L
       objectReference: {fileID: 0}
     - target: {fileID: 1941534657245948520, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
@@ -11915,9 +11887,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1725361157}
-  TargetPoints:
+  m_TargetPoints:
   - {fileID: 1498330035}
-  TargetRoute: 00000000
+  m_TargetRoute: 00000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
@@ -12099,9 +12071,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1829162338}
-  TargetPoints:
+  m_TargetPoints:
   - {fileID: 1498330035}
-  TargetRoute: 01000000
+  m_TargetRoute: 01000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
@@ -12186,10 +12158,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1848272542}
-  TargetPoints:
+  m_TargetPoints:
   - {fileID: 1498330035}
   - {fileID: 2061646812}
-  TargetRoute: 0000000001000000
+  m_TargetRoute: 0000000001000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
@@ -12206,7 +12178,7 @@ GameObject:
   - component: {fileID: 1855077853}
   - component: {fileID: 1855077854}
   m_Layer: 0
-  m_Name: SigLever_P1L
+  m_Name: SigLever_S1L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12306,7 +12278,7 @@ GameObject:
   - component: {fileID: 1868328718}
   - component: {fileID: 1868328717}
   m_Layer: 0
-  m_Name: State_Dep_1
+  m_Name: State_Dep1R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12375,7 +12347,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1868328717}
   eventStackHolder: {fileID: 0}
-  locker: {fileID: 0}
+  locker: {fileID: 1105354726}
   MeetPositionIndex: 01000000
   interlocking: {fileID: 0}
 --- !u!1 &1891880061
@@ -12459,7 +12431,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1891880063}
   eventStackHolder: {fileID: 0}
-  locker: {fileID: 0}
+  locker: {fileID: 1072270164}
   MeetPositionIndex: 00000000
   interlocking: {fileID: 0}
 --- !u!1 &1913067723 stripped
@@ -13158,10 +13130,10 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2061719699}
-  TargetPoints:
+  m_TargetPoints:
   - {fileID: 1498330035}
   - {fileID: 2061646812}
-  TargetRoute: 0000000000000000
+  m_TargetRoute: 0000000000000000
   eventStackHolder: {fileID: 0}
   ControlTargetIndex: 
   m_lockers: []
@@ -14267,48 +14239,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
+    - Name: m_SwitchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 1|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
       Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -14375,8 +14311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switchPositionNum: 2
   Switch_To_ControlMaps:
-  - onMulConOrder: 0
-    linkedController: {fileID: 1454166086}
+  - linkedController: {fileID: 1454166086}
     Switch_To_Control: 0000000001000000
 --- !u!1001 &4099424761986962798
 PrefabInstance:
@@ -14975,17 +14910,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switchPositionNum: 2
   Switch_To_ControlMaps:
-  - onMulConOrder: 0
-    linkedController: {fileID: 690977682}
+  - linkedController: {fileID: 690977682}
     Switch_To_Control: 0000000001000000
-  - onMulConOrder: 1
-    linkedController: {fileID: 4920066874882511089}
+  - linkedController: {fileID: 4920066874882511089}
     Switch_To_Control: 0000000002000000
-  - onMulConOrder: 1
-    linkedController: {fileID: 4728980181231292899}
+  - linkedController: {fileID: 4728980181231292899}
     Switch_To_Control: ffffffff00000000
-  - onMulConOrder: 1
-    linkedController: {fileID: 1731882305197672279}
+  - linkedController: {fileID: 1731882305197672279}
     Switch_To_Control: ffffffff00000000
 --- !u!114 &4457645061710611203
 MonoBehaviour:
@@ -15008,48 +14939,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
+    - Name: m_SwitchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 1|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
       Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -16479,7 +16374,7 @@ PrefabInstance:
     - target: {fileID: 1941534657245948520, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}
       propertyPath: m_text
-      value: Dep p1
+      value: DepP1R
       objectReference: {fileID: 0}
     - target: {fileID: 1941534657245948520, guid: 856af4f000569a84682a474d2c189a2f,
         type: 3}

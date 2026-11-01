@@ -1,6 +1,7 @@
 ﻿using frou01.RigidBodyTrain;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -8,28 +9,47 @@ namespace RBUR_SignalIntegrator
 {
     public class RouteLocker : UdonSharpBehaviour
     {
-        [SerializeField] protected AbstractPointSetter[] TargetPoints;
-        [SerializeField] protected int[] TargetRoute;
+        /// <summary>
+        /// Route array [index = points-index]
+        /// </summary>
+        [FormerlySerializedAs("TargetPoints")]
+        [SerializeField] protected AbstractPointSetter[] m_TargetPoints;
+        
+        public AbstractPointSetter[] TargetPoints//TODO 値入力用コンポーネントを別に用意して分岐器-進路を外部設定にするべき。EditorGUI.BeginChangeCheck()を使えば探索を組める。
+        {
+            get
+            {
+                return m_TargetPoints;
+            }
+            set
+            {
+                m_TargetPoints = value;
+            }
+        }
+        [FormerlySerializedAs("TargetRoute")]
+        [SerializeField] protected int[] m_TargetRoute;
+        public int[] TargetRoute
+        {
+            get
+            {
+                return m_TargetRoute;
+            }
+            set
+            {
+                m_TargetRoute = value;
+            }
+        }
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] public int[] ControlTargetIndex = new int[0];
         [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] m_lockers = new AbstractLockerConsolidater[0];
         [HideInInspector][SerializeField] protected Interlocking interlocking;
-
-        /// <summary>
-        /// Return user preset route
-        /// </summary>
-        /// <returns>Route array [index = points-index]</returns>
-        public int[] getTargetRoute()
-        {
-            return TargetRoute;
-        }
         /// <summary>
         /// Return user preset Points
         /// </summary>
         /// <returns>Points array [index = route-index]</returns>
         public AbstractPointSetter[] GetTargetPoints()
         {
-            return TargetPoints;
+            return m_TargetPoints;
         }
 
         /// <summary>
@@ -64,9 +84,9 @@ namespace RBUR_SignalIntegrator
             bool isOpen = true;
 
             int idx = 0;
-            foreach (AbstractPointSetter setter in TargetPoints)
+            foreach (AbstractPointSetter setter in m_TargetPoints)
             {
-                if (TargetRoute[idx] != setter.get_current_To_Index())
+                if (m_TargetRoute[idx] != setter.get_current_To_Index())
                 {
                     isOpen = false;
                     break;
@@ -155,9 +175,9 @@ namespace RBUR_SignalIntegrator
         {
             int point_idx = 0;
             int route_idx;
-            if (TargetPoints != null)
+            if (m_TargetPoints != null)
             {
-                foreach (AbstractPointSetter setter in TargetPoints)
+                foreach (AbstractPointSetter setter in m_TargetPoints)
                 {
                     route_idx = 0;
                     Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
@@ -165,7 +185,7 @@ namespace RBUR_SignalIntegrator
 
                     foreach (Rail_Script route in setter.getRoutes())
                     {
-                        if (route_idx == TargetRoute[point_idx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
+                        if (route_idx == m_TargetRoute[point_idx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
                         else Gizmos.color = new Color(1f, 0f, 0f, 1f);
                         setter.DrawGizmo_To(route);
                         route_idx++;

@@ -4,10 +4,13 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "RBUR_SignalIntegrator_ASMDEF",
-        "UdonSharp.Runtime",
+        "VRC.SDKBase",
         "VRC.Udon",
-        "VRC.SDKBase"
+        "VRC.Udon.Editor",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor",
+        "RBUR_Def-udon",
+        "RBUR_SignalIntegrator_ASMDEF"
     ],
     "includePlatforms": [
         "Editor"

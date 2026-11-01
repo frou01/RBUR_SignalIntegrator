@@ -40,7 +40,7 @@ namespace RBUR_SignalIntegrator_Editor
                 foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
                 {
                     int idx = -1;
-                    foreach (AbstractPointSetter points in routeLocker.GetTargetPoints())
+                    foreach (AbstractPointSetter points in routeLocker.TargetPoints)
                     {
                         //ポイントのAnimatorを制御しているController_Baseを抽出し、それに対応するGACLockerConsolidaterを抽出して、RouteLockerに登録する
                         idx++;

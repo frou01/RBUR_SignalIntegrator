@@ -17,36 +17,44 @@ namespace RBUR_SignalIntegrator
         [SerializeField] private protected Animator[] SwitchSideAnimator;
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
         [HideInInspector][SerializeField] private AbstractIndirectController[] m_controlledLevers;
-        [HideInInspector] public AbstractIndirectController[] controlledLevers
+        public AbstractIndirectController[] ControlledLevers
         {
             get
             {
-                if (m_controlledLevers != null)
-                {
-                    AbstractIndirectController[] b_controlledLevers = m_controlledLevers;
-                    m_controlledLevers = null;
-                    return b_controlledLevers;
-                }
-                else
-                {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-                    return GetComponent<MultiLever_SwitchToControlMapsHolder>().GetControllers();
+                return GetComponent<MultiLever_SwitchToControlMapsHolder>().GetControllers();
 #else
-                    return new AbstractIndirectController[0];
+                return new AbstractIndirectController[0];
 #endif
-                }
             }
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            set
+            {
+                m_controlledLevers = value;
+            }
+#endif
         }
-        [HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
+        [HideInInspector][OdinSerialize][SerializeField] private protected int[][] m_SwitchToControllerMap = new int[0][];//index:switch, value:controller. -1 is mid(not lever local control)
+        public int[][] SwitchToControllerMap
+        {
+            get
+            {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+                return GetComponent<MultiLever_SwitchToControlMapsHolder>().get_Switch_to_Controller_Map();
+#else
+                return m_SwitchToControllerMap;
+#endif
+            }
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+            set
+            {
+                m_SwitchToControllerMap = value;
+            }
+#endif
+        }
         [HideInInspector][SerializeField] private protected int SwitchPositionNum;
         [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
-        public virtual void Set_switchToControllerMap(AbstractIndirectController[] controlledLevers , int[][] switchToControllerMap)
-        {
-            this.m_controlledLevers = controlledLevers;
-            this.switchToControllerMap = switchToControllerMap;
-            if (switchToControllerMap.Length > 0)
-                SwitchPositionNum = switchToControllerMap[0].Length;
-        }
 
 
         Slider slider
@@ -116,10 +124,10 @@ namespace RBUR_SignalIntegrator
                 int idx = 0;
                 foreach (AbstractIndirectController panelController in m_controlledLevers)
                 {
-                    int nextControl = switchToControllerMap[idx][switchPosition];
+                    int nextControl = m_SwitchToControllerMap[idx][switchPosition];
 
                     if(TakeOwner && nextControl != -1) panelController.setControllerOwner();
-                    panelController.TrySetControlTarget(this, switchToControllerMap[idx][switchPosition], false);
+                    panelController.TrySetControlTarget(this, m_SwitchToControllerMap[idx][switchPosition], false);
                     idx++;
                 }
 

@@ -17,17 +17,22 @@ namespace RBUR_SignalIntegrator
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] public int switchPositionNum = 2;
-        [SerializeField] public List<To_ControllerMap> Switch_To_ControlMaps;
+        [SerializeField] public List<To_ControllerMap> Switch_To_ControlMaps = new List<To_ControllerMap>();
         public void apply_mulCon_to_Con_Map()
         {
             MultiLeverController TargetMulCon = GetComponent<MultiLeverController>();
             if (TargetMulCon)
             {
-                TargetMulCon.Set_switchToControllerMap(Switch_To_ControlMaps.Select(val => val.linkedController).ToArray(),
-                    Switch_To_ControlMaps
-                    .Select(val => val.Switch_To_Control)//List<To_ControllerMap> -> List<int[]>
-                    .ToArray());
+                TargetMulCon.SwitchToControllerMap = get_Switch_to_Controller_Map();
+                TargetMulCon.ControlledLevers = GetControllers();
             }
+        }
+
+        public int[][] get_Switch_to_Controller_Map()
+        {
+            return Switch_To_ControlMaps
+                .Select(val => val.Switch_To_Control)//List<To_ControllerMap> -> List<int[]>
+                .ToArray();
         }
         public AbstractIndirectController[] GetControllers()
         {
@@ -37,13 +42,11 @@ namespace RBUR_SignalIntegrator
         [System.Serializable]
         public class To_ControllerMap
         {
-            [SerializeField] public int onMulConOrder;
             [SerializeField] public AbstractIndirectController linkedController;
             [Tooltip("index = switch, value = contro. No overwrite lever value = -1")][SerializeField] public int[] Switch_To_Control;
 
-            public To_ControllerMap(int onMulConOrder, AbstractIndirectController linkedController, int[] MulConSwitch_To_ControllerControlMap)
+            public To_ControllerMap(AbstractIndirectController linkedController, int[] MulConSwitch_To_ControllerControlMap)
             {
-                this.onMulConOrder = onMulConOrder;
                 this.linkedController = linkedController;
                 this.Switch_To_Control = MulConSwitch_To_ControllerControlMap;
             }

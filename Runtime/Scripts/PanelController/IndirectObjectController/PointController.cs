@@ -13,16 +13,35 @@ namespace RBUR_SignalIntegrator
     [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_ControlToParamaterHolder))]
     public class PointController : AbstractIndirectController
     {
-        [SerializeField] protected AbstractPointSetter[] pointInstances;//TODO: PointLever_ControlToRouteIndexHolderを優先に書き直す
+        [HideInInspector][SerializeField] protected AbstractPointSetter[] pointInstances;
+        [HideInInspector][SerializeField] Animator[] PointSideAnimators;
         [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)
         [HideInInspector][OdinSerialize][SerializeField] protected float[][] ControlToParamaterMap;//2nd index:route, value:animationParamater.
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public void setPointInstances(AbstractPointSetter[] points)
+        {
+            this.pointInstances = points;
+        }
+        public AbstractPointSetter[] getPointInstances()
+        {
+            return GetComponent<PointLever_ControlToRouteIndexHolder>().get_assignedPointArray();
+        }
         public void SetControlToRouteIndexMap(int[][] ControlToRouteIndexMap)
         {
             this.ControlToRouteIndexMap = ControlToRouteIndexMap;
         }
         public int[][] GetControlToRouteIndexMap()
         {
-            return this.ControlToRouteIndexMap;
+            return GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
+        }
+        public void SetAttachedPointAnimator(Animator[] animators)
+        {
+            this.PointSideAnimators = animators;
+        }
+        public Animator[] GetAttachedPointAnimator()
+        {
+            return GetComponent<PointLever_ControlToParamaterHolder>().get_Attached_Animators();
         }
         public void SetControlToParamaterMap(float[][] RouteToParamaterMap)
         {
@@ -30,21 +49,9 @@ namespace RBUR_SignalIntegrator
         }
         public float[][] GetRouteToParamaterMap()
         {
-            return this.ControlToParamaterMap;
+            return GetComponent<PointLever_ControlToParamaterHolder>().get_Control_to_Paramater_Map();
         }
-        public void setPointInstances(AbstractPointSetter[] points)
-        {
-            this.pointInstances = points;
-        }
-        public AbstractPointSetter[] getPointInstances()
-        {
-            return pointInstances;
-        }
-        [SerializeField] Animator[] PointSideAnimators;//TODO: PointLever_ControlToParamaterHolderを優先に書き直す
-        public Animator[] attachedPointAnimator()
-        {
-            return PointSideAnimators;
-        }
+#endif
         [SerializeField] string currentRouteParamater = "PointRoute";
         [SerializeField] string progressParamater = "PointMovePos";
         int pointCon_prevControllingPosition = -1;

@@ -19,7 +19,7 @@ namespace RBUR_SignalIntegrator
     public class MultiLever_ReferRouteLocker : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] int targetMulConSwitch;
+        [SerializeField] public int targetMulConSwitch;
 
         private static int GetControlFromRoute(PointController pointController, AbstractPointSetter pointSetter, int routeIndex)
         {
@@ -55,7 +55,7 @@ namespace RBUR_SignalIntegrator
                 interlocks.AddRange(obj.GetComponentsInChildren<Interlocking>(true));
             }
             MultiLeverController mulCon = GetComponent<MultiLeverController>();
-            foreach (SignalController signalControllerLever in mulCon.controlledLevers.Where(val => val is SignalController))
+            foreach (SignalController signalControllerLever in mulCon.ControlledLevers.Where(val => val is SignalController))
             {
                 Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
                 ApplyToControlMap(mulCon, pointControllers, correspondInterlock.GetRouteLocker());
@@ -66,18 +66,18 @@ namespace RBUR_SignalIntegrator
             if (controller && routeLocker)
             {
                 int pointIdx = 0;
-                int[] targetRoutes = routeLocker.getTargetRoute();
-                foreach (AbstractPointSetter targetPoint in routeLocker.GetTargetPoints())
+                int[] targetRoutes = routeLocker.TargetRoute;
+                foreach (AbstractPointSetter targetPoint in routeLocker.TargetPoints)
                 {
                     PointController pointCorrespondController = pointControllers.FirstOrDefault(val => val.getPointInstances().Contains(targetPoint));
                     if (pointCorrespondController)
                     {
                         MultiLever_SwitchToControlMapsHolder switchMapHolder = controller.GetComponent<MultiLever_SwitchToControlMapsHolder>();
                         Undo.RecordObject(switchMapHolder, "Fetching Point Controller/Route settings");
-                        if (!controller.controlledLevers.Contains(pointCorrespondController))
+                        if (!controller.ControlledLevers.Contains(pointCorrespondController))
                         {
                             int[] MultileverControlMap = Enumerable.Repeat(-1, switchMapHolder.switchPositionNum).ToArray();
-                            switchMapHolder.Switch_To_ControlMaps.Add(new To_ControllerMap(-1, pointCorrespondController, MultileverControlMap));
+                            switchMapHolder.Switch_To_ControlMaps.Add(new To_ControllerMap(pointCorrespondController, MultileverControlMap));
                         }
                         int controlTarget = GetControlFromRoute(pointCorrespondController, targetPoint, targetRoutes[pointIdx]);
                         if (controlTarget != -1)

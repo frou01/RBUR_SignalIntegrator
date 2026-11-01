@@ -84,7 +84,7 @@ public class AbstractLockerConsolidater_Test
         consolidater.SetLockData(lockers, lockStates, lockIndices);
     }
 
-    private static void SetRequiredField(object target, string fieldName, object value)
+    public static void SetRequiredField(object target, string fieldName, object value)
     {
         FieldInfo field = target.GetType().GetField(
             fieldName,

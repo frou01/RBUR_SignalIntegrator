@@ -1,4 +1,4 @@
-using RBUR_SignalIntegrator;
+ï»¿using RBUR_SignalIntegrator;
 using System.Collections;
 using System.Collections.Generic;
 using UdonSharpEditor;
@@ -54,7 +54,7 @@ namespace RBUR_SignalIntegrator_Editor
                         routeLocker.eventStackHolder = eventStackHolder;
                         if (routeLocker.Lockers == null || routeLocker.Lockers.Length == 0)
                         {
-                            routeLocker.Lockers = new AbstractLockerConsolidater[routeLocker.GetTargetPoints().Length];//•K—v‚È’·‚³‚Ì”z—ñ‚ğŠm•Û‚·‚é
+                            routeLocker.Lockers = new AbstractLockerConsolidater[routeLocker.TargetPoints.Length];//å¿…è¦ãªé•·ã•ã®é…åˆ—ã‚’ç¢ºä¿ã™ã‚‹
                         }
                     }
                     foreach (LockerAndMeetPosition con in obj.GetComponentsInChildren<LockerAndMeetPosition>())
