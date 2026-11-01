@@ -14,7 +14,7 @@ using static RBUR_SignalIntegrator.PointLever_ControlToRouteIndexHolder;
 namespace RBUR_SignalIntegrator
 {
     /// <summary>
-    /// 進路てこへ、Interlockの進路条件を取得しててこ設定に変換する
+    /// Interlockの進路条件を取得して進路てこのてこ設定に変換する
     /// </summary>
     public class MultiLever_ReferRouteLocker : MonoBehaviour
     {
