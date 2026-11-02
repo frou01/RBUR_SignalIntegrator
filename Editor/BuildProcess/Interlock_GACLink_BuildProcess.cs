@@ -1,12 +1,9 @@
 ﻿using frou01.GrabController;
 using frou01.RigidBodyTrain;
 using frou01.util;
-using HarmonyLib;
-//using NUnit.Compatibility;
 using RBUR_SignalIntegrator;
 using System.Collections.Generic;
 using System.Linq;
-//using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -14,9 +11,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDK3.Components;
 using VRC.Udon;
+using static RBUR_SignalIntegrator_Editor.BuildProcessUtility;
 
 namespace RBUR_SignalIntegrator_Editor
 {
+    /// <summary>
+    /// GAC(GrabAnimatorController) で操作するてこと Interlocking の連携
+    /// </summary>
     public class Interlock_GACLink_BuildProcess : IProcessSceneWithReport
     {
         public int callbackOrder => -100;
@@ -24,114 +25,95 @@ namespace RBUR_SignalIntegrator_Editor
         public void OnProcessScene(Scene scene, BuildReport report)
         {
             Debug.Log("InterlockLink GAC Start Process");
-            List<Controller_Base> controllers = new List<Controller_Base>();
-            List<GACLockerConsolidater> gacLockers = new List<GACLockerConsolidater>();
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                controllers.AddRange(obj.GetComponentsInChildren<Controller_Base>(true));
-            }
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                gacLockers.AddRange(obj.GetComponentsInChildren<GACLockerConsolidater>(true));
-            }
+            List<Controller_Base> controllers = FindComponents<Controller_Base>(scene);
+            List<GACLockerConsolidater> gacLockers = FindComponents<GACLockerConsolidater>(scene);
+
+            ResolveRouteLockerGACLockers(scene, controllers, gacLockers);
+            //以降は RouteLocker.Lockers(GAC分)が解決済みであることが前提
             bool failed = false;
-            foreach (GameObject obj in scene.GetRootGameObjects())
+            foreach (Interlocking interlocking in FindComponents<Interlocking>(scene))
             {
-                foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
-                {
-                    int idx = -1;
-                    foreach (AbstractPointSetter points in routeLocker.TargetPoints)
-                    {
-                        //ポイントのAnimatorを制御しているController_Baseを抽出し、それに対応するGACLockerConsolidaterを抽出して、RouteLockerに登録する
-                        idx++;
-                        Animator pointAnimator = points.GetComponent<Animator>();
-                        if (!pointAnimator) continue;
-
-                        Controller_Base pointController = null;
-                        foreach (Controller_Base checkingController in controllers)
-                        {
-                            if (pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator))
-                            {
-                                pointController = checkingController;
-                                break;
-                            }
-                        }
-                        if (!pointController) continue;
-
-                        GACLockerConsolidater pointLocker = null;
-                        foreach (GACLockerConsolidater checkingLockers in gacLockers)
-                        {
-                            if (pointController == checkingLockers.getGACController())
-                            {
-                                pointLocker = checkingLockers;
-                                break;
-                            }
-                        }
-                        if (pointLocker == null)
-                        {
-                            Debug.LogError("Correspond GACLockerConsolidater not found", pointController);
-                        }
-                        else
-                        {
-                            routeLocker.Lockers[idx] = pointLocker;
-                        }
-                    }
-                }
-            }
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                foreach (Interlocking interlocking in obj.GetComponentsInChildren<Interlocking>(true))
-                {
-                    //Setup EventLinkers
-                    UdonBehaviour interlockUdon = UdonSharpEditorUtility.GetBackingUdonBehaviour(interlocking);
-                    List<GACLockerConsolidater> lockers = new List<GACLockerConsolidater>();//関係するLockerについてGACLockerConsolidaterだけを抽出する
-                    if (interlocking.GetFromLocker() is GACLockerConsolidater)
-                    {
-                        lockers.Add((GACLockerConsolidater)interlocking.GetFromLocker());
-                    }
-                    if (interlocking.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in interlocking.GetRouteLocker().Lockers)
-                        {
-                            if (locker is GACLockerConsolidater)
-                            {
-                                lockers.Add((GACLockerConsolidater)locker);
-                            }
-                        }
-                    foreach (LockerAndMeetPosition StateLocker in interlocking.GetInterlockStateLinker())
-                    {
-                        if (StateLocker.getLocker() is GACLockerConsolidater)
-                        {
-                            lockers.Add((GACLockerConsolidater)StateLocker.getLocker());
-                        }
-                    }
-                    foreach (GACLockerConsolidater locker in lockers)
-                    {
-                        VRCPickup Controller = locker.GetComponentInChildren<VRCPickup>();
-                        if (Controller)
-                        {
-                            SyncEventLinker syncEventLinker = Controller.GetComponent<SyncEventLinker>();
-                            PickUpEventLinker pickUpEventLinker = Controller.GetComponent<PickUpEventLinker>();
-                            if (!syncEventLinker)
-                            {
-                                syncEventLinker = Controller.gameObject.AddUdonSharpComponent<SyncEventLinker>();
-                            }
-                            if (!pickUpEventLinker)
-                            {
-                                Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
-                                failed = true;
-                                continue;
-                            }
-                            syncEventLinker.targets = syncEventLinker.targets.AddItem(interlockUdon).ToArray();
-                            pickUpEventLinker.targets = pickUpEventLinker.targets.AddItem(interlockUdon).ToArray();
-                        }
-                    }
-                }
+                failed |= !LinkEventsToInterlock(interlocking);
             }
             if (failed)
             {
                 throw new BuildFailedException("Add PickUpEventLinker to interlocked Controller");
             }
             Debug.Log("InterlockLink GAC Process End");
+        }
 
+        /// <summary>
+        /// 分岐器のAnimatorを制御している Controller_Base を探し、対応する GACLockerConsolidater を RouteLocker.Lockers に登録する
+        /// </summary>
+        private static void ResolveRouteLockerGACLockers(Scene scene, List<Controller_Base> controllers, List<GACLockerConsolidater> gacLockers)
+        {
+            foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
+            {
+                int idx = -1;
+                foreach (AbstractPointSetter points in routeLocker.TargetPoints)
+                {
+                    idx++;
+                    Animator pointAnimator = points.GetComponent<Animator>();
+                    if (!pointAnimator) continue;
+
+                    Controller_Base pointController = controllers.FirstOrDefault(checkingController =>
+                        pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator));
+                    if (!pointController) continue;
+
+                    GACLockerConsolidater pointLocker = gacLockers.FirstOrDefault(checkingLockers => pointController == checkingLockers.getGACController());
+                    if (pointLocker == null)
+                    {
+                        Debug.LogError("Correspond GACLockerConsolidater not found", pointController);
+                    }
+                    else
+                    {
+                        routeLocker.Lockers[idx] = pointLocker;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Interlocking が使う GAC てこの EventLinker に、Interlocking の UdonBehaviour を登録する
+        /// </summary>
+        /// <returns>false: PickUpEventLinker が無いてこがあった</returns>
+        private static bool LinkEventsToInterlock(Interlocking interlocking)
+        {
+            bool success = true;
+            UdonBehaviour interlockUdon = UdonSharpEditorUtility.GetBackingUdonBehaviour(interlocking);
+            foreach (GACLockerConsolidater locker in GetGACLockers(interlocking))
+            {
+                VRCPickup Controller = locker.GetComponentInChildren<VRCPickup>();
+                if (!Controller) continue;
+
+                SyncEventLinker syncEventLinker = Controller.GetComponent<SyncEventLinker>();
+                PickUpEventLinker pickUpEventLinker = Controller.GetComponent<PickUpEventLinker>();
+                if (!syncEventLinker)
+                {
+                    syncEventLinker = Controller.gameObject.AddUdonSharpComponent<SyncEventLinker>();
+                }
+                if (!pickUpEventLinker)
+                {
+                    Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
+                    success = false;
+                    continue;
+                }
+                syncEventLinker.targets = syncEventLinker.targets.AddUnique(interlockUdon);
+                pickUpEventLinker.targets = pickUpEventLinker.targets.AddUnique(interlockUdon);
+            }
+            return success;
+        }
+
+        /// <summary>
+        /// Interlocking が使う Locker のうち GACLockerConsolidater のもの (From_Locker / RouteLocker / toLocker_States)
+        /// </summary>
+        private static List<GACLockerConsolidater> GetGACLockers(Interlocking interlocking)
+        {
+            List<AbstractLockerConsolidater> lockers = new List<AbstractLockerConsolidater>();
+            lockers.Add(interlocking.GetFromLocker());
+            if (interlocking.GetRouteLocker()) lockers.AddRange(interlocking.GetRouteLocker().Lockers);
+            lockers.AddRange(interlocking.GetInterlockStateLinker().Select(stateLocker => stateLocker.getLocker()));
+            return lockers.OfType<GACLockerConsolidater>().ToList();
         }
     }
 }

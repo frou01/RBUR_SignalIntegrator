@@ -1,40 +1,49 @@
 ﻿using frou01.RigidBodyTrain;
-using HarmonyLib;
 using RBUR_SignalIntegrator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UdonSharp;
-using UdonSharpEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using VRC.Udon;
+using static RBUR_SignalIntegrator_Editor.BuildProcessUtility;
 
 namespace RBUR_SignalIntegrator_Editor
 {
+    /// <summary>
+    /// 制御盤(てこ類)の設定反映と、Interlocking との相互参照の構築
+    /// </summary>
     public class Interlock_Pannel_BuildProcess : IProcessSceneWithReport
     {
-
         public int callbackOrder => -101;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
+            List<PointController> pointControllers = FindComponents<PointController>(scene);
+            List<Interlocking> interlocks = FindComponents<Interlocking>(scene);
 
-            List<PointController> pointControllers = new List<PointController>();
-            List<MultiLever_ReferRouteLocker> multiLever_ReferRouteLocker = new List<MultiLever_ReferRouteLocker>();
-            List<Interlocking> interlocks = new List<Interlocking>();
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                pointControllers.AddRange(obj.GetComponentsInChildren<PointController>(true));
-                multiLever_ReferRouteLocker.AddRange(obj.GetComponentsInChildren<MultiLever_ReferRouteLocker>(true));
-                interlocks.AddRange(obj.GetComponentsInChildren<Interlocking>(true));
-            }
-            foreach (MultiLever_ReferRouteLocker mulconSetter in multiLever_ReferRouteLocker)
+            ApplyRouteLockerToMultiLever(scene, pointControllers, interlocks);
+            ApplyPointControllerMaps(pointControllers);
+            ApplyMultiLeverControlMaps(scene);
+            ResolveRouteLockerPointControllers(scene, pointControllers);
+            //以降は RouteLocker.Lockers(PointController分)が解決済みであることが前提
+            BuildIndirectControllerReferences(scene, interlocks);
+            BuildAffectedInterlockings(interlocks);
+            ExpandIndirectControllerReferences(scene);
+            BuildMultiLeverReferences(scene);
+            SetupRouteSelectors(scene);
+        }
+
+        /// <summary>
+        /// 進路てこ : 対応する Interlocking の進路条件を、MultiLever のてこ設定に変換する
+        /// </summary>
+        private static void ApplyRouteLockerToMultiLever(Scene scene, List<PointController> pointControllers, List<Interlocking> interlocks)
+        {
+            foreach (MultiLever_ReferRouteLocker mulconSetter in FindComponents<MultiLever_ReferRouteLocker>(scene))
             {
                 MultiLeverController mulCon = mulconSetter.GetComponent<MultiLeverController>();
-                foreach(SignalController signalControllerLever in mulCon.ControlledLevers.Where(val => val is SignalController))
+                foreach (SignalController signalControllerLever in mulCon.ControlledLevers.Where(val => val is SignalController))
                 {
                     Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
                     if (correspondInterlock)
@@ -47,143 +56,142 @@ namespace RBUR_SignalIntegrator_Editor
                     }
                 }
             }
+        }
 
+        /// <summary>
+        /// 転てつてこ : Holder の設定を PointController に反映し、分岐器からのコールバック先に登録する
+        /// </summary>
+        private static void ApplyPointControllerMaps(List<PointController> pointControllers)
+        {
             foreach (PointController pointCon in pointControllers)
             {
                 pointCon.GetComponent<PointLever_ControlToRouteIndexHolder>().ApplyToUdonBehaviour();
                 pointCon.GetComponent<PointLever_ControlToParamaterHolder>().ApplyToUdonBehaviour();
                 foreach (AbstractPointSetter point in pointCon.getPointInstances())
                 {
-                    point.callbackUdons = point.callbackUdons.AddToArray(pointCon);
+                    point.callbackUdons = point.callbackUdons.AddUnique(pointCon);
                 }
             }
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                foreach (MultiLeverController MulCon in obj.GetComponentsInChildren<MultiLeverController>(true))
-                {
-                    MulCon.GetComponent<MultiLever_SwitchToControlMapsHolder>().apply_mulCon_to_Con_Map();
-                }
-            }
-            foreach (GameObject obj in scene.GetRootGameObjects())
-            {
-                foreach (RouteLocker routeLocker in obj.GetComponentsInChildren<RouteLocker>(true))
-                {
-                    int LockerIdx = -1;
-                    routeLocker.ControlTargetIndex = (int[])routeLocker.TargetRoute.Clone();
-                    foreach (AbstractPointSetter point in routeLocker.TargetPoints)
-                    {
-                        LockerIdx++;
-                        foreach (PointController pointController in pointControllers)
-                        {
-                            int pointIdx = Array.IndexOf(pointController.getPointInstances(), point);
+        }
 
-                            if (pointIdx >= 0)
-                            {
-                                routeLocker.ControlTargetIndex[LockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.TargetRoute[LockerIdx]);
-                                routeLocker.Lockers[LockerIdx] = pointController;
-                                break;
-                            }
+        private static void ApplyMultiLeverControlMaps(Scene scene)
+        {
+            foreach (MultiLeverController mulCon in FindComponents<MultiLeverController>(scene))
+            {
+                mulCon.GetComponent<MultiLever_SwitchToControlMapsHolder>().apply_mulCon_to_Con_Map();
+            }
+        }
+
+        /// <summary>
+        /// RouteLocker の各分岐器を制御する PointController を Lockers に登録し、進路番号を制御位置に変換する
+        /// </summary>
+        private static void ResolveRouteLockerPointControllers(Scene scene, List<PointController> pointControllers)
+        {
+            foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
+            {
+                int LockerIdx = -1;
+                routeLocker.ControlTargetIndex = (int[])routeLocker.TargetRoute.Clone();
+                foreach (AbstractPointSetter point in routeLocker.TargetPoints)
+                {
+                    LockerIdx++;
+                    foreach (PointController pointController in pointControllers)
+                    {
+                        int pointIdx = Array.IndexOf(pointController.getPointInstances(), point);
+
+                        if (pointIdx >= 0)
+                        {
+                            routeLocker.ControlTargetIndex[LockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.TargetRoute[LockerIdx]);
+                            routeLocker.Lockers[LockerIdx] = pointController;
+                            break;
                         }
                     }
                 }
             }
+        }
 
+        /// <summary>
+        /// 各 Interlocking が直接使う IndirectController に、Interlocking への逆参照を張る
+        /// </summary>
+        private static void BuildIndirectControllerReferences(Scene scene, List<Interlocking> interlocks)
+        {
+            foreach (AbstractIndirectController controller in FindComponents<AbstractIndirectController>(scene))
+            {
+                controller.ReferingInterlocks = new Interlocking[0];
+            }
             foreach (Interlocking currentInterlock in interlocks)
             {
-                //Add Interlocking Reverse reference to Controller
-                List<AbstractIndirectController> controllers = new List<AbstractIndirectController>();
-                foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+                foreach (AbstractIndirectController controller in GetIndirectControllers(currentInterlock))
                 {
-                    if (StateLocker.getLocker() is AbstractIndirectController)
-                    {
-                        controllers.Add((AbstractIndirectController)StateLocker.getLocker());
-                    }
-                }
-                if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
-                    {
-                        if (locker is AbstractIndirectController)
-                        {
-                            controllers.Add((AbstractIndirectController)locker);
-                        }
-                    }
-                if (currentInterlock.GetFromLocker() is AbstractIndirectController)
-                {
-                    controllers.Add((AbstractIndirectController)currentInterlock.GetFromLocker());
-                }
-                foreach (AbstractIndirectController controller in controllers)
-                {
-                    controller.ReferingInterlocks = controller.ReferingInterlocks.AddToArray(currentInterlock);
+                    controller.ReferingInterlocks = controller.ReferingInterlocks.AddUnique(currentInterlock);
                 }
             }
+        }
 
-            foreach (GameObject obj in scene.GetRootGameObjects())
+        /// <summary>
+        /// 同じ IndirectController を使う Interlocking 同士を、互いの affectedInterlockings に登録する(自身を含む)
+        /// </summary>
+        private static void BuildAffectedInterlockings(List<Interlocking> interlocks)
+        {
+            foreach (Interlocking currentInterlock in interlocks)
             {
-                foreach (Interlocking currentInterlock in obj.GetComponentsInChildren<Interlocking>(true))
-                {
-                    //Add Affected Interlocks to Interlocking 
-                    List<Interlocking> ReverseReferencedInterlocks = new List<Interlocking>();
-                    foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
-                    {
-                        if (StateLocker.getLocker() is AbstractIndirectController)
-                        {
-                            ReverseReferencedInterlocks.AddRange(((AbstractIndirectController)StateLocker.getLocker()).ReferingInterlocks);
-                        }
-                    }
-                    if (currentInterlock.GetRouteLocker()) foreach (AbstractLockerConsolidater locker in currentInterlock.GetRouteLocker().Lockers)
-                    {
-                        if (locker is AbstractIndirectController)
-                        {
-                            ReverseReferencedInterlocks.AddRange(((AbstractIndirectController)locker).ReferingInterlocks);
-                        }
-                    }
-                    if (currentInterlock.GetFromLocker() is AbstractIndirectController)
-                    {
-                        ReverseReferencedInterlocks.AddRange(((AbstractIndirectController)currentInterlock.GetFromLocker()).ReferingInterlocks);
-                    }
-                    ReverseReferencedInterlocks = ReverseReferencedInterlocks.Distinct().ToList();
-
-                    currentInterlock.affectedInterlockings = currentInterlock.affectedInterlockings.AddRangeToArray(ReverseReferencedInterlocks.ToArray());
-                }
+                currentInterlock.affectedInterlockings = GetIndirectControllers(currentInterlock)
+                    .SelectMany(controller => controller.ReferingInterlocks)
+                    .Distinct()
+                    .ToArray();
             }
+        }
 
-            foreach (GameObject obj in scene.GetRootGameObjects())
+        /// <summary>
+        /// IndirectController の逆参照を、関係する Interlocking 全体に広げる
+        /// </summary>
+        private static void ExpandIndirectControllerReferences(Scene scene)
+        {
+            foreach (AbstractIndirectController controller in FindComponents<AbstractIndirectController>(scene))
             {
-                foreach (AbstractIndirectController controller in obj.GetComponentsInChildren<AbstractIndirectController>(true))
-                {
-                    List<Interlocking> ReferingInterlocks = new List<Interlocking>();
-                    foreach(Interlocking interlock in controller.ReferingInterlocks)
-                    {
-                        ReferingInterlocks.AddRange(interlock.affectedInterlockings);
-                    }
-                    ReferingInterlocks = ReferingInterlocks.Distinct().ToList();
-                    controller.ReferingInterlocks = ReferingInterlocks.ToArray();
-                }
+                controller.ReferingInterlocks = controller.ReferingInterlocks
+                    .SelectMany(interlock => interlock.affectedInterlockings)
+                    .Distinct()
+                    .ToArray();
             }
+        }
 
-            foreach (GameObject obj in scene.GetRootGameObjects())
+        private static void BuildMultiLeverReferences(Scene scene)
+        {
+            foreach (MultiLeverController multiLeverController in FindComponents<MultiLeverController>(scene))
             {
-                foreach (MultiLeverController multiLeverController in obj.GetComponentsInChildren<MultiLeverController>(true))
-                {
-                    foreach (AbstractIndirectController panelController in multiLeverController.ControlledLevers)
-                    {
-                        multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.AddRangeToArray(panelController.ReferingInterlocks);
-                    }
-                    multiLeverController.ReferingInterlocks = multiLeverController.ReferingInterlocks.Distinct().ToArray();
-                }
+                multiLeverController.ReferingInterlocks = multiLeverController.ControlledLevers
+                    .SelectMany(panelController => panelController.ReferingInterlocks)
+                    .Distinct()
+                    .ToArray();
             }
+        }
 
-            foreach (GameObject obj in scene.GetRootGameObjects())
+        private static void SetupRouteSelectors(Scene scene)
+        {
+            foreach (RouteSelector_EndButton end in FindComponents<RouteSelector_EndButton>(scene))
             {
-                foreach (RouteSelector_StartLever routeSlector_Start in obj.GetComponentsInChildren<RouteSelector_StartLever>(true))
+                end.StartLevers = new RouteSelector_StartLever[0];
+            }
+            foreach (RouteSelector_StartLever routeSlector_Start in FindComponents<RouteSelector_StartLever>(scene))
+            {
+                routeSlector_Start.AssignMaps();
+                foreach (RouteSelector_EndButton end in routeSlector_Start.getRouteEnds().SelectMany(val => val))
                 {
-                    routeSlector_Start.AssignMaps();
-                    foreach (RouteSelector_EndButton end in routeSlector_Start.getRouteEnds().SelectMany(val => val).ToArray())
-                    {
-                        end.StartLevers = end.StartLevers.AddItem(routeSlector_Start).ToArray();
-                    }
+                    end.StartLevers = end.StartLevers.AddUnique(routeSlector_Start);
                 }
             }
+        }
 
+        /// <summary>
+        /// Interlocking が使う IndirectController (toLocker_States / RouteLocker / From_Locker のうち該当するもの)
+        /// </summary>
+        private static List<AbstractIndirectController> GetIndirectControllers(Interlocking interlock)
+        {
+            List<AbstractLockerConsolidater> lockers = new List<AbstractLockerConsolidater>();
+            lockers.AddRange(interlock.GetInterlockStateLinker().Select(stateLocker => stateLocker.getLocker()));
+            if (interlock.GetRouteLocker()) lockers.AddRange(interlock.GetRouteLocker().Lockers);
+            lockers.Add(interlock.GetFromLocker());
+            return lockers.OfType<AbstractIndirectController>().ToList();
         }
     }
 }
