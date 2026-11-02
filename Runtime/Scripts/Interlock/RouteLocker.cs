@@ -39,6 +39,9 @@ namespace RBUR_SignalIntegrator
                 m_TargetRoute = value;
             }
         }
+
+        [HideInInspector][SerializeField] public Rail_Script[] Route_Rails;//カスタムエディタ向けの経路情報保持用
+
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] public int[] ControlTargetIndex = new int[0];
         [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] m_lockers = new AbstractLockerConsolidater[0];
