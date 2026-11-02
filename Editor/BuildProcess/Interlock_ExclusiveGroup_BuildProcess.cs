@@ -67,24 +67,12 @@ namespace RBUR_SignalIntegrator_Editor
         /// </summary>
         private static void AddExclusiveStateLinker(ExclusiveInterlockGroup group, Interlocking interlockA, Interlocking interlockB)
         {
-            int closePositionIndex = new SerializedObject(interlockB).FindProperty("ClosePositionIndex").intValue;
-
             GameObject linkerObject = new GameObject($"Exclusive_{interlockA.name}_{interlockB.name}");
             linkerObject.transform.SetParent(group.transform, false);
             LockerAndMeetPosition stateLinker = linkerObject.AddUdonSharpComponent<LockerAndMeetPosition>();
-
-            SerializedObject linkerSO = new SerializedObject(stateLinker);
-            linkerSO.FindProperty("locker").objectReferenceValue = interlockB.GetFromLocker();
-            SerializedProperty meetPositions = linkerSO.FindProperty("MeetPositionIndex");
-            meetPositions.arraySize = 1;
-            meetPositions.GetArrayElementAtIndex(0).intValue = closePositionIndex;
-            linkerSO.ApplyModifiedPropertiesWithoutUndo();
-
-            SerializedObject interlockSO = new SerializedObject(interlockA);
-            SerializedProperty states = interlockSO.FindProperty("toLocker_States");
-            states.arraySize++;
-            states.GetArrayElementAtIndex(states.arraySize - 1).objectReferenceValue = stateLinker;
-            interlockSO.ApplyModifiedPropertiesWithoutUndo();
+            stateLinker.SetLockerAndMeetPosition(interlockB.GetFromLocker(), new int[] { interlockB.GetClosePositionIndex() });
+            interlockA.AddInterlockStateLinker(stateLinker);
+            Debug.Log($"[ExclusiveInterlockGroup] {group.name} : {interlockA.name} requires {interlockB.name} at position {interlockB.GetClosePositionIndex()} ({interlockA.GetInterlockStateLinker().Length} state linker(s))", interlockA);
         }
     }
 }

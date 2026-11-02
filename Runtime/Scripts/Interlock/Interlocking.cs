@@ -44,6 +44,22 @@ namespace RBUR_SignalIntegrator
         {
             return From_Locker;
         }
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public int GetClosePositionIndex()
+        {
+            return ClosePositionIndex;
+        }
+        /// <summary>
+        /// ビルド処理から進行要件を追加する
+        /// </summary>
+        public void AddInterlockStateLinker(LockerAndMeetPosition stateLinker)
+        {
+            LockerAndMeetPosition[] newStates = new LockerAndMeetPosition[toLocker_States.Length + 1];
+            toLocker_States.CopyTo(newStates, 0);
+            newStates[toLocker_States.Length] = stateLinker;
+            toLocker_States = newStates;
+        }
+#endif
 
         public void OnDeserialization_()// for SyncEventLinker
         {

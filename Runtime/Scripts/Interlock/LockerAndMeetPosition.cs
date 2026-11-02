@@ -19,6 +19,16 @@ namespace RBUR_SignalIntegrator
         {
             interlocking = val;
         }
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        /// <summary>
+        /// ビルド処理から対象の Locker と適合位置を設定する
+        /// </summary>
+        public void SetLockerAndMeetPosition(AbstractLockerConsolidater locker, int[] meetPositionIndex)
+        {
+            this.locker = locker;
+            MeetPositionIndex = meetPositionIndex;
+        }
+#endif
         public virtual bool Check()
         {
             foreach (int meet in MeetPositionIndex)
