@@ -9,8 +9,7 @@ namespace RBUR_SignalIntegrator
     public class ExclusiveInterlockGroupGenerator : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] public Interlocking[] targetInterlocks = new Interlocking[0];
-        //作り直し時に削除する対象。手動で作った ExclusiveInterlockGroup は含まない
+        [SerializeField] public Interlocking[] targetInterlocks = new Interlocking[0];        //作り直し時に削除する対象。手動で作った ExclusiveInterlockGroup は含まない
         [SerializeField] public ExclusiveInterlockGroup[] generatedGroups = new ExclusiveInterlockGroup[0];
 #endif
     }
