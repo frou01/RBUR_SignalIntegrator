@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 namespace RBUR_SignalIntegrator_Editor
 {
     [CustomEditor(typeof(RouteLocker))]
+    [CanEditMultipleObjects]
     public class RouteLocker_Editor : Editor
     {
         SerializedProperty AssignedPoints;
@@ -25,29 +26,60 @@ namespace RBUR_SignalIntegrator_Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            RouteLocker routeLocker = (RouteLocker)target;
             EditorGUILayout.PropertyField(AssignedPoints);
             EditorGUILayout.PropertyField(AssignedRoutes);
             EditorGUILayout.PropertyField(AssignedRails);
+            serializedObject.ApplyModifiedProperties();
+
             if (GUILayout.Button("AutoSetup-Route"))
             {
-                AbstractPointSetter[] allPoint = GetAllPoints();
-
-                List<AbstractPointSetter> points;
-                List<int> routes;
-                if (SearchRoute(routeLocker.Route_Rails, allPoint, out points, out routes))
-                {
-                    AssignedPoints.arraySize = points.Count;
-                    AssignedRoutes.arraySize = routes.Count;
-                    for (int i = 0; i < points.Count; i++)
-                    {
-                        AssignedPoints.GetArrayElementAtIndex(i).objectReferenceValue = points[i];
-                        AssignedRoutes.GetArrayElementAtIndex(i).intValue = routes[i];
-                    }
-                    Debug.Log($"[RouteLocker] {routeLocker.name} : assigned {points.Count} point(s)", routeLocker);
-                }
+                AutoSetupRoutes(targets.OfType<RouteLocker>().ToArray());
             }
-            serializedObject.ApplyModifiedProperties();
+        }
+
+        /// <summary>
+        /// 選択中の全ての RouteLocker に AutoSetup-Route を行う。Undo は1回分にまとめる
+        /// </summary>
+        private static void AutoSetupRoutes(RouteLocker[] routeLockers)
+        {
+            Undo.SetCurrentGroupName("AutoSetup-Route");
+            int undoGroup = Undo.GetCurrentGroup();
+            AbstractPointSetter[] allPoint = GetAllPoints();
+            int succeeded = 0;
+            foreach (RouteLocker routeLocker in routeLockers)
+            {
+                if (AutoSetupRoute(routeLocker, allPoint)) succeeded++;
+            }
+            Undo.CollapseUndoOperations(undoGroup);
+            if (routeLockers.Length > 1) Debug.Log($"[RouteLocker] auto setup : {succeeded} / {routeLockers.Length} succeeded");
+        }
+
+        /// <summary>
+        /// Route_Rails を辿って TargetPoints / TargetRoute を設定する
+        /// 複数編集時に共通の serializedObject へ書くと全員に同じ値が入るので、個別の SerializedObject を使う
+        /// </summary>
+        private static bool AutoSetupRoute(RouteLocker routeLocker, AbstractPointSetter[] allPoint)
+        {
+            List<AbstractPointSetter> points;
+            List<int> routes;
+            if (!SearchRoute(routeLocker.Route_Rails, allPoint, out points, out routes))
+            {
+                Debug.LogWarning($"[RouteLocker] {routeLocker.name} : auto setup failed", routeLocker);
+                return false;
+            }
+            SerializedObject routeLockerObject = new SerializedObject(routeLocker);
+            SerializedProperty assignedPoints = routeLockerObject.FindProperty("m_TargetPoints");
+            SerializedProperty assignedRoutes = routeLockerObject.FindProperty("m_TargetRoute");
+            assignedPoints.arraySize = points.Count;
+            assignedRoutes.arraySize = routes.Count;
+            for (int i = 0; i < points.Count; i++)
+            {
+                assignedPoints.GetArrayElementAtIndex(i).objectReferenceValue = points[i];
+                assignedRoutes.GetArrayElementAtIndex(i).intValue = routes[i];
+            }
+            routeLockerObject.ApplyModifiedProperties();
+            Debug.Log($"[RouteLocker] {routeLocker.name} : assigned {points.Count} point(s)", routeLocker);
+            return true;
         }
 
         private static AbstractPointSetter[] GetAllPoints()
