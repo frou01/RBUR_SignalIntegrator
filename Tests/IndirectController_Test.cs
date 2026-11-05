@@ -704,7 +704,7 @@ namespace RBUR_SignalIntegrator.Test
 
         public bool GetNetworkUpdatePublic()
         {
-            return GetNetworkUpdate();
+            return IsNeedNetworkUpdate();
         }
 
         public int GetSendControllingPositionPublic()

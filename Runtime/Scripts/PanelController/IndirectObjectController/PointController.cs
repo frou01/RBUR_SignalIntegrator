@@ -79,6 +79,7 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
+        bool disabledOnSingled = false;
         protected override void Update()
         {
             base.Update();
@@ -134,10 +135,19 @@ namespace RBUR_SignalIntegrator
             }
             else
             {
-                if (!GetNetworkUpdate() || !isControllerOwner())
+                if (!IsNeedNetworkUpdate() || !isControllerOwner() || (disabledOnSingled = VRCPlayerApi.GetPlayerCount() == 1))
                 {
                     this.enabled = false;
                 }
+            }
+        }
+
+        public override void OnPlayerJoined(VRCPlayerApi player)
+        {
+            if (disabledOnSingled)
+            {
+                this.enabled = true;
+                disabledOnSingled = false;
             }
         }
 

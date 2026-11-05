@@ -39,7 +39,7 @@ namespace RBUR_SignalIntegrator
 
         private int sendControllingPosition = -1;
         private bool NetworkUpdate;
-        protected bool GetNetworkUpdate()
+        protected bool IsNeedNetworkUpdate()
         {
             return NetworkUpdate;
         }
