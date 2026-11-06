@@ -1,5 +1,5 @@
 {
-    "name": "RBUR_SignalIntegrator.Test",
+    "name": "frou01.RBUR.SignalIntegrator.Tests",
     "rootNamespace": "RBUR_SignalIntegrator.Test",
     "references": [
         "UnityEngine.TestRunner",
@@ -10,7 +10,7 @@
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
         "RBUR_Def-udon",
-        "RBUR_SignalIntegrator_ASMDEF"
+        "frou01.RBUR.SignalIntegrator.Runtime"
     ],
     "includePlatforms": [
         "Editor"

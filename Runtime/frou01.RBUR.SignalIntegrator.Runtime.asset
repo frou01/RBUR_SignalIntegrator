@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5136146375e9a0a498a72a0091b40cc1, type: 3}
-  m_Name: RBUR_SignalIntegrator_ASMDEF
+  m_Name: frou01.RBUR.SignalIntegrator.Runtime
   m_EditorClassIdentifier: 
-  sourceAssembly: {fileID: 5897886265953266890, guid: 8538103283af1b646b7dc77f0c20f371, type: 3}
+  sourceAssembly: {fileID: 5897886265953266890, guid: 8538103283af1b646b7dc77f0c20f371,
+    type: 3}
