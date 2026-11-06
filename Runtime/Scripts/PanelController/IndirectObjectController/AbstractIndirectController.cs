@@ -38,13 +38,13 @@ namespace RBUR_SignalIntegrator
         [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
 
         private int sendControllingPosition = -1;
-        private bool NetworkUpdate;
+        private bool isNetworkUpdateNeeded;
         protected bool IsNeedNetworkUpdate()
         {
-            return NetworkUpdate;
+            return isNetworkUpdateNeeded;
         }
 
-        private protected bool disableTillPlayerJoin = false;
+        private protected bool isDisabledUntilPlayerJoin = false;
 
 
         protected override void Start()
@@ -60,7 +60,7 @@ namespace RBUR_SignalIntegrator
         {
             if (VRCPlayerApi.GetPlayerCount() == 1)
             {
-                disableTillPlayerJoin = true;
+                isDisabledUntilPlayerJoin = true;
             }
         }
 
@@ -75,24 +75,24 @@ namespace RBUR_SignalIntegrator
         /// <summary>
         /// Set the control target from the targeter instance. If the targeter instance is not registered, it will be added to the list of targeter instances.
         /// </summary>
-        /// <param name="TargeterInstance">The targeter instance to set the control target for.</param>
-        /// <param name="ControlTarget">Control target is the target value to be set for the specified targeter instance. -1 means no control.</param>
-        /// <param name="UserDirect">Indicates whether the control is being set directly by the user. Panel controller store the user direct instance index.</param>
+        /// <param name="targeterInstance">The targeter instance to set the control target for.</param>
+        /// <param name="controlTarget">Control target is the target value to be set for the specified targeter instance. -1 means no control.</param>
+        /// <param name="isUserDirect">Indicates whether the control is being set directly by the user. Panel controller store the user direct instance index.</param>
         /// <returns>True if the control target was set successfully, false otherwise.</returns>
-        public virtual bool TrySetControlTarget(UdonSharpBehaviour TargeterInstance, int ControlTarget, bool UserDirect)
+        public virtual bool TrySetControlTarget(UdonSharpBehaviour targeterInstance, int controlTarget, bool isUserDirect)
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(TrySetControlTarget));
             hasCachedControl = false;
-            int targeterIDX;
-            getTargeterIndex(TargeterInstance, out targeterIDX);
-            if (TargeterInstances.Length == targeterIDX)
+            int targeterIdx;
+            getTargeterIndex(targeterInstance, out targeterIdx);
+            if (TargeterInstances.Length == targeterIdx)
             {
-                AddNewTargeter(TargeterInstance);
+                AddNewTargeter(targeterInstance);
             }
-            ControlTargetsArray[targeterIDX] = ControlTarget;
-            if (UserDirect)
+            ControlTargetsArray[targeterIdx] = controlTarget;
+            if (isUserDirect)
             {
-                UserDirectIndex = targeterIDX;
+                UserDirectIndex = targeterIdx;
             }
             int nextControlTarget = EvaluateControlTarget();
             if (!isLocked() && GetCurrentPosition()!= nextControlTarget)
@@ -106,7 +106,7 @@ namespace RBUR_SignalIntegrator
 
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(TrySetControlTarget));
 
-            return ControlTarget == nextControlTarget;
+            return controlTarget == nextControlTarget;
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace RBUR_SignalIntegrator
         }
         protected override void SyncController()
         {
-            NetworkUpdate = true;
+            isNetworkUpdateNeeded = true;
             if (isControllerOwner() && sendControllingPosition != controllingPosition)
             {
                 if (!this.enabled) this.enabled = true;
@@ -293,7 +293,7 @@ namespace RBUR_SignalIntegrator
             if (result.success)
             {
                 sendControllingPosition = controllingPosition;
-                NetworkUpdate = false;
+                isNetworkUpdateNeeded = false;
                 PostSync();
             }
             else

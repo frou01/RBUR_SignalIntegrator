@@ -35,20 +35,20 @@ namespace RBUR_SignalIntegrator
             ReceiveSignal[triedIndex] = signal;
 
             int currentOutSig = mode ? int.MinValue : int.MaxValue;
-            foreach(int recieved in ReceiveSignal)
+            foreach(int received in ReceiveSignal)
             {
                 if (mode)
                 {
-                    if(recieved > currentOutSig)
+                    if(received > currentOutSig)
                     {
-                        currentOutSig = recieved;
+                        currentOutSig = received;
                     }
                 }
                 else
                 {
-                    if (recieved < currentOutSig)
+                    if (received < currentOutSig)
                     {
-                        currentOutSig = recieved;
+                        currentOutSig = received;
                     }
                 }
             }
@@ -63,9 +63,9 @@ namespace RBUR_SignalIntegrator
                 animator.SetFloat(signalAnimationParamater, currentOutSig * SignalMultiplier);
             }
 
-            foreach (SignalEvaluator Evaluator in childEvaluators)
+            foreach (SignalEvaluator evaluator in childEvaluators)
             {
-                Evaluator.updateSignal(this, currentOutSig * SignalMultiplier);
+                evaluator.updateSignal(this, currentOutSig * SignalMultiplier);
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(updateSignal));
         }
@@ -121,13 +121,13 @@ namespace RBUR_SignalIntegrator
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
-            foreach (SignalEvaluator Evaluator in childEvaluators)
+            foreach (SignalEvaluator evaluator in childEvaluators)
             {
                 Gizmos.color = new Color(0.5f, 1f, 0f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;
 
-                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.02f, 0.02f);
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.8f), Evaluator.name, guiStyle);
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(evaluator.transform), 0.02f, 0.02f);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(evaluator.transform), 0.8f), evaluator.name, guiStyle);
             }
         }
 #endif

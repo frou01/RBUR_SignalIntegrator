@@ -31,9 +31,9 @@ namespace RBUR_SignalIntegrator
                 animator.enabled = true;
                 animator.SetFloat(signalAnimationParamater, (float)controllingPosition / signalLargestLevel);
             }
-            foreach (SignalEvaluator Evaluator in Evaluators)
+            foreach (SignalEvaluator evaluator in Evaluators)
             {
-                Evaluator.updateSignal(this, controllingPosition);
+                evaluator.updateSignal(this, controllingPosition);
             }
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
@@ -51,14 +51,14 @@ namespace RBUR_SignalIntegrator
                 GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.02f, 0.02f);
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
-            foreach (SignalEvaluator Evaluator in Evaluators)
+            foreach (SignalEvaluator evaluator in Evaluators)
             {
                 Gizmos.color = new Color(0.5f, 1f, 0f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;
 
-                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.02f, 0.02f);
-                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(Evaluator.transform), 0.8f), Evaluator.name, guiStyle);
-                Evaluator.OnDrawGizmosSelected();
+                GizmoExtension.DrawArrow(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(evaluator.transform), 0.02f, 0.02f);
+                Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(evaluator.transform), 0.8f), evaluator.name, guiStyle);
+                evaluator.OnDrawGizmosSelected();
             }
         }
 #endif

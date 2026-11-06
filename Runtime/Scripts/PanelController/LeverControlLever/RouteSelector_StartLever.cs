@@ -27,27 +27,27 @@ namespace RBUR_SignalIntegrator
             GetComponent<RouteSelector_EndToPresetMapHolder>().ApplyEndToPresetArray(out RouteEnds, out RouteAndSignalPreset);
         }
 #endif
-        Slider slider
+        Slider LinkedSlider
         {
             get
             {
-                if (m_slider == null)
+                if (linkedSlider == null)
                 {
-                    m_slider = GetComponentInChildren<Slider>();
+                    linkedSlider = GetComponentInChildren<Slider>();
                 }
-                return m_slider;
+                return linkedSlider;
             }
 
             set
             {
-                m_slider = value;
+                linkedSlider = value;
             }
         }
-        Slider m_slider;
+        Slider linkedSlider;
 
         protected virtual void Start()
         {
-            if (slider) slider.maxValue = RouteEnds.Length - 1;//0 or 1
+            if (LinkedSlider) LinkedSlider.maxValue = RouteEnds.Length - 1;//0 or 1
             OnDeserialization();
         }
 
@@ -56,17 +56,17 @@ namespace RBUR_SignalIntegrator
             if (!routeSelected && RouteEnds[Switch_Position].Length > 0)
             {
                 Networking.SetOwner(Networking.LocalPlayer,this.gameObject);
-                int SelectedRoute = 0;
+                int selectedRoute = 0;
                 foreach (RouteSelector_EndButton routeEnd in RouteEnds[Switch_Position])
                 {
                     if (routeEnd == endButton) break;
-                    SelectedRoute++;
+                    selectedRoute++;
                 }
-                if(SelectedRoute == RouteEnds[Switch_Position].Length)
+                if(selectedRoute == RouteEnds[Switch_Position].Length)
                 {
                     return;
                 }
-                RouteAndSignalPreset[Switch_Position][SelectedRoute].SetControlToLevers(1,true);
+                RouteAndSignalPreset[Switch_Position][selectedRoute].SetControlToLevers(1,true);
                 routeSelected = true;
                 RequestSerialization();
             }
@@ -74,16 +74,16 @@ namespace RBUR_SignalIntegrator
         public void OnValueChanged()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
-            if (slider != null) Switch_Position = (int)slider.value;
+            if (LinkedSlider != null) Switch_Position = (int)LinkedSlider.value;
             SyncUI(Switch_Position, false);
             if(RouteEnds[Switch_Position].Length <= 0)
             {
-                OwnerOnly_SwitchDisabled();
+                SwitchDisabledOwnerOnly();
             }
             RequestSerialization();
         }
 
-        private void OwnerOnly_SwitchDisabled()
+        private void SwitchDisabledOwnerOnly()
         {
             routeSelected = false;
             foreach (MultiLeverController[] routeArray in RouteAndSignalPreset)
@@ -102,9 +102,9 @@ namespace RBUR_SignalIntegrator
         }
         protected void SyncUI(int switchPosition, bool updateSlider)
         {
-            if (updateSlider && slider != null)
+            if (updateSlider && LinkedSlider != null)
             {
-                slider.SetValueWithoutNotify(switchPosition);
+                LinkedSlider.SetValueWithoutNotify(switchPosition);
             }
 
             foreach (Animator animator in SwitchSideAnimator)

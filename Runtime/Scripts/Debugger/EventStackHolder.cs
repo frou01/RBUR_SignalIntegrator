@@ -8,13 +8,13 @@ namespace RBUR_SignalIntegrator
     {
         [FormerlySerializedAs("debugLog_onAddStack")]
         [SerializeField] bool debugLog = false;
-        protected string StackString = "";
+        protected string stackString = "";
         protected string indent;
 
-        bool nestBottom = true;
+        bool isNestBottom = true;
         private void Update()
         {
-            StackString = "";
+            stackString = "";
         }
 
         public void AddStack(UdonSharpBehaviour on, string funcName)
@@ -26,8 +26,8 @@ namespace RBUR_SignalIntegrator
             pointedStack += "()";
             pointedStack += "\n";
 
-            StackString += pointedStack;
-            nestBottom = true;
+            stackString += pointedStack;
+            isNestBottom = true;
         }
         public void RemoveStack(UdonSharpBehaviour on, string funcName)
         {
@@ -37,20 +37,20 @@ namespace RBUR_SignalIntegrator
             pointedStack += "()";
             pointedStack += "\n";
 
-            if (nestBottom)
+            if (isNestBottom)
             {
                 if (debugLog)
                 {
-                    Debug.Log("Stacktrace:\n" + StackString, on);
+                    Debug.Log("Stacktrace:\n" + stackString, on);
                 }
-                nestBottom = false;
+                isNestBottom = false;
             }
-            StackString = StackString.Remove(StackString.Length - pointedStack.Length);
+            stackString = stackString.Remove(stackString.Length - pointedStack.Length);
             indent = indent.Remove(indent.Length - "    ".Length);
         }
         public string GetCurrentStackString()
         {
-            return StackString;
+            return stackString;
         }
     }
 }

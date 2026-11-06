@@ -57,27 +57,27 @@ namespace RBUR_SignalIntegrator
         [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
 
 
-        Slider slider
+        Slider LinkedSlider
         {
             get
             {
-                if (m_slider == null)
+                if (linkedSlider == null)
                 {
-                    m_slider = GetComponentInChildren<Slider>();
+                    linkedSlider = GetComponentInChildren<Slider>();
                 }
-                return m_slider;
+                return linkedSlider;
             }
 
             set
             {
-                m_slider = value;
+                linkedSlider = value;
             }
         }
-        Slider m_slider;
+        Slider linkedSlider;
 
         protected virtual void Start()
         {
-            if (slider) slider.maxValue = (SwitchPositionNum - 1);
+            if (LinkedSlider) LinkedSlider.maxValue = (SwitchPositionNum - 1);
             OnDeserialization();
         }
         public virtual void setControllerOwner()
@@ -92,9 +92,9 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
 
-            if (slider != null) switchPosition = (int)slider.value;
+            if (LinkedSlider != null) switchPosition = (int)LinkedSlider.value;
             SyncUI(switchPosition, false);
-            if (slider != null) SetControlToLevers(switchPosition, true);
+            if (LinkedSlider != null) SetControlToLevers(switchPosition, true);
 
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
         }
@@ -111,14 +111,14 @@ namespace RBUR_SignalIntegrator
         }
 
         int prevAppliedPos = -2;
-        public virtual void SetControlToLevers(int newSwitchPosition,bool TakeOwner)
+        public virtual void SetControlToLevers(int newSwitchPosition,bool takeOwner)
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(SetControlToLevers));
 
             if (newSwitchPosition != prevAppliedPos)
             {
                 switchPosition = prevAppliedPos = newSwitchPosition;
-                if(TakeOwner) setControllerOwner();
+                if(takeOwner) setControllerOwner();
 
                 //Try control Controllers without interlock update
                 int idx = 0;
@@ -126,7 +126,7 @@ namespace RBUR_SignalIntegrator
                 {
                     int nextControl = m_SwitchToControllerMap[idx][switchPosition];
 
-                    if(TakeOwner && nextControl != -1) panelController.setControllerOwner();
+                    if(takeOwner && nextControl != -1) panelController.setControllerOwner();
                     panelController.TrySetControlTarget(this, m_SwitchToControllerMap[idx][switchPosition], false);
                     idx++;
                 }
@@ -142,9 +142,9 @@ namespace RBUR_SignalIntegrator
 
         protected virtual void SyncUI(int switchPosition, bool updateSlider)
         {
-            if (updateSlider && slider != null)
+            if (updateSlider && LinkedSlider != null)
             {
-                slider.SetValueWithoutNotify(this.switchPosition);
+                LinkedSlider.SetValueWithoutNotify(this.switchPosition);
             }
 
             foreach (Animator animator in SwitchSideAnimator)

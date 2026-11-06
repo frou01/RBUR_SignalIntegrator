@@ -19,14 +19,14 @@ namespace RBUR_SignalIntegrator
         public override int GetCurrentPosition()
         {
             float controllerPos = target.controllerPosition;
-            float diffhistr = float.MaxValue;
+            float minDiff = float.MaxValue;
             int res = -1;
             for (int idx = 0; idx < lockPositions.Length; idx++)
             {
                 float diff = Mathf.Abs(lockPositions[idx] - controllerPos);
-                if (diff < diffhistr)
+                if (diff < minDiff)
                 {
-                    diffhistr = diff;
+                    minDiff = diff;
                     res = idx;
                 }
             }

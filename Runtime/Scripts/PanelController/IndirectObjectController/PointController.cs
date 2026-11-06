@@ -27,9 +27,9 @@ namespace RBUR_SignalIntegrator
         {
             return GetComponent<PointLever_ControlToRouteIndexHolder>().get_assignedPointArray();
         }
-        public void SetControlToRouteIndexMap(int[][] ControlToRouteIndexMap)
+        public void SetControlToRouteIndexMap(int[][] controlToRouteIndexMap)
         {
-            this.ControlToRouteIndexMap = ControlToRouteIndexMap;
+            this.ControlToRouteIndexMap = controlToRouteIndexMap;
         }
         public int[][] GetControlToRouteIndexMap()
         {
@@ -43,9 +43,9 @@ namespace RBUR_SignalIntegrator
         {
             return GetComponent<PointLever_ControlToParamaterHolder>().get_Attached_Animators();
         }
-        public void SetControlToParamaterMap(float[][] RouteToParamaterMap)
+        public void SetControlToParamaterMap(float[][] controlToParameterMap)
         {
-            this.ControlToParamaterMap = RouteToParamaterMap;
+            this.ControlToParamaterMap = controlToParameterMap;
         }
         public float[][] GetRouteToParamaterMap()
         {
@@ -54,8 +54,8 @@ namespace RBUR_SignalIntegrator
 #endif
         [SerializeField] string currentRouteParamater = "PointRoute";
         [SerializeField] string progressParamater = "PointMovePos";
-        int pointCon_prevControllingPosition = -1;
-        protected int PrevPointRouteIndex = int.MinValue;
+        int prevControllingPosition = -1;
+        protected int prevPointRouteIndex = int.MinValue;
         [SerializeField] protected float changeTimeLength = 1;
         [SerializeField] protected int CurrentPointRouteMapIndex;
         [SerializeField] protected float changeProgress;
@@ -79,63 +79,63 @@ namespace RBUR_SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
         }
 
-        bool disabledOnSingled = false;
+        bool isDisabledForSinglePlayer = false;
         protected override void Update()
         {
             base.Update();
-            if (pointCon_prevControllingPosition != controllingPosition)
+            if (prevControllingPosition != controllingPosition)
             {
                 foreach (AbstractPointSetter pointSetter in pointInstances)
                 {
                     pointSetter.set_route_To(-1);
                 }
-                pointCon_prevControllingPosition = controllingPosition;
+                prevControllingPosition = controllingPosition;
             }
             if (CurrentPointRouteMapIndex != controllingPosition)
             {
                 int prevChanging = Mathf.RoundToInt(changeProgress / changeTimeLength);
-                int Changing;
+                int changing;
                 if (controllingPosition * changeTimeLength > changeProgress)
                 {
                     prevChanging = Mathf.FloorToInt(changeProgress / changeTimeLength);
                     changeProgress += Time.deltaTime;
-                    Changing = Mathf.FloorToInt(changeProgress / changeTimeLength);
+                    changing = Mathf.FloorToInt(changeProgress / changeTimeLength);
                 }
                 else if (controllingPosition * changeTimeLength < changeProgress)
                 {
                     prevChanging = Mathf.CeilToInt(changeProgress / changeTimeLength);
                     changeProgress -= Time.deltaTime;
-                    Changing = Mathf.CeilToInt(changeProgress / changeTimeLength);
+                    changing = Mathf.CeilToInt(changeProgress / changeTimeLength);
                 }
                 else
                 {
                     prevChanging = int.MinValue;
-                    Changing = Mathf.CeilToInt(changeProgress / changeTimeLength);
+                    changing = Mathf.CeilToInt(changeProgress / changeTimeLength);
                 }
-                if (prevChanging != Changing && Changing == controllingPosition)
+                if (prevChanging != changing && changing == controllingPosition)
                 {
-                    changeProgress = Changing * changeTimeLength;
+                    changeProgress = changing * changeTimeLength;
                     int pointIdx = 0;
                     foreach (AbstractPointSetter pointSetter in pointInstances)
                     {
-                        pointSetter.set_route_To(ControlToRouteIndexMap[pointIdx][Changing]);
+                        pointSetter.set_route_To(ControlToRouteIndexMap[pointIdx][changing]);
                         pointIdx++;
                     }
                 }
-                int animatorindex = 0;
+                int animatorIdx = 0;
                 foreach (Animator animator in PointSideAnimators)
                 {
                     animator.enabled = true;
                     int mapSection = Mathf.FloorToInt(changeProgress / changeTimeLength);
-                    float mapstart = ControlToParamaterMap[animatorindex][mapSection];
-                    float mapEnd = ControlToParamaterMap[animatorindex][mapSection + mapSection == ControlToParamaterMap[animatorindex].Length ? 0 : 1];
-                    animator.SetFloat(progressParamater, Mathf.Lerp(mapstart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
-                    animatorindex++;
+                    float mapStart = ControlToParamaterMap[animatorIdx][mapSection];
+                    float mapEnd = ControlToParamaterMap[animatorIdx][mapSection + mapSection == ControlToParamaterMap[animatorIdx].Length ? 0 : 1];
+                    animator.SetFloat(progressParamater, Mathf.Lerp(mapStart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
+                    animatorIdx++;
                 }
             }
             else
             {
-                if (!IsNeedNetworkUpdate() || !isControllerOwner() || (disabledOnSingled = VRCPlayerApi.GetPlayerCount() == 1))
+                if (!IsNeedNetworkUpdate() || !isControllerOwner() || (isDisabledForSinglePlayer = VRCPlayerApi.GetPlayerCount() == 1))
                 {
                     this.enabled = false;
                 }
@@ -144,10 +144,10 @@ namespace RBUR_SignalIntegrator
 
         public override void OnPlayerJoined(VRCPlayerApi player)
         {
-            if (disabledOnSingled)
+            if (isDisabledForSinglePlayer)
             {
                 this.enabled = true;
-                disabledOnSingled = false;
+                isDisabledForSinglePlayer = false;
             }
         }
 
@@ -155,7 +155,7 @@ namespace RBUR_SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this,nameof(PointUpdate));
             this.enabled = true;
-            int Control_RouteCorresponding = -2;
+            int controlRouteCorresponding = -2;
 
             int pointIdx = 0;
             foreach (PointLever_Setter aPoint in pointInstances)
@@ -164,25 +164,25 @@ namespace RBUR_SignalIntegrator
                 if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPoint = " + aPoint.name, this);
                 if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPointRoute = " + aPointRoute, this);
 
-                int aControl_RouteCorresponding = 0;
+                int aControlRouteCorresponding = 0;
                 foreach (int anRoute in ControlToRouteIndexMap[pointIdx])
                 {
                     if(anRoute == aPointRoute)
                     {
                         if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] anRoute = " + anRoute, this);
-                        if (Control_RouteCorresponding == -2) Control_RouteCorresponding = aControl_RouteCorresponding;
-                        else if (Control_RouteCorresponding != aControl_RouteCorresponding)
+                        if (controlRouteCorresponding == -2) controlRouteCorresponding = aControlRouteCorresponding;
+                        else if (controlRouteCorresponding != aControlRouteCorresponding)
                         {
-                            Control_RouteCorresponding = -1;
+                            controlRouteCorresponding = -1;
                         }
                         break;
                     }
-                    aControl_RouteCorresponding++;
+                    aControlRouteCorresponding++;
                 }
-                if (aControl_RouteCorresponding == ControlToRouteIndexMap[pointIdx].Length) Control_RouteCorresponding = -1;//Not Found
+                if (aControlRouteCorresponding == ControlToRouteIndexMap[pointIdx].Length) controlRouteCorresponding = -1;//Not Found
                 pointIdx++;
             }
-            CurrentPointRouteMapIndex = Control_RouteCorresponding;
+            CurrentPointRouteMapIndex = controlRouteCorresponding;
             foreach (Animator animator in PointSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
@@ -192,11 +192,11 @@ namespace RBUR_SignalIntegrator
                 animator.enabled = true;
                 animator.SetFloat(currentRouteParamater, (float)CurrentPointRouteMapIndex / (float)(ControlToRouteIndexMap[0].Length-1));
             }
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PrevPointRouteIndex = " + PrevPointRouteIndex, this);
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] prevPointRouteIndex = " + prevPointRouteIndex, this);
             if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PointRouteIndex = " + CurrentPointRouteMapIndex, this);
-            if (PrevPointRouteIndex != CurrentPointRouteMapIndex)
+            if (prevPointRouteIndex != CurrentPointRouteMapIndex)
             {
-                PrevPointRouteIndex = CurrentPointRouteMapIndex;
+                prevPointRouteIndex = CurrentPointRouteMapIndex;
                 UpdateInterlocks();
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
@@ -244,14 +244,14 @@ namespace RBUR_SignalIntegrator
 
                 Gizmos.color = new Color(0f, 1f, 0f, 1f);
                 pointSetter.DrawGizmo_From();
-                Vector4 colorVec_Start = new Vector4(0.2f, 0.2f, 1f, 1f);
-                Vector4 colorVec_End = new Vector4(1f, 0f, 0f, 1f);
+                Vector4 colorVecStart = new Vector4(0.2f, 0.2f, 1f, 1f);
+                Vector4 colorVecEnd = new Vector4(1f, 0f, 0f, 1f);
                 float routeNum = ControlToRouteIndexMap[pointIdx].Length - 1;
                 float idx = 0;
                 Rail_Script[] routes = pointSetter.getRoutes();
                 foreach (int routeIndex in ControlToRouteIndexMap[pointIdx])
                 {
-                    Vector4 currentCol = Vector4.Lerp(colorVec_Start, colorVec_End, idx / routeNum);
+                    Vector4 currentCol = Vector4.Lerp(colorVecStart, colorVecEnd, idx / routeNum);
                     Gizmos.color = new Color(currentCol.x, currentCol.y, currentCol.z, currentCol.w);
                     guiStyle.normal.textColor = Gizmos.color;
                     pointSetter.DrawGizmo_To(routes[routeIndex]);

@@ -15,22 +15,22 @@ namespace RBUR_SignalIntegrator
         [SerializeField] private protected Animator[] SwitchSideAnimator = new Animator[0];
         [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
         [SerializeField][UdonSynced] private protected int switchPosition;
-        Slider slider
+        Slider LinkedSlider
         {
             get
             {
-                if (m_slider == null)
+                if (linkedSlider == null)
                 {
-                    m_slider = GetComponentInChildren<Slider>();
+                    linkedSlider = GetComponentInChildren<Slider>();
                 }
-                return m_slider;
+                return linkedSlider;
             }
-            set { m_slider = value; }
+            set { linkedSlider = value; }
         }
-        Slider m_slider;
+        Slider linkedSlider;
         private void Start()
         {
-            if (slider) slider.maxValue = (switchToControllerMap.Length - 1);
+            if (LinkedSlider) LinkedSlider.maxValue = (switchToControllerMap.Length - 1);
             OnDeserialization();
         }
 
@@ -41,7 +41,7 @@ namespace RBUR_SignalIntegrator
         }
         public virtual void OnValueChanged()//Call by UI
         {
-            if (slider != null) switchPosition = (int)slider.value;
+            if (LinkedSlider != null) switchPosition = (int)LinkedSlider.value;
 
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
             Networking.SetOwner(Networking.LocalPlayer, targetController.gameObject);
@@ -58,9 +58,9 @@ namespace RBUR_SignalIntegrator
 
         protected virtual void SyncUI(bool updateSlider)
         {
-            if (updateSlider && slider != null)
+            if (updateSlider && LinkedSlider != null)
             {
-                slider.SetValueWithoutNotify(this.switchPosition);
+                LinkedSlider.SetValueWithoutNotify(this.switchPosition);
             }
 
             foreach (Animator animator in SwitchSideAnimator)
