@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    public class RouteSelector_EndToPresetMapHolder : MonoBehaviour
+    public class RouteSelectorEndToPresetMapHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] List<SwitchToPresets> Switch_To_EndAndPresetMaps;

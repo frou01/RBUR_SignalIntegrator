@@ -9,7 +9,7 @@ using VRC.Udon.Serialization.OdinSerializer;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    [RequireComponent(typeof(MultiLever_SwitchToControlMapsHolder))]
+    [RequireComponent(typeof(MultiLeverSwitchToControlMapsHolder))]
     public class MultiLeverController : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
@@ -22,7 +22,7 @@ namespace frou01.RBUR.SignalIntegrator
             get
             {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-                return GetComponent<MultiLever_SwitchToControlMapsHolder>().GetControllers();
+                return GetComponent<MultiLeverSwitchToControlMapsHolder>().GetControllers();
 #else
                 return new AbstractIndirectController[0];
 #endif
@@ -41,7 +41,7 @@ namespace frou01.RBUR.SignalIntegrator
             get
             {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-                return GetComponent<MultiLever_SwitchToControlMapsHolder>().get_Switch_to_Controller_Map();
+                return GetComponent<MultiLeverSwitchToControlMapsHolder>().get_Switch_to_Controller_Map();
 #else
                 return m_SwitchToControllerMap;
 #endif

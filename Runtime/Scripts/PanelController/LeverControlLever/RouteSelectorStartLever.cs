@@ -7,7 +7,7 @@ using VRC.Udon;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    [RequireComponent(typeof(RouteSelector_EndToPresetMapHolder))]
+    [RequireComponent(typeof(RouteSelectorEndToPresetMapHolder))]
     public class RouteSelectorStartLever : UdonSharpBehaviour
     {
         [UdonSynced][SerializeField] private int Switch_Position;
@@ -24,7 +24,7 @@ namespace frou01.RBUR.SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public void AssignMaps()
         {
-            GetComponent<RouteSelector_EndToPresetMapHolder>().ApplyEndToPresetArray(out RouteEnds, out RouteAndSignalPreset);
+            GetComponent<RouteSelectorEndToPresetMapHolder>().ApplyEndToPresetArray(out RouteEnds, out RouteAndSignalPreset);
         }
 #endif
         Slider LinkedSlider

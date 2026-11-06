@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine.SceneManagement;
-using static frou01.RBUR.SignalIntegrator.MultiLever_SwitchToControlMapsHolder;
-using static frou01.RBUR.SignalIntegrator.PointLever_ControlToRouteIndexHolder;
+using static frou01.RBUR.SignalIntegrator.MultiLeverSwitchToControlMapsHolder;
+using static frou01.RBUR.SignalIntegrator.PointLeverControlToRouteIndexHolder;
 #endif
 
 namespace frou01.RBUR.SignalIntegrator
@@ -16,15 +16,15 @@ namespace frou01.RBUR.SignalIntegrator
     /// <summary>
     /// Interlockの進路条件を取得して進路てこのてこ設定に変換する
     /// </summary>
-    public class MultiLever_ReferRouteLocker : MonoBehaviour
+    public class MultiLeverReferRouteLocker : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] public int targetMulConSwitch;
 
         private static int GetControlFromRoute(PointController pointController, AbstractPointSetter pointSetter, int routeIndex)
         {
-            List<Control_To_RouteIndexMap> controlToRoute = pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps;
-            Control_To_RouteIndexMap targetedMap = controlToRoute.First(val => val.linkedPoint == pointSetter);
+            List<ControlToRouteIndexMap> controlToRoute = pointController.GetComponent<PointLeverControlToRouteIndexHolder>().control_To_RouteIndexMaps;
+            ControlToRouteIndexMap targetedMap = controlToRoute.First(val => val.linkedPoint == pointSetter);
             if (targetedMap != null)
             {
                 return targetedMap.Control_To_RouteIndex.Select((x, i) => (x, i)).FirstOrDefault(map => map.x == routeIndex).i;
@@ -34,10 +34,10 @@ namespace frou01.RBUR.SignalIntegrator
                 return -1;
             }
         }
-        private static void SetControlToMap(MultiLever_SwitchToControlMapsHolder switchMapHolder, PointController pointController, int targetControl, int targetMulConSwitch)
+        private static void SetControlToMap(MultiLeverSwitchToControlMapsHolder switchMapHolder, PointController pointController, int targetControl, int targetMulConSwitch)
         {
-            List<Control_To_RouteIndexMap> controlToRoute = pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps;
-            To_ControllerMap map = switchMapHolder.Switch_To_ControlMaps.FirstOrDefault(val => val.linkedController == pointController);
+            List<ControlToRouteIndexMap> controlToRoute = pointController.GetComponent<PointLeverControlToRouteIndexHolder>().control_To_RouteIndexMaps;
+            ToControllerMap map = switchMapHolder.Switch_To_ControlMaps.FirstOrDefault(val => val.linkedController == pointController);
             if (map != null)
             {
                 map.Switch_To_Control[targetMulConSwitch] = targetControl;
@@ -72,12 +72,12 @@ namespace frou01.RBUR.SignalIntegrator
                     PointController pointCorrespondController = pointControllers.FirstOrDefault(val => val.getPointInstances().Contains(targetPoint));
                     if (pointCorrespondController)
                     {
-                        MultiLever_SwitchToControlMapsHolder switchMapHolder = controller.GetComponent<MultiLever_SwitchToControlMapsHolder>();
+                        MultiLeverSwitchToControlMapsHolder switchMapHolder = controller.GetComponent<MultiLeverSwitchToControlMapsHolder>();
                         Undo.RecordObject(switchMapHolder, "Fetching Point Controller/Route settings");
                         if (!controller.ControlledLevers.Contains(pointCorrespondController))
                         {
                             int[] multiLeverControlMap = Enumerable.Repeat(-1, switchMapHolder.switchPositionNum).ToArray();
-                            switchMapHolder.Switch_To_ControlMaps.Add(new To_ControllerMap(pointCorrespondController, multiLeverControlMap));
+                            switchMapHolder.Switch_To_ControlMaps.Add(new ToControllerMap(pointCorrespondController, multiLeverControlMap));
                         }
                         int controlTarget = GetControlFromRoute(pointCorrespondController, targetPoint, targetRoutes[pointIdx]);
                         if (controlTarget != -1)
@@ -91,17 +91,17 @@ namespace frou01.RBUR.SignalIntegrator
                 }
             }
         }
-        [CustomEditor(typeof(MultiLever_ReferRouteLocker)), CanEditMultipleObjects]
-        public class MultiLever_ReferRouteLocker_CustomEditor : UnityEditor.Editor
+        [CustomEditor(typeof(MultiLeverReferRouteLocker)), CanEditMultipleObjects]
+        public class MultiLeverReferRouteLockerEditor : UnityEditor.Editor
         {
             public override void OnInspectorGUI()
             {
-                MultiLever_ReferRouteLocker instance = target as MultiLever_ReferRouteLocker;
+                MultiLeverReferRouteLocker instance = target as MultiLeverReferRouteLocker;
                 base.OnInspectorGUI();
                 if (GUILayout.Button("Apply to ControlMap"))
                 {
                     instance.ApplyToControlMap();
-                    foreach (MultiLever_ReferRouteLocker childInstance in targets)
+                    foreach (MultiLeverReferRouteLocker childInstance in targets)
                     {
                         childInstance.ApplyToControlMap();
                     }

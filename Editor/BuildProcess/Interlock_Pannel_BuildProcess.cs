@@ -40,7 +40,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         /// </summary>
         private static void ApplyRouteLockerToMultiLever(Scene scene, List<PointController> pointControllers, List<Interlocking> interlocks)
         {
-            foreach (MultiLever_ReferRouteLocker mulConSetter in FindComponents<MultiLever_ReferRouteLocker>(scene))
+            foreach (MultiLeverReferRouteLocker mulConSetter in FindComponents<MultiLeverReferRouteLocker>(scene))
             {
                 MultiLeverController mulCon = mulConSetter.GetComponent<MultiLeverController>();
                 foreach (SignalController signalControllerLever in mulCon.ControlledLevers.Where(val => val is SignalController))
@@ -65,8 +65,8 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (PointController pointCon in pointControllers)
             {
-                pointCon.GetComponent<PointLever_ControlToRouteIndexHolder>().ApplyToUdonBehaviour();
-                pointCon.GetComponent<PointLever_ControlToParamaterHolder>().ApplyToUdonBehaviour();
+                pointCon.GetComponent<PointLeverControlToRouteIndexHolder>().ApplyToUdonBehaviour();
+                pointCon.GetComponent<PointLeverControlToParameterHolder>().ApplyToUdonBehaviour();
                 foreach (AbstractPointSetter point in pointCon.getPointInstances())
                 {
                     point.callbackUdons = point.callbackUdons.AddUnique(pointCon);
@@ -78,7 +78,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (MultiLeverController mulCon in FindComponents<MultiLeverController>(scene))
             {
-                mulCon.GetComponent<MultiLever_SwitchToControlMapsHolder>().apply_mulCon_to_Con_Map();
+                mulCon.GetComponent<MultiLeverSwitchToControlMapsHolder>().apply_mulCon_to_Con_Map();
             }
         }
 

@@ -25,7 +25,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             _pointSetter = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "Point")
                 .AddComponent<PointLever_Setter>();
 
-            _pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps.Add(new PointLever_ControlToRouteIndexHolder.Control_To_RouteIndexMap(_pointSetter, new int[] { 0, 1 }));
+            _pointController.GetComponent<PointLeverControlToRouteIndexHolder>().control_To_RouteIndexMaps.Add(new PointLeverControlToRouteIndexHolder.ControlToRouteIndexMap(_pointSetter, new int[] { 0, 1 }));
 
             _eventStackHolder = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"EventStackHolder")
                 .AddComponent<EventStackHolder>();
@@ -46,17 +46,17 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TestApplyToControlMap()
         {
-            MultiLever_ReferRouteLocker referRouteLocker = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "MultiLever_ReferRouteLocker")
-                .AddComponent<MultiLever_ReferRouteLocker>();
+            MultiLeverReferRouteLocker referRouteLocker = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "MultiLeverReferRouteLocker")
+                .AddComponent<MultiLeverReferRouteLocker>();
             referRouteLocker.targetMulConSwitch = 1;
 
             MultiLeverController multiLeverController = referRouteLocker.gameObject.AddComponent<MultiLeverController>();
-            MultiLever_SwitchToControlMapsHolder switchMapHolder = multiLeverController.GetComponent<MultiLever_SwitchToControlMapsHolder>();
+            MultiLeverSwitchToControlMapsHolder switchMapHolder = multiLeverController.GetComponent<MultiLeverSwitchToControlMapsHolder>();
 
             SignalController signal = AbstractLockerConsolidater_Test.CreateChild(referRouteLocker.gameObject, "SignalController").AddComponent<SignalController>();
 
             switchMapHolder.switchPositionNum = 2;
-            switchMapHolder.Switch_To_ControlMaps.Add(new MultiLever_SwitchToControlMapsHolder.To_ControllerMap(signal, new int[] { 0, 1 }));
+            switchMapHolder.Switch_To_ControlMaps.Add(new MultiLeverSwitchToControlMapsHolder.ToControllerMap(signal, new int[] { 0, 1 }));
 
             AbstractLockerConsolidater_Test.SetRequiredField(_locker1, "From_Locker", signal);
 

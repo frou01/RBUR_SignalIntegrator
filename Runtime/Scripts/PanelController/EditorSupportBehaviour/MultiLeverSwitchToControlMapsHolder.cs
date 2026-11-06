@@ -13,11 +13,11 @@ using HarmonyLib;
 namespace frou01.RBUR.SignalIntegrator
 {
     [ExecuteAlways]
-    public class MultiLever_SwitchToControlMapsHolder : MonoBehaviour
+    public class MultiLeverSwitchToControlMapsHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] public int switchPositionNum = 2;
-        [SerializeField] public List<To_ControllerMap> Switch_To_ControlMaps = new List<To_ControllerMap>();
+        [SerializeField] public List<ToControllerMap> Switch_To_ControlMaps = new List<ToControllerMap>();
         public void apply_mulCon_to_Con_Map()
         {
             MultiLeverController targetMulCon = GetComponent<MultiLeverController>();
@@ -31,7 +31,7 @@ namespace frou01.RBUR.SignalIntegrator
         public int[][] get_Switch_to_Controller_Map()
         {
             return Switch_To_ControlMaps
-                .Select(val => val.Switch_To_Control)//List<To_ControllerMap> -> List<int[]>
+                .Select(val => val.Switch_To_Control)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
         public AbstractIndirectController[] GetControllers()
@@ -40,12 +40,12 @@ namespace frou01.RBUR.SignalIntegrator
         }
 
         [System.Serializable]
-        public class To_ControllerMap
+        public class ToControllerMap
         {
             [SerializeField] public AbstractIndirectController linkedController;
             [Tooltip("index = switch, value = contro. No overwrite lever value = -1")][SerializeField] public int[] Switch_To_Control;
 
-            public To_ControllerMap(AbstractIndirectController linkedController, int[] switchToControl)
+            public ToControllerMap(AbstractIndirectController linkedController, int[] switchToControl)
             {
                 this.linkedController = linkedController;
                 this.Switch_To_Control = switchToControl;
@@ -57,7 +57,7 @@ namespace frou01.RBUR.SignalIntegrator
             guiStyle.richText = true;
             Vector4 colorVecStart = new Vector4(0.2f, 0.2f, 1f, 1f);
             Vector4 colorVecEnd = new Vector4(1f, 0f, 0f, 1f);
-            foreach (To_ControllerMap controlSetting in Switch_To_ControlMaps)
+            foreach (ToControllerMap controlSetting in Switch_To_ControlMaps)
             {
                 Gizmos.color = new Color(0.2f, 1.0f, 0.0f, 1f);
                 Vector3 controlPos = GizmoExtension.getCenter(controlSetting.linkedController.transform);

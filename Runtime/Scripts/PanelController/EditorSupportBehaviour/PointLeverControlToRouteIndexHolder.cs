@@ -11,10 +11,10 @@ using UnityEngine;
 namespace frou01.RBUR.SignalIntegrator
 {
     [ExecuteAlways]
-    public class PointLever_ControlToRouteIndexHolder : MonoBehaviour
+    public class PointLeverControlToRouteIndexHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] public List<Control_To_RouteIndexMap> control_To_RouteIndexMaps = new List<Control_To_RouteIndexMap>();
+        [SerializeField] public List<ControlToRouteIndexMap> control_To_RouteIndexMaps = new List<ControlToRouteIndexMap>();
 
         public void ApplyToUdonBehaviour()
         {
@@ -30,7 +30,7 @@ namespace frou01.RBUR.SignalIntegrator
         public int[][] get_Control_to_RouteIndex_Map()
         {
             return control_To_RouteIndexMaps
-                .Select(val => val.Control_To_RouteIndex)//List<To_ControllerMap> -> List<int[]>
+                .Select(val => val.Control_To_RouteIndex)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
 
@@ -45,7 +45,7 @@ namespace frou01.RBUR.SignalIntegrator
         {
             bool isDirty = false;
 
-            foreach (Control_To_RouteIndexMap map in control_To_RouteIndexMaps)
+            foreach (ControlToRouteIndexMap map in control_To_RouteIndexMaps)
             {
                 if (map.Control_To_RouteIndex.Length != RouteIndexNum)
                 {
@@ -65,12 +65,12 @@ namespace frou01.RBUR.SignalIntegrator
             }
         }
         [System.Serializable]
-        public class Control_To_RouteIndexMap
+        public class ControlToRouteIndexMap
         {
             [SerializeField] public AbstractPointSetter linkedPoint;
             [SerializeField] public int[] Control_To_RouteIndex;
 
-            public Control_To_RouteIndexMap(AbstractPointSetter linkedPoint, int[] controlToRouteIndex)
+            public ControlToRouteIndexMap(AbstractPointSetter linkedPoint, int[] controlToRouteIndex)
             {
                 this.linkedPoint = linkedPoint;
                 this.Control_To_RouteIndex = controlToRouteIndex;

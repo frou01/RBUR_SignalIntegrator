@@ -10,7 +10,7 @@ using VRC.Udon.Serialization.OdinSerializer;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_ControlToParamaterHolder))]
+    [RequireComponent(typeof(PointLeverControlToRouteIndexHolder),typeof(PointLeverControlToParameterHolder))]
     public class PointController : AbstractIndirectController
     {
         [HideInInspector][SerializeField] protected AbstractPointSetter[] pointInstances;
@@ -25,7 +25,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public AbstractPointSetter[] getPointInstances()
         {
-            return GetComponent<PointLever_ControlToRouteIndexHolder>().get_assignedPointArray();
+            return GetComponent<PointLeverControlToRouteIndexHolder>().get_assignedPointArray();
         }
         public void SetControlToRouteIndexMap(int[][] controlToRouteIndexMap)
         {
@@ -33,7 +33,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public int[][] GetControlToRouteIndexMap()
         {
-            return GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
+            return GetComponent<PointLeverControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
         }
         public void SetAttachedPointAnimator(Animator[] animators)
         {
@@ -41,7 +41,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public Animator[] GetAttachedPointAnimator()
         {
-            return GetComponent<PointLever_ControlToParamaterHolder>().get_Attached_Animators();
+            return GetComponent<PointLeverControlToParameterHolder>().get_Attached_Animators();
         }
         public void SetControlToParamaterMap(float[][] controlToParameterMap)
         {
@@ -49,7 +49,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public float[][] GetRouteToParamaterMap()
         {
-            return GetComponent<PointLever_ControlToParamaterHolder>().get_Control_to_Paramater_Map();
+            return GetComponent<PointLeverControlToParameterHolder>().get_Control_to_Paramater_Map();
         }
 #endif
         [SerializeField] string currentRouteParamater = "PointRoute";
@@ -232,7 +232,7 @@ namespace frou01.RBUR.SignalIntegrator
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
 
-            ControlToRouteIndexMap = GetComponent<PointLever_ControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
+            ControlToRouteIndexMap = GetComponent<PointLeverControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
             int pointIdx = 0;
             foreach (AbstractPointSetter pointSetter in pointInstances)
             {
