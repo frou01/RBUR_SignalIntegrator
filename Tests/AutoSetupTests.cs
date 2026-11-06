@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace frou01.RBUR.SignalIntegrator.Tests
 {
-    public class AutoSetup_Test : MonoBehaviour
+    public class AutoSetupTests : MonoBehaviour
     {
         private GameObject _testRoot;
         private Interlocking _locker1;
@@ -17,21 +17,21 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [SetUp]
         public void Setup()
         {
-            _testRoot = new GameObject("AbstractLockerConsolidater_Test");
+            _testRoot = new GameObject("AbstractLockerConsolidatorTests");
 
-            pointControllers.Add(_pointController = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"PointController")
+            pointControllers.Add(_pointController = AbstractLockerConsolidatorTests.CreateChild(_testRoot,"PointController")
                 .AddComponent<PointController>());
 
-            _pointSetter = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "Point")
+            _pointSetter = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "Point")
                 .AddComponent<PointLever_Setter>();
 
             _pointController.GetComponent<PointLeverControlToRouteIndexHolder>().control_To_RouteIndexMaps.Add(new PointLeverControlToRouteIndexHolder.ControlToRouteIndexMap(_pointSetter, new int[] { 0, 1 }));
 
-            _eventStackHolder = AbstractLockerConsolidater_Test.CreateChild(_testRoot,"EventStackHolder")
+            _eventStackHolder = AbstractLockerConsolidatorTests.CreateChild(_testRoot,"EventStackHolder")
                 .AddComponent<EventStackHolder>();
 
 
-            _locker1 = AbstractLockerConsolidater_Test.CreateInterlocking(_testRoot,"Locker1");
+            _locker1 = AbstractLockerConsolidatorTests.CreateInterlocking(_testRoot,"Locker1");
         }
 
         [TearDown]
@@ -46,26 +46,26 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TestApplyToControlMap()
         {
-            MultiLeverReferRouteLocker referRouteLocker = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "MultiLeverReferRouteLocker")
+            MultiLeverReferRouteLocker referRouteLocker = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "MultiLeverReferRouteLocker")
                 .AddComponent<MultiLeverReferRouteLocker>();
             referRouteLocker.targetMulConSwitch = 1;
 
             MultiLeverController multiLeverController = referRouteLocker.gameObject.AddComponent<MultiLeverController>();
             MultiLeverSwitchToControlMapsHolder switchMapHolder = multiLeverController.GetComponent<MultiLeverSwitchToControlMapsHolder>();
 
-            SignalController signal = AbstractLockerConsolidater_Test.CreateChild(referRouteLocker.gameObject, "SignalController").AddComponent<SignalController>();
+            SignalController signal = AbstractLockerConsolidatorTests.CreateChild(referRouteLocker.gameObject, "SignalController").AddComponent<SignalController>();
 
             switchMapHolder.switchPositionNum = 2;
             switchMapHolder.Switch_To_ControlMaps.Add(new MultiLeverSwitchToControlMapsHolder.ToControllerMap(signal, new int[] { 0, 1 }));
 
-            AbstractLockerConsolidater_Test.SetRequiredField(_locker1, "From_Locker", signal);
+            AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "From_Locker", signal);
 
             RouteLocker routeLocker = _locker1.gameObject.AddComponent<RouteLocker>();
             routeLocker.Lockers = new AbstractLockerConsolidator[0];
             routeLocker.setParentInterlock(_locker1);
             routeLocker.TargetPoints = new AbstractPointSetter[] { _pointSetter };
             routeLocker.TargetRoute = new int[] { 1 };
-            AbstractLockerConsolidater_Test.SetRequiredField(_locker1, "interlock_Route", routeLocker);
+            AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "interlock_Route", routeLocker);
             //TODO: routeLockerにPointと進路(1)を設定
 
             referRouteLocker.ApplyToControlMap();

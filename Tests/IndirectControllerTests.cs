@@ -15,27 +15,27 @@ namespace frou01.RBUR.SignalIntegrator.Tests
     /// applyPositionToController() override, and related functionality
     /// 
     /// Design:
-    /// - Uses MockLocker instead of VRC SDK dependencies
+    /// - Uses FakeLocker instead of VRC SDK dependencies
     /// - EventStackHolder can be null (gracefully handled)
     /// - Tests focus on control target evaluation and position management
     /// </summary>
-    public class IndirectController_Test
+    public class IndirectControllerTests
     {
         private GameObject _testRoot;
-        private TestIndirectController _indirectController;
-        private MockLocker _locker1;
-        private MockLocker _locker2;
+        private FakeIndirectController _indirectController;
+        private FakeLocker _locker1;
+        private FakeLocker _locker2;
         private EventStackHolder _eventStackHolder;
 
         [SetUp]
         public void Setup()
         {
-            _testRoot = new GameObject("IndirectController_Test");
+            _testRoot = new GameObject("IndirectControllerTests");
 
-            _indirectController = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "IndirectController")
-                .AddComponent<TestIndirectController>();
+            _indirectController = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "IndirectController")
+                .AddComponent<FakeIndirectController>();
 
-            _eventStackHolder = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "EventStackHolder")
+            _eventStackHolder = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "EventStackHolder")
                 .AddComponent<EventStackHolder>();
 
             _indirectController.eventStackHolder = _eventStackHolder;
@@ -43,8 +43,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             SetLockData(new UdonSharpBehaviour[0], new bool[0], new int[0]);
             SetTargeterData(new UdonSharpBehaviour[0], new int[0]);
 
-            _locker1 = new MockLocker("Locker1");
-            _locker2 = new MockLocker("Locker2");
+            _locker1 = new FakeLocker("Locker1");
+            _locker2 = new FakeLocker("Locker2");
 
             _indirectController.ReferingInterlocks = new Interlocking[0];
 
@@ -106,7 +106,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         public void TrySetControlTarget_WithExistingTargeter_UpdatesControl()
         {
             // Create a real UdonSharpBehaviour mock wrapper for existing targeters
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { 5 });
@@ -120,7 +120,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TrySetControlTarget_WithUserDirectControl_SetsUserDirectIndexAndAppliesPosition()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { 0 });
@@ -136,8 +136,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TrySetControlTarget_MultipleTargetersSwitchUserDirect()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { -1, 0 });
@@ -170,7 +170,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void AddNewTargeter_WithNewInstance_AddsTargeterAndInitializesControl()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(new UdonSharpBehaviour[0], new int[0]);
 
             bool result = _indirectController.AddNewTargeter(realLocker1);
@@ -184,7 +184,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void AddNewTargeter_WithDuplicateInstance_ReturnsFalse()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { 10 });
@@ -198,8 +198,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void AddNewTargeter_PreservesExistingDataAndInitializesNewElements()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { 5 });
@@ -228,8 +228,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateControlTarget_WithAllTargetsMinusOne_ReturnsMinusOne()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { -1, -1 });
@@ -242,8 +242,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateControlTarget_ReturnsFirstNonMinusOneTarget()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { -1, 10 });
@@ -256,8 +256,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateControlTarget_WithMultipleValidTargets_ReturnsFirst()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { 5, 10 });
@@ -272,8 +272,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateUserDirectControl_WithNoUserDirect_ReturnsMinusOne()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { 5, 10 });
@@ -287,8 +287,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateUserDirectControl_WithValidUserDirectIndex_ReturnsCorrectTarget()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { 5, 15 });
@@ -302,7 +302,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateUserDirectControl_WithOutOfRangeIndex_ReturnsMinusOne()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { 5 });
@@ -393,7 +393,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TrySetControlTarget_NotLockedAppliesPosition_ReturnsTrue()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { -1 });
@@ -412,7 +412,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TrySetControlTarget_LockedDoesNotApplyPosition()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { -1 });
@@ -430,7 +430,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void TrySetControlTarget_CacheClearedOnNewControl()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1 },
                 new[] { 10 });
@@ -464,7 +464,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void UpdateLocking_WhenLockStateChangesToFalse_AppliesEvaluatedControlTarget()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
             SetLockData(
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { true },
@@ -521,8 +521,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void EvaluateControlTarget_CacheHit_ReturnsCachedValue()
         {
-            var realLocker1 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker1").AddComponent<TestIndirectController>();
-            var realLocker2 = AbstractLockerConsolidater_Test.CreateChild(_testRoot, "RealLocker2").AddComponent<TestIndirectController>();
+            var realLocker1 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker1").AddComponent<FakeIndirectController>();
+            var realLocker2 = AbstractLockerConsolidatorTests.CreateChild(_testRoot, "RealLocker2").AddComponent<FakeIndirectController>();
             SetTargeterData(
                 new UdonSharpBehaviour[] { realLocker1, realLocker2 },
                 new[] { 5, 10 });
@@ -564,7 +564,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
     /// Provides access to protected members and test-specific functionality.
     /// Uses Reflection to bypass VRC SDK requirements.
     /// </summary>
-    public class TestIndirectController : AbstractIndirectController
+    public class FakeIndirectController : AbstractIndirectController
     {
         public void StartPublic()
         {
@@ -726,11 +726,11 @@ namespace frou01.RBUR.SignalIntegrator.Tests
     /// <summary>
     /// Simple mock locker for testing without VRC SDK dependencies.
     /// </summary>
-    public class MockLocker : UdonSharpBehaviour
+    public class FakeLocker : UdonSharpBehaviour
     {
         public string Name { get; set; }
 
-        public MockLocker(string name)
+        public FakeLocker(string name)
         {
             Name = name;
         }

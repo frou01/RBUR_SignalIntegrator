@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace frou01.RBUR.SignalIntegrator.Tests
 {
-    public class AbstractLockerConsolidater_Test
+    public class AbstractLockerConsolidatorTests
     {
         private GameObject _testRoot;
-        private TestLockerConsolidater _consolidater;
+        private FakeLockerConsolidator _consolidator;
         private Interlocking _locker1;
         private Interlocking _locker2;
         private EventStackHolder _eventStackHolder;
@@ -18,16 +18,16 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [SetUp]
         public void Setup()
         {
-            _testRoot = new GameObject("AbstractLockerConsolidater_Test");
+            _testRoot = new GameObject("AbstractLockerConsolidatorTests");
 
-            _consolidater = CreateChild(_testRoot, "Consolidater")
-                .AddComponent<TestLockerConsolidater>();
+            _consolidator = CreateChild(_testRoot, "Consolidator")
+                .AddComponent<FakeLockerConsolidator>();
 
             _eventStackHolder = CreateChild(_testRoot, "EventStackHolder")
                 .AddComponent<EventStackHolder>();
 
-            _consolidater.eventStackHolder = _eventStackHolder;
-            SetLockData(_consolidater, new UdonSharpBehaviour[0], new bool[0], new int[0]);
+            _consolidator.eventStackHolder = _eventStackHolder;
+            SetLockData(_consolidator, new UdonSharpBehaviour[0], new bool[0], new int[0]);
 
             _locker1 = CreateInterlocking(_testRoot, "Locker1");
             _locker2 = CreateInterlocking(_testRoot, "Locker2");
@@ -59,7 +59,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             routeLocker.setParentInterlock(interlocking);
 
             GameObject fromLockerObject = CreateChild(root, name + "_FromLocker");
-            TestLockerConsolidater fromLocker = fromLockerObject.AddComponent<TestLockerConsolidater>();
+            FakeLockerConsolidator fromLocker = fromLockerObject.AddComponent<FakeLockerConsolidator>();
             fromLocker.SetLockData(new UdonSharpBehaviour[0], new bool[0], new int[0]);
 
             SetRequiredField(interlocking, "From_Locker", fromLocker);
@@ -70,7 +70,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             return interlocking;
         }
 
-        public static void SetLockData(TestLockerConsolidater consolidater,
+        public static void SetLockData(FakeLockerConsolidator consolidator,
             UdonSharpBehaviour[] lockers,
             bool[] lockStates,
             int[] lockIndices)
@@ -83,7 +83,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             Assert.That(lockIndices.Length, Is.EqualTo(lockers.Length),
                 "ロッカー配列とロック位置配列の要素数が一致していません。");
 
-            consolidater.SetLockData(lockers, lockStates, lockIndices);
+            consolidator.SetLockData(lockers, lockStates, lockIndices);
         }
 
         public static void SetRequiredField(object target, string fieldName, object value)
@@ -99,181 +99,181 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void IsLocked_WithNoLocks_ReturnsFalse()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { false, false },
                 new[] { 0, 0 });
 
-            Assert.IsFalse(_consolidater.isLocked());
+            Assert.IsFalse(_consolidator.isLocked());
         }
 
         [Test]
         public void IsLocked_WithAnyLock_ReturnsTrue()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { false, true },
                 new[] { 0, 5 });
 
-            Assert.IsTrue(_consolidater.isLocked());
+            Assert.IsTrue(_consolidator.isLocked());
         }
 
         [Test]
         public void IsLocked_WithEmptyArrays_ReturnsFalse()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[0],
                 new bool[0],
                 new int[0]);
 
-            Assert.IsFalse(_consolidater.isLocked());
+            Assert.IsFalse(_consolidator.isLocked());
         }
 
         [Test]
         public void AddNewLocker_WithNewInstance_AddsLockerAndInitializesArrays()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[0],
                 new bool[0],
                 new int[0]);
 
-            bool result = _consolidater.AddNewLocker(_locker1);
+            bool result = _consolidator.AddNewLocker(_locker1);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(1, _consolidater.GetLockerInstanceCount());
-            Assert.AreEqual(1, _consolidater.GetLockStateCount());
-            Assert.AreEqual(1, _consolidater.GetLockIndexCount());
-            Assert.IsFalse(_consolidater.GetLockState(0));
-            Assert.AreEqual(0, _consolidater.GetLockIndex(0));
+            Assert.AreEqual(1, _consolidator.GetLockerInstanceCount());
+            Assert.AreEqual(1, _consolidator.GetLockStateCount());
+            Assert.AreEqual(1, _consolidator.GetLockIndexCount());
+            Assert.IsFalse(_consolidator.GetLockState(0));
+            Assert.AreEqual(0, _consolidator.GetLockIndex(0));
         }
 
         [Test]
         public void AddNewLocker_WithDuplicateInstance_ReturnsFalse()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { false },
                 new[] { 0 });
 
-            bool result = _consolidater.AddNewLocker(_locker1);
+            bool result = _consolidator.AddNewLocker(_locker1);
 
             Assert.IsFalse(result);
-            Assert.AreEqual(1, _consolidater.GetLockerInstanceCount());
+            Assert.AreEqual(1, _consolidator.GetLockerInstanceCount());
         }
 
         [Test]
         public void AddNewLocker_PreservesExistingDataAndInitializesNewElements()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidater.AddNewLocker(_locker2);
+            bool result = _consolidator.AddNewLocker(_locker2);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(2, _consolidater.GetLockerInstanceCount());
-            Assert.AreEqual(2, _consolidater.GetLockStateCount());
-            Assert.AreEqual(2, _consolidater.GetLockIndexCount());
+            Assert.AreEqual(2, _consolidator.GetLockerInstanceCount());
+            Assert.AreEqual(2, _consolidator.GetLockStateCount());
+            Assert.AreEqual(2, _consolidator.GetLockIndexCount());
 
-            Assert.IsTrue(_consolidater.GetLockState(0));
-            Assert.AreEqual(5, _consolidater.GetLockIndex(0));
-            Assert.IsFalse(_consolidater.GetLockState(1));
-            Assert.AreEqual(0, _consolidater.GetLockIndex(1));
+            Assert.IsTrue(_consolidator.GetLockState(0));
+            Assert.AreEqual(5, _consolidator.GetLockIndex(0));
+            Assert.IsFalse(_consolidator.GetLockState(1));
+            Assert.AreEqual(0, _consolidator.GetLockIndex(1));
         }
 
         [Test]
         public void TryUpdateLocking_WithNewLocker_AddsAndLocks()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[0],
                 new bool[0],
                 new int[0]);
 
-            bool result = _consolidater.tryUpdateLocking(_locker1, true, 5);
+            bool result = _consolidator.tryUpdateLocking(_locker1, true, 5);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(1, _consolidater.GetLockerInstanceCount());
-            Assert.IsTrue(_consolidater.isLocked());
-            Assert.AreEqual(5, _consolidater.LastAppliedPosition);
+            Assert.AreEqual(1, _consolidator.GetLockerInstanceCount());
+            Assert.IsTrue(_consolidator.isLocked());
+            Assert.AreEqual(5, _consolidator.LastAppliedPosition);
         }
 
         [Test]
         public void TryUpdateLocking_UnlockingExistingLocker_ReleasesLock()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidater.tryUpdateLocking(_locker1, false, 5);
+            bool result = _consolidator.tryUpdateLocking(_locker1, false, 5);
 
             Assert.IsTrue(result);
-            Assert.IsFalse(_consolidater.isLocked());
+            Assert.IsFalse(_consolidator.isLocked());
         }
 
         [Test]
         public void TryUpdateLocking_WithSameLockPosition_Succeeds()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidater.tryUpdateLocking(_locker2, true, 5);
+            bool result = _consolidator.tryUpdateLocking(_locker2, true, 5);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(2, _consolidater.GetLockerInstanceCount());
-            Assert.IsTrue(_consolidater.isLocked());
+            Assert.AreEqual(2, _consolidator.GetLockerInstanceCount());
+            Assert.IsTrue(_consolidator.isLocked());
         }
 
         [Test]
         public void TryUpdateLocking_SameLockerChangesPosition_Succeeds()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidater.tryUpdateLocking(_locker1, true, 10);
+            bool result = _consolidator.tryUpdateLocking(_locker1, true, 10);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(10, _consolidater.GetLockIndex(0));
-            Assert.AreEqual(10, _consolidater.LastAppliedPosition);
+            Assert.AreEqual(10, _consolidator.GetLockIndex(0));
+            Assert.AreEqual(10, _consolidator.LastAppliedPosition);
         }
 
         [Test]
         public void TryUpdateLocking_ConflictingPositions_ReturnsFalse_ThenUnlockingOneResolvesConflict()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { false, false },
                 new[] { 0, 0 });
 
-            bool firstLockResult = _consolidater.tryUpdateLocking(_locker1, true, 5);
-            bool conflictingLockResult = _consolidater.tryUpdateLocking(_locker2, true, 10);
+            bool firstLockResult = _consolidator.tryUpdateLocking(_locker1, true, 5);
+            bool conflictingLockResult = _consolidator.tryUpdateLocking(_locker2, true, 10);
 
             Assert.IsTrue(firstLockResult);
             Assert.IsFalse(conflictingLockResult);
 
-            bool unlockResult = _consolidater.tryUpdateLocking(_locker2, false, 10);
+            bool unlockResult = _consolidator.tryUpdateLocking(_locker2, false, 10);
 
             Assert.IsTrue(unlockResult);
-            Assert.IsTrue(_consolidater.isLocked());
-            Assert.IsFalse(_consolidater.GetLockState(1));
-            Assert.IsTrue(_consolidater.GetLockState(0));
-            Assert.AreEqual(5, _consolidater.LastAppliedPosition);
+            Assert.IsTrue(_consolidator.isLocked());
+            Assert.IsFalse(_consolidator.GetLockState(1));
+            Assert.IsTrue(_consolidator.GetLockState(0));
+            Assert.AreEqual(5, _consolidator.LastAppliedPosition);
         }
 
         [Test]
         public void TryUpdateLocking_LeavesEventStackBalanced()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[0],
                 new bool[0],
                 new int[0]);
 
-            bool result = _consolidater.tryUpdateLocking(_locker1, true, 5);
+            bool result = _consolidator.tryUpdateLocking(_locker1, true, 5);
 
             Assert.IsTrue(result);
             Assert.AreEqual(string.Empty, _eventStackHolder.GetCurrentStackString());
@@ -282,12 +282,12 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void CheckFaultAndGetLockIndex_WithNoLocks_ReturnsNoFaultAndMinusOne()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { false, false },
                 new[] { 0, 0 });
 
-            _consolidater.EvaluateLockFault(out bool lockFault, out int lockIndex);
+            _consolidator.EvaluateLockFault(out bool lockFault, out int lockIndex);
 
             Assert.IsFalse(lockFault);
             Assert.AreEqual(-1, lockIndex);
@@ -296,12 +296,12 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void CheckFaultAndGetLockIndex_WithLocksAtSamePosition_ReturnsNoFault()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { true, true },
                 new[] { 5, 5 });
 
-            _consolidater.EvaluateLockFault(out bool lockFault, out int lockIndex);
+            _consolidator.EvaluateLockFault(out bool lockFault, out int lockIndex);
 
             Assert.IsFalse(lockFault);
             Assert.AreEqual(5, lockIndex);
@@ -310,12 +310,12 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void CheckFaultAndGetLockIndex_WithLocksAtDifferentPositions_ReturnsFault()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { true, true },
                 new[] { 5, 10 });
 
-            _consolidater.EvaluateLockFault(out bool lockFault, out int lockIndex);
+            _consolidator.EvaluateLockFault(out bool lockFault, out int lockIndex);
 
             Assert.IsTrue(lockFault);
             Assert.AreEqual(5, lockIndex);
@@ -324,22 +324,22 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void ResetUpdatedDetectorFlag_ClearsFlag()
         {
-            _consolidater.SetUpdatedDetectorFlag(true);
+            _consolidator.SetUpdatedDetectorFlag(true);
 
-            _consolidater.ResetFlagPosChangeOnLockDetector();
+            _consolidator.ResetFlagPosChangeOnLockDetector();
 
-            Assert.IsFalse(_consolidater.GetFlagPosChangeOnLockDetector());
+            Assert.IsFalse(_consolidator.GetFlagPosChangeOnLockDetector());
         }
 
         [Test]
         public void RelayFailSafe_DispatchesToRegisteredInterlocking()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1 },
                 new[] { false },
                 new[] { 0 });
 
-            _consolidater.RelayFailSafe();
+            _consolidator.RelayFailSafe();
 
             Assert.IsTrue(_locker1.FailSafeCalled);
         }
@@ -347,26 +347,26 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void SetToFailSafePosition_ClearsLocksAndAppliesFailSafePosition()
         {
-            SetLockData(_consolidater,
+            SetLockData(_consolidator,
                 new UdonSharpBehaviour[] { _locker1, _locker2 },
                 new[] { true, true },
                 new[] { 5, 5 });
-            _consolidater.SetFailSafeIndex(0);
-            _consolidater.SetCurrentPosition(5);
+            _consolidator.SetFailSafeIndex(0);
+            _consolidator.SetCurrentPosition(5);
 
-            _consolidater.SetToFailSafePosition();
+            _consolidator.SetToFailSafePosition();
 
-            Assert.IsFalse(_consolidater.isLocked());
-            Assert.IsFalse(_consolidater.GetLockState(0));
-            Assert.IsFalse(_consolidater.GetLockState(1));
-            Assert.AreEqual(0, _consolidater.GetLockIndex(0));
-            Assert.AreEqual(0, _consolidater.GetLockIndex(1));
-            Assert.AreEqual(0, _consolidater.LastAppliedPosition);
-            Assert.IsTrue(_consolidater.GetFlagPosChangeOnLockDetector());
+            Assert.IsFalse(_consolidator.isLocked());
+            Assert.IsFalse(_consolidator.GetLockState(0));
+            Assert.IsFalse(_consolidator.GetLockState(1));
+            Assert.AreEqual(0, _consolidator.GetLockIndex(0));
+            Assert.AreEqual(0, _consolidator.GetLockIndex(1));
+            Assert.AreEqual(0, _consolidator.LastAppliedPosition);
+            Assert.IsTrue(_consolidator.GetFlagPosChangeOnLockDetector());
         }
     }
 
-    public class TestLockerConsolidater : AbstractLockerConsolidator
+    public class FakeLockerConsolidator : AbstractLockerConsolidator
     {
         public bool PositionWasApplied { get; private set; }
         public int LastAppliedPosition { get; private set; }
