@@ -13,22 +13,22 @@ namespace RBUR_SignalIntegrator_Editor
     [CanEditMultipleObjects]
     public class RouteLocker_Editor : Editor
     {
-        SerializedProperty AssignedPoints;
-        SerializedProperty AssignedRoutes;
-        SerializedProperty AssignedRails;
+        SerializedProperty targetPointsProperty;
+        SerializedProperty targetRouteProperty;
+        SerializedProperty routeRailsProperty;
 
         void OnEnable()
         {
-            AssignedPoints = serializedObject.FindProperty("m_TargetPoints");
-            AssignedRoutes = serializedObject.FindProperty("m_TargetRoute");
-            AssignedRails = serializedObject.FindProperty("Route_Rails");
+            targetPointsProperty = serializedObject.FindProperty("m_TargetPoints");
+            targetRouteProperty = serializedObject.FindProperty("m_TargetRoute");
+            routeRailsProperty = serializedObject.FindProperty("Route_Rails");
         }
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            EditorGUILayout.PropertyField(AssignedPoints);
-            EditorGUILayout.PropertyField(AssignedRoutes);
-            EditorGUILayout.PropertyField(AssignedRails);
+            EditorGUILayout.PropertyField(targetPointsProperty);
+            EditorGUILayout.PropertyField(targetRouteProperty);
+            EditorGUILayout.PropertyField(routeRailsProperty);
             serializedObject.ApplyModifiedProperties();
 
             if (GUILayout.Button("AutoSetup-Route"))
@@ -44,11 +44,11 @@ namespace RBUR_SignalIntegrator_Editor
         {
             Undo.SetCurrentGroupName("AutoSetup-Route");
             int undoGroup = Undo.GetCurrentGroup();
-            AbstractPointSetter[] allPoint = GetAllPoints();
+            AbstractPointSetter[] allPoints = GetAllPoints();
             int succeeded = 0;
             foreach (RouteLocker routeLocker in routeLockers)
             {
-                if (AutoSetupRoute(routeLocker, allPoint)) succeeded++;
+                if (AutoSetupRoute(routeLocker, allPoints)) succeeded++;
             }
             Undo.CollapseUndoOperations(undoGroup);
             if (routeLockers.Length > 1) Debug.Log($"[RouteLocker] auto setup : {succeeded} / {routeLockers.Length} succeeded");
@@ -58,11 +58,11 @@ namespace RBUR_SignalIntegrator_Editor
         /// Route_Rails を辿って TargetPoints / TargetRoute を設定する
         /// 複数編集時に共通の serializedObject へ書くと全員に同じ値が入るので、個別の SerializedObject を使う
         /// </summary>
-        private static bool AutoSetupRoute(RouteLocker routeLocker, AbstractPointSetter[] allPoint)
+        private static bool AutoSetupRoute(RouteLocker routeLocker, AbstractPointSetter[] allPoints)
         {
             List<AbstractPointSetter> points;
             List<int> routes;
-            if (!SearchRoute(routeLocker.Route_Rails, allPoint, out points, out routes))
+            if (!SearchRoute(routeLocker.Route_Rails, allPoints, out points, out routes))
             {
                 Debug.LogWarning($"[RouteLocker] {routeLocker.name} : auto setup failed", routeLocker);
                 return false;
@@ -121,7 +121,7 @@ namespace RBUR_SignalIntegrator_Editor
         /// <summary>
         /// Route_Rails を [0]->[1]->...->[end] の順に辿り、通過する分岐器と進路を集める
         /// </summary>
-        private static bool SearchRoute(Rail_Script[] routeRails, AbstractPointSetter[] allPoint, out List<AbstractPointSetter> points, out List<int> routes)
+        private static bool SearchRoute(Rail_Script[] routeRails, AbstractPointSetter[] allPoints, out List<AbstractPointSetter> points, out List<int> routes)
         {
             points = new List<AbstractPointSetter>();
             routes = new List<int>();
@@ -135,7 +135,7 @@ namespace RBUR_SignalIntegrator_Editor
                 Debug.LogWarning("[RouteLocker] Route_Rails contains an empty element");
                 return false;
             }
-            foreach (AbstractPointSetter point in allPoint)
+            foreach (AbstractPointSetter point in allPoints)
             {
                 if ((point.getFroms()?.Length ?? 0) != (point.getFromsEdge()?.Length ?? 0))
                 {
@@ -148,7 +148,7 @@ namespace RBUR_SignalIntegrator_Editor
             for (int i = 0; i < routeRails.Length - 1; i++)
             {
                 List<Transition> path;
-                if (!SearchSegment(starts, routeRails[i + 1], allPoint, out path))
+                if (!SearchSegment(starts, routeRails[i + 1], allPoints, out path))
                 {
                     Debug.LogWarning($"[RouteLocker] {routeRails[i].name} -> {routeRails[i + 1].name} : no path found");
                     return false;
@@ -177,7 +177,7 @@ namespace RBUR_SignalIntegrator_Editor
         /// <summary>
         /// 向きを考慮した幅優先探索で starts から goal までの遷移列を求める
         /// </summary>
-        private static bool SearchSegment(List<RailState> starts, Rail_Script goal, AbstractPointSetter[] allPoint, out List<Transition> path)
+        private static bool SearchSegment(List<RailState> starts, Rail_Script goal, AbstractPointSetter[] allPoints, out List<Transition> path)
         {
             path = new List<Transition>();
             Dictionary<RailState, (RailState from, Transition transition)> parents = new Dictionary<RailState, (RailState, Transition)>();
@@ -187,7 +187,7 @@ namespace RBUR_SignalIntegrator_Editor
             while (queue.Count > 0)
             {
                 RailState current = queue.Dequeue();
-                foreach (Transition transition in GetTransitions(current, allPoint))
+                foreach (Transition transition in GetTransitions(current, allPoints))
                 {
                     if (visited.Contains(transition.to)) continue;
                     visited.Add(transition.to);
@@ -213,12 +213,12 @@ namespace RBUR_SignalIntegrator_Editor
         /// <summary>
         /// current の抜ける端から進める遷移を列挙
         /// </summary>
-        private static List<Transition> GetTransitions(RailState current, AbstractPointSetter[] allPoint)
+        private static List<Transition> GetTransitions(RailState current, AbstractPointSetter[] allPoints)
         {
             List<Transition> transitions = new List<Transition>();
             bool controlledByPoint = false;
 
-            foreach (AbstractPointSetter point in allPoint)
+            foreach (AbstractPointSetter point in allPoints)
             {
                 Rail_Script[] froms = point.getFroms() ?? new Rail_Script[0];
                 bool[] edges = point.getFromsEdge() ?? new bool[0];
@@ -234,7 +234,7 @@ namespace RBUR_SignalIntegrator_Editor
                         for (int k = 0; k < pointRoutes.Length; k++)
                         {
                             RailState to;
-                            if (!TryEnter(pointRoutes[k], current.rail, allPoint, out to)) continue;
+                            if (!TryEnter(pointRoutes[k], current.rail, allPoints, out to)) continue;
                             transitions.Add(new Transition { to = to, point = point, routeIndex = k });
                         }
                         break;
@@ -247,7 +247,7 @@ namespace RBUR_SignalIntegrator_Editor
                 for (int i = 0; i < fromCount; i++)
                 {
                     bool connectedEdge;
-                    if (!froms[i] || !TryGetConnectedEdge(current.rail, froms[i], allPoint, out connectedEdge)) continue;
+                    if (!froms[i] || !TryGetConnectedEdge(current.rail, froms[i], allPoints, out connectedEdge)) continue;
                     if (connectedEdge != current.isNext) continue;
                     controlledByPoint = true;
                     //Fromの分岐端から入るので、反対側の端へ抜ける
@@ -259,7 +259,7 @@ namespace RBUR_SignalIntegrator_Editor
             if (!controlledByPoint)
             {
                 RailState to;
-                if (TryEnter(current.isNext ? current.rail.next : current.rail.prev, current.rail, allPoint, out to))
+                if (TryEnter(current.isNext ? current.rail.next : current.rail.prev, current.rail, allPoints, out to))
                 {
                     transitions.Add(new Transition { to = to, point = null, routeIndex = -1 });
                 }
@@ -270,11 +270,11 @@ namespace RBUR_SignalIntegrator_Editor
         /// <summary>
         /// previous から rail に入ったときの状態(入った端の反対側へ抜ける)を返す
         /// </summary>
-        private static bool TryEnter(Rail_Script rail, Rail_Script previous, AbstractPointSetter[] allPoint, out RailState state)
+        private static bool TryEnter(Rail_Script rail, Rail_Script previous, AbstractPointSetter[] allPoints, out RailState state)
         {
             state = default;
             bool enteredEdge;
-            if (!rail || !TryGetConnectedEdge(rail, previous, allPoint, out enteredEdge)) return false;
+            if (!rail || !TryGetConnectedEdge(rail, previous, allPoints, out enteredEdge)) return false;
             state = new RailState(rail, !enteredEdge);
             return true;
         }
@@ -283,10 +283,10 @@ namespace RBUR_SignalIntegrator_Editor
         /// rail のどちらの端が neighbor に繋がっているか(true=next側)
         /// 固定接続(next/prev)か、railの端を neighbor へ書き換えうる分岐器で判定
         /// </summary>
-        private static bool TryGetConnectedEdge(Rail_Script rail, Rail_Script neighbor, AbstractPointSetter[] allPoint, out bool isNext)
+        private static bool TryGetConnectedEdge(Rail_Script rail, Rail_Script neighbor, AbstractPointSetter[] allPoints, out bool isNext)
         {
             isNext = false;
-            foreach (AbstractPointSetter point in allPoint)
+            foreach (AbstractPointSetter point in allPoints)
             {
                 Rail_Script[] froms = point.getFroms() ?? new Rail_Script[0];
                 bool[] edges = point.getFromsEdge() ?? new bool[0];

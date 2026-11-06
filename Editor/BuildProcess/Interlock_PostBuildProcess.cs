@@ -32,8 +32,8 @@ namespace RBUR_SignalIntegrator_Editor
             }
 
             List<Interlocking> interlocks = FindComponents<Interlocking>(scene);
-            Dictionary<AbstractLockerConsolidater, Interlocking> interlock_From_Lockers = CollectFromLockers(interlocks);
-            WarnMutualLocking(interlocks, interlock_From_Lockers);
+            Dictionary<AbstractLockerConsolidater, Interlocking> interlockByFromLocker = CollectFromLockers(interlocks);
+            WarnMutualLocking(interlocks, interlockByFromLocker);
             Debug.Log("InterlockLink Process End");
         }
 
@@ -71,9 +71,9 @@ namespace RBUR_SignalIntegrator_Editor
         private static AbstractLockerConsolidater[] GetAffectedLockers(Interlocking currentInterlock)
         {
             List<AbstractLockerConsolidater> controllers = new List<AbstractLockerConsolidater>();
-            foreach (LockerAndMeetPosition StateLocker in currentInterlock.GetInterlockStateLinker())
+            foreach (LockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
             {
-                controllers.Add(StateLocker.getLocker());
+                controllers.Add(stateLinker.getLocker());
             }
             if (currentInterlock.GetRouteLocker() != null) controllers.AddRange(currentInterlock.GetRouteLocker().Lockers);
             controllers.Add(currentInterlock.GetFromLocker());
@@ -85,34 +85,34 @@ namespace RBUR_SignalIntegrator_Editor
         /// </summary>
         private static Dictionary<AbstractLockerConsolidater, Interlocking> CollectFromLockers(List<Interlocking> interlocks)
         {
-            Dictionary<AbstractLockerConsolidater, Interlocking> interlock_From_Lockers = new Dictionary<AbstractLockerConsolidater, Interlocking>();
+            Dictionary<AbstractLockerConsolidater, Interlocking> interlockByFromLocker = new Dictionary<AbstractLockerConsolidater, Interlocking>();
             foreach (Interlocking currentInterlock in interlocks)
             {
                 if (!currentInterlock.GetFromLocker()) continue;
-                if (interlock_From_Lockers.ContainsKey(currentInterlock.GetFromLocker()))
+                if (interlockByFromLocker.ContainsKey(currentInterlock.GetFromLocker()))
                 {
                     Debug.LogError("interlock duplicated. Controller: " + currentInterlock.GetFromLocker().name, currentInterlock.GetFromLocker());
                     Debug.LogError("interlock duplicated, Interlock:  " + currentInterlock.name, currentInterlock);
                 }
                 else
                 {
-                    interlock_From_Lockers.Add(currentInterlock.GetFromLocker(), currentInterlock);
+                    interlockByFromLocker.Add(currentInterlock.GetFromLocker(), currentInterlock);
                 }
             }
-            return interlock_From_Lockers;
+            return interlockByFromLocker;
         }
 
         /// <summary>
         /// 2つの Interlocking が互いの From_Locker を鎖錠し合っていれば警告する
         /// </summary>
-        private static void WarnMutualLocking(List<Interlocking> interlocks, Dictionary<AbstractLockerConsolidater, Interlocking> interlock_From_Lockers)
+        private static void WarnMutualLocking(List<Interlocking> interlocks, Dictionary<AbstractLockerConsolidater, Interlocking> interlockByFromLocker)
         {
             foreach (Interlocking interlockA in interlocks)
             {
                 foreach (AbstractLockerConsolidater lockerAffectedFromA in interlockA.affectedLockers)
                 {
                     Interlocking interlockB;
-                    if (lockerAffectedFromA == null || !interlock_From_Lockers.TryGetValue(lockerAffectedFromA, out interlockB)) continue;
+                    if (lockerAffectedFromA == null || !interlockByFromLocker.TryGetValue(lockerAffectedFromA, out interlockB)) continue;
                     if (interlockB != interlockA && interlockB.affectedLockers.Contains(interlockA.GetFromLocker()))
                     {
                         Debug.LogWarning("AnController " + interlockA.GetFromLocker().name + " is Locking / Locked by " + interlockB.GetFromLocker().name, interlockA);

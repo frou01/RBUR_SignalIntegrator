@@ -40,15 +40,15 @@ namespace RBUR_SignalIntegrator_Editor
         /// </summary>
         private static void ApplyRouteLockerToMultiLever(Scene scene, List<PointController> pointControllers, List<Interlocking> interlocks)
         {
-            foreach (MultiLever_ReferRouteLocker mulconSetter in FindComponents<MultiLever_ReferRouteLocker>(scene))
+            foreach (MultiLever_ReferRouteLocker mulConSetter in FindComponents<MultiLever_ReferRouteLocker>(scene))
             {
-                MultiLeverController mulCon = mulconSetter.GetComponent<MultiLeverController>();
+                MultiLeverController mulCon = mulConSetter.GetComponent<MultiLeverController>();
                 foreach (SignalController signalControllerLever in mulCon.ControlledLevers.Where(val => val is SignalController))
                 {
                     Interlocking correspondInterlock = interlocks.FirstOrDefault(val => val.GetFromLocker() == signalControllerLever);
                     if (correspondInterlock)
                     {
-                        mulconSetter.ApplyToControlMap(mulCon, pointControllers, correspondInterlock.GetRouteLocker());
+                        mulConSetter.ApplyToControlMap(mulCon, pointControllers, correspondInterlock.GetRouteLocker());
                     }
                     else
                     {
@@ -89,19 +89,19 @@ namespace RBUR_SignalIntegrator_Editor
         {
             foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
             {
-                int LockerIdx = -1;
+                int lockerIdx = -1;
                 routeLocker.ControlTargetIndex = (int[])routeLocker.TargetRoute.Clone();
                 foreach (AbstractPointSetter point in routeLocker.TargetPoints)
                 {
-                    LockerIdx++;
+                    lockerIdx++;
                     foreach (PointController pointController in pointControllers)
                     {
                         int pointIdx = Array.IndexOf(pointController.getPointInstances(), point);
 
                         if (pointIdx >= 0)
                         {
-                            routeLocker.ControlTargetIndex[LockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.TargetRoute[LockerIdx]);
-                            routeLocker.Lockers[LockerIdx] = pointController;
+                            routeLocker.ControlTargetIndex[lockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.TargetRoute[lockerIdx]);
+                            routeLocker.Lockers[lockerIdx] = pointController;
                             break;
                         }
                     }
@@ -172,12 +172,12 @@ namespace RBUR_SignalIntegrator_Editor
             {
                 end.StartLevers = new RouteSelector_StartLever[0];
             }
-            foreach (RouteSelector_StartLever routeSlector_Start in FindComponents<RouteSelector_StartLever>(scene))
+            foreach (RouteSelector_StartLever startLever in FindComponents<RouteSelector_StartLever>(scene))
             {
-                routeSlector_Start.AssignMaps();
-                foreach (RouteSelector_EndButton end in routeSlector_Start.getRouteEnds().SelectMany(val => val))
+                startLever.AssignMaps();
+                foreach (RouteSelector_EndButton end in startLever.getRouteEnds().SelectMany(val => val))
                 {
-                    end.StartLevers = end.StartLevers.AddUnique(routeSlector_Start);
+                    end.StartLevers = end.StartLevers.AddUnique(startLever);
                 }
             }
         }

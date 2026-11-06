@@ -50,17 +50,17 @@ namespace RBUR_SignalIntegrator_Editor
             foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
             {
                 int idx = -1;
-                foreach (AbstractPointSetter points in routeLocker.TargetPoints)
+                foreach (AbstractPointSetter point in routeLocker.TargetPoints)
                 {
                     idx++;
-                    Animator pointAnimator = points.GetComponent<Animator>();
+                    Animator pointAnimator = point.GetComponent<Animator>();
                     if (!pointAnimator) continue;
 
                     Controller_Base pointController = controllers.FirstOrDefault(checkingController =>
                         pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator));
                     if (!pointController) continue;
 
-                    GACLockerConsolidater pointLocker = gacLockers.FirstOrDefault(checkingLockers => pointController == checkingLockers.getGACController());
+                    GACLockerConsolidater pointLocker = gacLockers.FirstOrDefault(checkingLocker => pointController == checkingLocker.getGACController());
                     if (pointLocker == null)
                     {
                         Debug.LogError("Correspond GACLockerConsolidater not found", pointController);
@@ -83,18 +83,18 @@ namespace RBUR_SignalIntegrator_Editor
             UdonBehaviour interlockUdon = UdonSharpEditorUtility.GetBackingUdonBehaviour(interlocking);
             foreach (GACLockerConsolidater locker in GetGACLockers(interlocking))
             {
-                VRCPickup Controller = locker.GetComponentInChildren<VRCPickup>();
-                if (!Controller) continue;
+                VRCPickup pickup = locker.GetComponentInChildren<VRCPickup>();
+                if (!pickup) continue;
 
-                SyncEventLinker syncEventLinker = Controller.GetComponent<SyncEventLinker>();
-                PickUpEventLinker pickUpEventLinker = Controller.GetComponent<PickUpEventLinker>();
+                SyncEventLinker syncEventLinker = pickup.GetComponent<SyncEventLinker>();
+                PickUpEventLinker pickUpEventLinker = pickup.GetComponent<PickUpEventLinker>();
                 if (!syncEventLinker)
                 {
-                    syncEventLinker = Controller.gameObject.AddUdonSharpComponent<SyncEventLinker>();
+                    syncEventLinker = pickup.gameObject.AddUdonSharpComponent<SyncEventLinker>();
                 }
                 if (!pickUpEventLinker)
                 {
-                    Debug.LogError("PickUpEventLinker not found", Controller.gameObject);
+                    Debug.LogError("PickUpEventLinker not found", pickup.gameObject);
                     success = false;
                     continue;
                 }

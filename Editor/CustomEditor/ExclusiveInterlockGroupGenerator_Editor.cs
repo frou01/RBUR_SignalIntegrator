@@ -10,24 +10,24 @@ namespace RBUR_SignalIntegrator_Editor
     [CustomEditor(typeof(ExclusiveInterlockGroupGenerator))]
     public class ExclusiveInterlockGroupGenerator_Editor : Editor
     {
-        SerializedProperty TargetInterlocks;
-        SerializedProperty GeneratedGroups;
+        SerializedProperty targetInterlocksProperty;
+        SerializedProperty generatedGroupsProperty;
 
         void OnEnable()
         {
-            TargetInterlocks = serializedObject.FindProperty("targetInterlocks");
-            GeneratedGroups = serializedObject.FindProperty("generatedGroups");
+            targetInterlocksProperty = serializedObject.FindProperty("targetInterlocks");
+            generatedGroupsProperty = serializedObject.FindProperty("generatedGroups");
         }
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
             //標準の描画より先にドロップを処理するため、矩形を先に確保する
-            Rect targetRect = EditorGUILayout.GetControlRect(true, EditorGUI.GetPropertyHeight(TargetInterlocks, true));
-            HandleDropChildren(targetRect, TargetInterlocks);
-            EditorGUI.PropertyField(targetRect, TargetInterlocks, true);
+            Rect targetRect = EditorGUILayout.GetControlRect(true, EditorGUI.GetPropertyHeight(targetInterlocksProperty, true));
+            HandleDropChildren(targetRect, targetInterlocksProperty);
+            EditorGUI.PropertyField(targetRect, targetInterlocksProperty, true);
             using (new EditorGUI.DisabledScope(true))
             {
-                EditorGUILayout.PropertyField(GeneratedGroups);
+                EditorGUILayout.PropertyField(generatedGroupsProperty);
             }
             serializedObject.ApplyModifiedProperties();
 
