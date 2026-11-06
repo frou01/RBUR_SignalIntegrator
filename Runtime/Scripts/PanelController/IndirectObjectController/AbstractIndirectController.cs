@@ -31,8 +31,8 @@ namespace frou01.RBUR.SignalIntegrator
 #endif
         class AbstractIndirectController : AbstractLockerConsolidator
     {
-        public bool Logging = false;
-        [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;
+        [FormerlySerializedAs("Logging")] public bool isLogging = false;
+        [FormerlySerializedAs("ReferingInterlocks")][SerializeField][HideInInspector] public Interlocking[] referringInterlocks;
 
         [HideInInspector] public int currentUserControl;
         [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
@@ -66,9 +66,9 @@ namespace frou01.RBUR.SignalIntegrator
 
 
         //Control setter/getter
-        [HideInInspector][SerializeField] private protected UdonSharpBehaviour[] TargeterInstances;
-        [HideInInspector][SerializeField] private protected int[] ControlTargetsArray;
-        [HideInInspector][SerializeField] private protected int UserDirectIndex = -1;
+        [FormerlySerializedAs("TargeterInstances")][HideInInspector][SerializeField] private protected UdonSharpBehaviour[] targeterInstances;
+        [FormerlySerializedAs("ControlTargetsArray")][HideInInspector][SerializeField] private protected int[] controlTargets;
+        [FormerlySerializedAs("UserDirectIndex")][HideInInspector][SerializeField] private protected int userDirectIndex = -1;
         private bool hasCachedControl = false;
         int cachedControlTarget = -1;
 
@@ -85,14 +85,14 @@ namespace frou01.RBUR.SignalIntegrator
             hasCachedControl = false;
             int targeterIdx;
             GetTargeterIndex(targeterInstance, out targeterIdx);
-            if (TargeterInstances.Length == targeterIdx)
+            if (targeterInstances.Length == targeterIdx)
             {
                 AddNewTargeter(targeterInstance);
             }
-            ControlTargetsArray[targeterIdx] = controlTarget;
+            controlTargets[targeterIdx] = controlTarget;
             if (isUserDirect)
             {
-                UserDirectIndex = targeterIdx;
+                userDirectIndex = targeterIdx;
             }
             int nextControlTarget = EvaluateControlTarget();
             if (!IsLocked() && GetCurrentPosition()!= nextControlTarget)
@@ -116,20 +116,20 @@ namespace frou01.RBUR.SignalIntegrator
         /// <returns>True if the instance was added, false if it was already present.</returns>
         public virtual bool AddNewTargeter(UdonSharpBehaviour triedFrom)
         {
-            foreach (UdonSharpBehaviour targeter in TargeterInstances)
+            foreach (UdonSharpBehaviour targeter in targeterInstances)
             {
                 if (triedFrom == targeter) return false;
             }
 
-            UdonSharpBehaviour[] newTargeterInstances = new UdonSharpBehaviour[TargeterInstances.Length + 1];
-            TargeterInstances.CopyTo(newTargeterInstances, 0);
-            newTargeterInstances[TargeterInstances.Length] = triedFrom;
-            TargeterInstances = newTargeterInstances;
+            UdonSharpBehaviour[] newTargeterInstances = new UdonSharpBehaviour[targeterInstances.Length + 1];
+            targeterInstances.CopyTo(newTargeterInstances, 0);
+            newTargeterInstances[targeterInstances.Length] = triedFrom;
+            targeterInstances = newTargeterInstances;
 
-            int[] newTargetsArray = new int[ControlTargetsArray.Length + 1];
-            ControlTargetsArray.CopyTo(newTargetsArray, 0);
-            newTargetsArray[ControlTargetsArray.Length] = -1;
-            ControlTargetsArray = newTargetsArray;
+            int[] newTargetsArray = new int[controlTargets.Length + 1];
+            controlTargets.CopyTo(newTargetsArray, 0);
+            newTargetsArray[controlTargets.Length] = -1;
+            controlTargets = newTargetsArray;
 
             return true;
         }
@@ -142,7 +142,7 @@ namespace frou01.RBUR.SignalIntegrator
         protected void GetTargeterIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {
             triedIndex = 0;
-            foreach (UdonSharpBehaviour targeter in TargeterInstances)
+            foreach (UdonSharpBehaviour targeter in targeterInstances)
             {
                 triedIndex++;
                 if (triedFrom == targeter)
@@ -164,7 +164,7 @@ namespace frou01.RBUR.SignalIntegrator
                 return cachedControlTarget;
             }
             int controlTarget = -1;
-            foreach (int anTarget in ControlTargetsArray)
+            foreach (int anTarget in controlTargets)
             {
                 if (anTarget != -1)
                 {
@@ -183,9 +183,9 @@ namespace frou01.RBUR.SignalIntegrator
         /// <returns>The evaluated user direct control target.</returns>
         public virtual int EvaluateUserDirectControl()
         {
-            if (UserDirectIndex >= 0 && UserDirectIndex < ControlTargetsArray.Length)
+            if (userDirectIndex >= 0 && userDirectIndex < controlTargets.Length)
             {
-                return ControlTargetsArray[UserDirectIndex];
+                return controlTargets[userDirectIndex];
             }
             else
             {
@@ -275,7 +275,7 @@ namespace frou01.RBUR.SignalIntegrator
         public override void OnDeserialization()
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
 
             ApplyPositionToController(controllingPosition);//Force Apply Control
             if(sendControllingPosition != controllingPosition)
@@ -284,7 +284,7 @@ namespace frou01.RBUR.SignalIntegrator
             }
             sendControllingPosition = controllingPosition;
 
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 
@@ -318,7 +318,7 @@ namespace frou01.RBUR.SignalIntegrator
             {
                 loopLimit--;
                 needNextUpdate = false;
-                foreach (Interlocking interlock in ReferingInterlocks)
+                foreach (Interlocking interlock in referringInterlocks)
                 {
                     needNextUpdate |= interlock.UpdateInterlock(false);
                 }
@@ -326,7 +326,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (loopLimit <= 0)
             {
                 Debug.LogError(this.name + ": Interlock Update Looping. Interlock Settings is inconsistency." + this.name, this);
-                foreach (Interlocking interlock in ReferingInterlocks)
+                foreach (Interlocking interlock in referringInterlocks)
                 {
                     Debug.LogError(this.name + ":    " + interlock.name, interlock);
                 }

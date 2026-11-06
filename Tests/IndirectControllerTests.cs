@@ -46,7 +46,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             _locker1 = new FakeLocker("Locker1");
             _locker2 = new FakeLocker("Locker2");
 
-            _indirectController.ReferingInterlocks = new Interlocking[0];
+            _indirectController.referringInterlocks = new Interlocking[0];
 
             // Start() を明示的に呼んで初期化を完了させる
             _indirectController.StartPublic();
@@ -147,7 +147,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             _indirectController.TrySetControlTarget(realLocker2, 20, true);
 
             // Assert
-            // UserDirectIndex should be set to index of locker2 (which is 1)
+            // userDirectIndex should be set to index of locker2 (which is 1)
             Assert.AreEqual(1, _indirectController.GetUserDirectIndex());
             // Control target for locker2 should be 20
             Assert.AreEqual(20, _indirectController.GetControlTarget(1));
@@ -359,7 +359,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         public void OnDeserialization_AppliesCurrentPosition()
         {
             _indirectController.SetCurrentPosition(10);
-            _indirectController.ReferingInterlocks = new Interlocking[0];
+            _indirectController.referringInterlocks = new Interlocking[0];
 
             _indirectController.OnDeserializationPublic();
 
@@ -369,7 +369,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         [Test]
         public void OnDeserialization_LeavesEventStackBalanced()
         {
-            _indirectController.ReferingInterlocks = new Interlocking[0];
+            _indirectController.referringInterlocks = new Interlocking[0];
 
             _indirectController.OnDeserializationPublic();
 
@@ -550,7 +550,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         public void OnDeserialization_UpdatesSendControllingPosition()
         {
             _indirectController.SetCurrentPosition(10);
-            _indirectController.ReferingInterlocks = new Interlocking[0];
+            _indirectController.referringInterlocks = new Interlocking[0];
 
             _indirectController.OnDeserializationPublic();
 
@@ -585,8 +585,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             UdonSharpBehaviour[] targeters,
             int[] controlTargets)
         {
-            SetField("TargeterInstances", targeters);
-            SetField("ControlTargetsArray", controlTargets);
+            SetField("targeterInstances", targeters);
+            SetField("controlTargets", controlTargets);
         }
 
         public void SetCurrentPosition(int position)
@@ -596,27 +596,27 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         public void SetUserDirectIndex(int index)
         {
-            SetField("UserDirectIndex", index);
+            SetField("userDirectIndex", index);
         }
 
         public int GetTargeterInstanceCount()
         {
-            return GetField<UdonSharpBehaviour[]>("TargeterInstances").Length;
+            return GetField<UdonSharpBehaviour[]>("targeterInstances").Length;
         }
 
         public int GetControlTargetArrayLength()
         {
-            return GetField<int[]>("ControlTargetsArray").Length;
+            return GetField<int[]>("controlTargets").Length;
         }
 
         public int GetControlTarget(int index)
         {
-            return GetField<int[]>("ControlTargetsArray")[index];
+            return GetField<int[]>("controlTargets")[index];
         }
 
         public int GetUserDirectIndex()
         {
-            return (int)GetFieldValue("UserDirectIndex");
+            return (int)GetFieldValue("userDirectIndex");
         }
 
         public void ApplyPositionPublic(int posIndex)

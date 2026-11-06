@@ -2,6 +2,7 @@
 using UdonSharp;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -12,8 +13,8 @@ namespace frou01.RBUR.SignalIntegrator
     {
         [SerializeField] private protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] private protected AbstractIndirectController targetController;//index:switch, value:controller. -1 is mid(not lever local control)
-        [SerializeField] private protected Animator[] SwitchSideAnimator = new Animator[0];
-        [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
+        [FormerlySerializedAs("SwitchSideAnimator")][SerializeField] private protected Animator[] switchSideAnimators = new Animator[0];
+        [FormerlySerializedAs("switchAnimationParamater")][SerializeField] private protected string switchAnimationParamName = "SwitchPosition";
         [SerializeField][UdonSynced] private protected int switchPosition;
         Slider LinkedSlider
         {
@@ -63,21 +64,21 @@ namespace frou01.RBUR.SignalIntegrator
                 LinkedSlider.SetValueWithoutNotify(this.switchPosition);
             }
 
-            foreach (Animator animator in SwitchSideAnimator)
+            foreach (Animator animator in switchSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (switchToControllerMap.Length - 1));
+                animator.SetFloat(switchAnimationParamName, (float)switchPosition / (switchToControllerMap.Length - 1));
             }
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         protected virtual void OnDrawGizmosSelected()
         {
             GUIStyle guiStyle = new GUIStyle();
-            foreach (Animator animator in SwitchSideAnimator)
+            foreach (Animator animator in switchSideAnimators)
             {
                 Gizmos.color = new Color(0f, 0.5f, 1f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;

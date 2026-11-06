@@ -1,6 +1,7 @@
 ﻿using frou01.util;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -12,19 +13,19 @@ namespace frou01.RBUR.SignalIntegrator
     {
         [UdonSynced][SerializeField] private int Switch_Position;
         [UdonSynced] private bool routeSelected;
-        [SerializeField] private Animator[] SwitchSideAnimator;
-        [SerializeField] private string switchAnimationParamater = "SwitchPosition";
+        [FormerlySerializedAs("SwitchSideAnimator")][SerializeField] private Animator[] switchSideAnimators;
+        [FormerlySerializedAs("switchAnimationParamater")][SerializeField] private string switchAnimationParamName = "SwitchPosition";
         [SerializeField] private int switchAnimationOffset;
-        [HideInInspector][SerializeField] private RouteSelectorEndButton[][] RouteEnds;
+        [FormerlySerializedAs("RouteEnds")][HideInInspector][SerializeField] private RouteSelectorEndButton[][] routeEnds;
         public RouteSelectorEndButton[][] GetRouteEnds()
         {
-            return RouteEnds;
+            return routeEnds;
         }
-        [HideInInspector][SerializeField] private MultiLeverController[][] RouteAndSignalPreset;
+        [FormerlySerializedAs("RouteAndSignalPreset")][HideInInspector][SerializeField] private MultiLeverController[][] routeAndSignalPresets;
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public void AssignMaps()
         {
-            GetComponent<RouteSelectorEndToPresetMapHolder>().ApplyEndToPresetArray(out RouteEnds, out RouteAndSignalPreset);
+            GetComponent<RouteSelectorEndToPresetMapHolder>().ApplyEndToPresetArray(out routeEnds, out routeAndSignalPresets);
         }
 #endif
         Slider LinkedSlider
@@ -47,26 +48,26 @@ namespace frou01.RBUR.SignalIntegrator
 
         protected virtual void Start()
         {
-            if (LinkedSlider) LinkedSlider.maxValue = RouteEnds.Length - 1;//0 or 1
+            if (LinkedSlider) LinkedSlider.maxValue = routeEnds.Length - 1;//0 or 1
             OnDeserialization();
         }
 
         public void SelectRoute(RouteSelectorEndButton endButton)
         {
-            if (!routeSelected && RouteEnds[Switch_Position].Length > 0)
+            if (!routeSelected && routeEnds[Switch_Position].Length > 0)
             {
                 Networking.SetOwner(Networking.LocalPlayer,this.gameObject);
                 int selectedRoute = 0;
-                foreach (RouteSelectorEndButton routeEnd in RouteEnds[Switch_Position])
+                foreach (RouteSelectorEndButton routeEnd in routeEnds[Switch_Position])
                 {
                     if (routeEnd == endButton) break;
                     selectedRoute++;
                 }
-                if(selectedRoute == RouteEnds[Switch_Position].Length)
+                if(selectedRoute == routeEnds[Switch_Position].Length)
                 {
                     return;
                 }
-                RouteAndSignalPreset[Switch_Position][selectedRoute].SetControlToLevers(1,true);
+                routeAndSignalPresets[Switch_Position][selectedRoute].SetControlToLevers(1,true);
                 routeSelected = true;
                 RequestSerialization();
             }
@@ -76,7 +77,7 @@ namespace frou01.RBUR.SignalIntegrator
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
             if (LinkedSlider != null) Switch_Position = (int)LinkedSlider.value;
             SyncUI(Switch_Position, false);
-            if(RouteEnds[Switch_Position].Length <= 0)
+            if(routeEnds[Switch_Position].Length <= 0)
             {
                 SwitchDisabledOwnerOnly();
             }
@@ -86,7 +87,7 @@ namespace frou01.RBUR.SignalIntegrator
         private void SwitchDisabledOwnerOnly()
         {
             routeSelected = false;
-            foreach (MultiLeverController[] routeArray in RouteAndSignalPreset)
+            foreach (MultiLeverController[] routeArray in routeAndSignalPresets)
             {
                 foreach (MultiLeverController route in routeArray)
                 {
@@ -107,17 +108,17 @@ namespace frou01.RBUR.SignalIntegrator
                 LinkedSlider.SetValueWithoutNotify(switchPosition);
             }
 
-            foreach (Animator animator in SwitchSideAnimator)
+            foreach (Animator animator in switchSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater,
+                animator.SetFloat(switchAnimationParamName,
                     (float)(switchPosition + (switchAnimationOffset > 0 ? switchAnimationOffset : 0)) 
                     /
-                    ((RouteEnds.Length > 1 ? RouteEnds.Length - 1 : 1) + Mathf.Abs(switchAnimationOffset)));
+                    ((routeEnds.Length > 1 ? routeEnds.Length - 1 : 1) + Mathf.Abs(switchAnimationOffset)));
             }
         }
     }

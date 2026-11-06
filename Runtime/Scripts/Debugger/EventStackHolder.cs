@@ -7,7 +7,7 @@ namespace frou01.RBUR.SignalIntegrator
     public class EventStackHolder : UdonSharpBehaviour
     {
         [FormerlySerializedAs("debugLog_onAddStack")]
-        [SerializeField] bool debugLog = false;
+        [FormerlySerializedAs("debugLog")][SerializeField] bool isLogging = false;
         protected string stackString = "";
         protected string indent;
 
@@ -39,7 +39,7 @@ namespace frou01.RBUR.SignalIntegrator
 
             if (isNestBottom)
             {
-                if (debugLog)
+                if (isLogging)
                 {
                     Debug.Log("Stacktrace:\n" + stackString, on);
                 }

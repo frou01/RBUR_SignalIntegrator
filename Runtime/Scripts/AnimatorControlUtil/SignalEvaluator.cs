@@ -2,6 +2,7 @@
 using UdonSharp;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -10,13 +11,13 @@ namespace frou01.RBUR.SignalIntegrator
     public class SignalEvaluator : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] protected UdonSharpBehaviour[] senderInstance = new UdonSharpBehaviour[0];
-        [HideInInspector][SerializeField] protected float[] ReceiveSignal = new float[0];
+        [FormerlySerializedAs("senderInstance")][HideInInspector][SerializeField] protected UdonSharpBehaviour[] senderInstances = new UdonSharpBehaviour[0];
+        [FormerlySerializedAs("ReceiveSignal")][HideInInspector][SerializeField] protected float[] receivedSignals = new float[0];
 
-        [Tooltip("False: Prioritize the minimum, True: Prioritize the MAXIMUM")][SerializeField] bool mode; 
-        [SerializeField] protected Animator[] SignalSideAnimators;
-        [SerializeField] protected string signalAnimationParamater = "SignalRelayPosition";
-        [SerializeField] protected float SignalMultiplier = 1;
+        [FormerlySerializedAs("mode")][Tooltip("False: Prioritize the minimum, True: Prioritize the MAXIMUM")][SerializeField] bool shouldPrioritizeMaximum; 
+        [FormerlySerializedAs("SignalSideAnimators")][SerializeField] protected Animator[] signalSideAnimators;
+        [FormerlySerializedAs("signalAnimationParamater")][SerializeField] protected string signalAnimationParamName = "SignalRelayPosition";
+        [FormerlySerializedAs("SignalMultiplier")][SerializeField] protected float signalMultiplier = 1;
 
         [SerializeField] protected SignalEvaluator[] childEvaluators;
 
@@ -28,16 +29,16 @@ namespace frou01.RBUR.SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateSignal));
             GetCallingBehaviourIndex(callingInstance,out triedIndex);
-            if (senderInstance.Length == triedIndex)
+            if (senderInstances.Length == triedIndex)
             {
                 AddNewSender(callingInstance);
             }
-            ReceiveSignal[triedIndex] = signal;
+            receivedSignals[triedIndex] = signal;
 
-            int currentOutSig = mode ? int.MinValue : int.MaxValue;
-            foreach(int received in ReceiveSignal)
+            int currentOutSig = shouldPrioritizeMaximum ? int.MinValue : int.MaxValue;
+            foreach(int received in receivedSignals)
             {
-                if (mode)
+                if (shouldPrioritizeMaximum)
                 {
                     if(received > currentOutSig)
                     {
@@ -53,26 +54,26 @@ namespace frou01.RBUR.SignalIntegrator
                 }
             }
 
-            foreach (Animator animator in SignalSideAnimators)
+            foreach (Animator animator in signalSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(signalAnimationParamater, currentOutSig * SignalMultiplier);
+                animator.SetFloat(signalAnimationParamName, currentOutSig * signalMultiplier);
             }
 
             foreach (SignalEvaluator evaluator in childEvaluators)
             {
-                evaluator.UpdateSignal(this, currentOutSig * SignalMultiplier);
+                evaluator.UpdateSignal(this, currentOutSig * signalMultiplier);
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateSignal));
         }
         protected void GetCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {
             triedIndex = 0;
-            foreach (UdonSharpBehaviour locker in senderInstance)
+            foreach (UdonSharpBehaviour locker in senderInstances)
             {
                 triedIndex++;
                 if (triedFrom == locker)
@@ -86,7 +87,7 @@ namespace frou01.RBUR.SignalIntegrator
         public virtual bool AddNewSender(UdonSharpBehaviour triedFrom)
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(AddNewSender));
-            foreach (UdonSharpBehaviour locker in senderInstance)
+            foreach (UdonSharpBehaviour locker in senderInstances)
             {
                 if (triedFrom == locker)
                 {
@@ -95,15 +96,15 @@ namespace frou01.RBUR.SignalIntegrator
                 }
             }
 
-            UdonSharpBehaviour[] newSenderScripts = new UdonSharpBehaviour[senderInstance.Length + 1];
-            senderInstance.CopyTo(newSenderScripts, 0);
-            newSenderScripts[senderInstance.Length] = triedFrom;
-            senderInstance = newSenderScripts;
+            UdonSharpBehaviour[] newSenderScripts = new UdonSharpBehaviour[senderInstances.Length + 1];
+            senderInstances.CopyTo(newSenderScripts, 0);
+            newSenderScripts[senderInstances.Length] = triedFrom;
+            senderInstances = newSenderScripts;
 
-            float[] newReceiveSignal = new float[senderInstance.Length];
-            ReceiveSignal.CopyTo(newReceiveSignal, 0);
-            newReceiveSignal[ReceiveSignal.Length] = 0;
-            ReceiveSignal = newReceiveSignal;
+            float[] newReceiveSignal = new float[senderInstances.Length];
+            receivedSignals.CopyTo(newReceiveSignal, 0);
+            newReceiveSignal[receivedSignals.Length] = 0;
+            receivedSignals = newReceiveSignal;
 
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(AddNewSender));
             return true;
@@ -113,7 +114,7 @@ namespace frou01.RBUR.SignalIntegrator
         public void OnDrawGizmosSelected()
         {
             GUIStyle guiStyle = new GUIStyle();
-            foreach (Animator animator in SignalSideAnimators)
+            foreach (Animator animator in signalSideAnimators)
             {
                 Gizmos.color = new Color(0.2f, 1f, 0.2f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;

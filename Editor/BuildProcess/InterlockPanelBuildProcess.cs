@@ -116,13 +116,13 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (AbstractIndirectController controller in FindComponents<AbstractIndirectController>(scene))
             {
-                controller.ReferingInterlocks = new Interlocking[0];
+                controller.referringInterlocks = new Interlocking[0];
             }
             foreach (Interlocking currentInterlock in interlocks)
             {
                 foreach (AbstractIndirectController controller in GetIndirectControllers(currentInterlock))
                 {
-                    controller.ReferingInterlocks = controller.ReferingInterlocks.AddUnique(currentInterlock);
+                    controller.referringInterlocks = controller.referringInterlocks.AddUnique(currentInterlock);
                 }
             }
         }
@@ -135,7 +135,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             foreach (Interlocking currentInterlock in interlocks)
             {
                 currentInterlock.affectedInterlockings = GetIndirectControllers(currentInterlock)
-                    .SelectMany(controller => controller.ReferingInterlocks)
+                    .SelectMany(controller => controller.referringInterlocks)
                     .Distinct()
                     .ToArray();
             }
@@ -148,7 +148,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (AbstractIndirectController controller in FindComponents<AbstractIndirectController>(scene))
             {
-                controller.ReferingInterlocks = controller.ReferingInterlocks
+                controller.referringInterlocks = controller.referringInterlocks
                     .SelectMany(interlock => interlock.affectedInterlockings)
                     .Distinct()
                     .ToArray();
@@ -159,8 +159,8 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (MultiLeverController multiLeverController in FindComponents<MultiLeverController>(scene))
             {
-                multiLeverController.ReferingInterlocks = multiLeverController.ControlledLevers
-                    .SelectMany(panelController => panelController.ReferingInterlocks)
+                multiLeverController.referringInterlocks = multiLeverController.ControlledLevers
+                    .SelectMany(panelController => panelController.referringInterlocks)
                     .Distinct()
                     .ToArray();
             }
@@ -170,14 +170,14 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (RouteSelectorEndButton end in FindComponents<RouteSelectorEndButton>(scene))
             {
-                end.StartLevers = new RouteSelectorStartLever[0];
+                end.startLevers = new RouteSelectorStartLever[0];
             }
             foreach (RouteSelectorStartLever startLever in FindComponents<RouteSelectorStartLever>(scene))
             {
                 startLever.AssignMaps();
                 foreach (RouteSelectorEndButton end in startLever.GetRouteEnds().SelectMany(val => val))
                 {
-                    end.StartLevers = end.StartLevers.AddUnique(startLever);
+                    end.startLevers = end.startLevers.AddUnique(startLever);
                 }
             }
         }

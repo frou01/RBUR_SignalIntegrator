@@ -2,6 +2,7 @@
 using System.Threading;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -14,9 +15,9 @@ namespace frou01.RBUR.SignalIntegrator
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [UdonSynced][SerializeField] private protected int switchPosition;
-        [SerializeField] private protected Animator[] SwitchSideAnimator;
-        [SerializeField] private protected string switchAnimationParamater = "SwitchPosition";
-        [HideInInspector][SerializeField] private AbstractIndirectController[] m_controlledLevers;
+        [FormerlySerializedAs("SwitchSideAnimator")][SerializeField] private protected Animator[] switchSideAnimators;
+        [FormerlySerializedAs("switchAnimationParamater")][SerializeField] private protected string switchAnimationParamName = "SwitchPosition";
+        [FormerlySerializedAs("m_controlledLevers")][HideInInspector][SerializeField] private AbstractIndirectController[] controlledLevers;
         public AbstractIndirectController[] ControlledLevers
         {
             get
@@ -31,11 +32,11 @@ namespace frou01.RBUR.SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
             set
             {
-                m_controlledLevers = value;
+                controlledLevers = value;
             }
 #endif
         }
-        [HideInInspector][OdinSerialize][SerializeField] private protected int[][] m_SwitchToControllerMap = new int[0][];//index:switch, value:controller. -1 is mid(not lever local control)
+        [FormerlySerializedAs("m_SwitchToControllerMap")][HideInInspector][OdinSerialize][SerializeField] private protected int[][] switchToControllerMap = new int[0][];//index:switch, value:controller. -1 is mid(not lever local control)
         public int[][] SwitchToControllerMap
         {
             get
@@ -43,18 +44,18 @@ namespace frou01.RBUR.SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
                 return GetComponent<MultiLeverSwitchToControlMapsHolder>().GetSwitchToControllerMap();
 #else
-                return m_SwitchToControllerMap;
+                return switchToControllerMap;
 #endif
             }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
             set
             {
-                m_SwitchToControllerMap = value;
+                switchToControllerMap = value;
             }
 #endif
         }
-        [HideInInspector][SerializeField] private protected int SwitchPositionNum;
-        [HideInInspector][SerializeField] public Interlocking[] ReferingInterlocks;
+        [FormerlySerializedAs("SwitchPositionNum")][HideInInspector][SerializeField] private protected int switchPositionNum;
+        [FormerlySerializedAs("ReferingInterlocks")][HideInInspector][SerializeField] public Interlocking[] referringInterlocks;
 
 
         Slider LinkedSlider
@@ -77,7 +78,7 @@ namespace frou01.RBUR.SignalIntegrator
 
         protected virtual void Start()
         {
-            if (LinkedSlider) LinkedSlider.maxValue = (SwitchPositionNum - 1);
+            if (LinkedSlider) LinkedSlider.maxValue = (switchPositionNum - 1);
             OnDeserialization();
         }
         public virtual void SetControllerOwner()
@@ -122,12 +123,12 @@ namespace frou01.RBUR.SignalIntegrator
 
                 //Try control Controllers without interlock update
                 int idx = 0;
-                foreach (AbstractIndirectController panelController in m_controlledLevers)
+                foreach (AbstractIndirectController panelController in controlledLevers)
                 {
-                    int nextControl = m_SwitchToControllerMap[idx][switchPosition];
+                    int nextControl = switchToControllerMap[idx][switchPosition];
 
                     if(takeOwner && nextControl != -1) panelController.SetControllerOwner();
-                    panelController.TrySetControlTarget(this, m_SwitchToControllerMap[idx][switchPosition], false);
+                    panelController.TrySetControlTarget(this, switchToControllerMap[idx][switchPosition], false);
                     idx++;
                 }
 
@@ -147,14 +148,14 @@ namespace frou01.RBUR.SignalIntegrator
                 LinkedSlider.SetValueWithoutNotify(this.switchPosition);
             }
 
-            foreach (Animator animator in SwitchSideAnimator)
+            foreach (Animator animator in switchSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamater, (float)switchPosition / (SwitchPositionNum - 1));
+                animator.SetFloat(switchAnimationParamName, (float)switchPosition / (switchPositionNum - 1));
             }
         }
 
@@ -167,7 +168,7 @@ namespace frou01.RBUR.SignalIntegrator
             {
                 loopLimit--;
                 needNextUpdate = false;
-                foreach (Interlocking interlock in ReferingInterlocks)
+                foreach (Interlocking interlock in referringInterlocks)
                 {
                     needNextUpdate |= interlock.UpdateInterlock(false);
                 }
@@ -175,7 +176,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (loopLimit <= 0)
             {
                 Debug.LogError(this.name + ": Interlock Update Looping. Interlock Settings is inconsistency." + this.name, this);
-                foreach (Interlocking interlock in ReferingInterlocks)
+                foreach (Interlocking interlock in referringInterlocks)
                 {
                     Debug.LogError(this.name + ":    " + interlock.name, interlock);
                 }

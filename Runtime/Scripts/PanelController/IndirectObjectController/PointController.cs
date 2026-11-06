@@ -3,6 +3,7 @@ using frou01.util;
 using UdonSharp;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 using VRC.Udon.Common;
@@ -14,9 +15,9 @@ namespace frou01.RBUR.SignalIntegrator
     public class PointController : AbstractIndirectController
     {
         [HideInInspector][SerializeField] protected AbstractPointSetter[] pointInstances;
-        [HideInInspector][SerializeField] Animator[] PointSideAnimators;
-        [HideInInspector][OdinSerialize][SerializeField] protected int[][] ControlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)
-        [HideInInspector][OdinSerialize][SerializeField] protected float[][] ControlToParamaterMap;//2nd index:route, value:animationParamater.
+        [FormerlySerializedAs("PointSideAnimators")][HideInInspector][SerializeField] Animator[] pointSideAnimators;
+        [FormerlySerializedAs("ControlToRouteIndexMap")][HideInInspector][OdinSerialize][SerializeField] protected int[][] controlToRouteIndexMap;//2nd index:switch, value:control. -1 is mid(not lever local control)
+        [FormerlySerializedAs("ControlToParamaterMap")][HideInInspector][OdinSerialize][SerializeField] protected float[][] controlToParameterMap;//2nd index:route, value:animationParamater.
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public void SetPointInstances(AbstractPointSetter[] points)
@@ -29,7 +30,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public void SetControlToRouteIndexMap(int[][] controlToRouteIndexMap)
         {
-            this.ControlToRouteIndexMap = controlToRouteIndexMap;
+            this.controlToRouteIndexMap = controlToRouteIndexMap;
         }
         public int[][] GetControlToRouteIndexMap()
         {
@@ -37,7 +38,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public void SetAttachedPointAnimator(Animator[] animators)
         {
-            this.PointSideAnimators = animators;
+            this.pointSideAnimators = animators;
         }
         public Animator[] GetAttachedPointAnimator()
         {
@@ -45,19 +46,19 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public void SetControlToParameterMap(float[][] controlToParameterMap)
         {
-            this.ControlToParamaterMap = controlToParameterMap;
+            this.controlToParameterMap = controlToParameterMap;
         }
         public float[][] GetControlToParameterMap()
         {
             return GetComponent<PointLeverControlToParameterHolder>().GetControlToParameterMap();
         }
 #endif
-        [SerializeField] string currentRouteParamater = "PointRoute";
-        [SerializeField] string progressParamater = "PointMovePos";
+        [FormerlySerializedAs("currentRouteParamater")][SerializeField] string currentRouteParamName = "PointRoute";
+        [FormerlySerializedAs("progressParamater")][SerializeField] string progressParamName = "PointMovePos";
         int prevControllingPosition = -1;
         protected int prevPointRouteIndex = int.MinValue;
         [SerializeField] protected float changeTimeLength = 1;
-        [SerializeField] protected int CurrentPointRouteMapIndex;
+        [FormerlySerializedAs("CurrentPointRouteMapIndex")][SerializeField] protected int currentPointRouteMapIndex;
         [SerializeField] protected float changeProgress;
         protected override void Start()
         {
@@ -91,7 +92,7 @@ namespace frou01.RBUR.SignalIntegrator
                 }
                 prevControllingPosition = controllingPosition;
             }
-            if (CurrentPointRouteMapIndex != controllingPosition)
+            if (currentPointRouteMapIndex != controllingPosition)
             {
                 int prevChanging = Mathf.RoundToInt(changeProgress / changeTimeLength);
                 int changing;
@@ -118,18 +119,18 @@ namespace frou01.RBUR.SignalIntegrator
                     int pointIdx = 0;
                     foreach (AbstractPointSetter pointSetter in pointInstances)
                     {
-                        pointSetter.set_route_To(ControlToRouteIndexMap[pointIdx][changing]);
+                        pointSetter.set_route_To(controlToRouteIndexMap[pointIdx][changing]);
                         pointIdx++;
                     }
                 }
                 int animatorIdx = 0;
-                foreach (Animator animator in PointSideAnimators)
+                foreach (Animator animator in pointSideAnimators)
                 {
                     animator.enabled = true;
                     int mapSection = Mathf.FloorToInt(changeProgress / changeTimeLength);
-                    float mapStart = ControlToParamaterMap[animatorIdx][mapSection];
-                    float mapEnd = ControlToParamaterMap[animatorIdx][mapSection + mapSection == ControlToParamaterMap[animatorIdx].Length ? 0 : 1];
-                    animator.SetFloat(progressParamater, Mathf.Lerp(mapStart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
+                    float mapStart = controlToParameterMap[animatorIdx][mapSection];
+                    float mapEnd = controlToParameterMap[animatorIdx][mapSection + mapSection == controlToParameterMap[animatorIdx].Length ? 0 : 1];
+                    animator.SetFloat(progressParamName, Mathf.Lerp(mapStart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
                     animatorIdx++;
                 }
             }
@@ -161,15 +162,15 @@ namespace frou01.RBUR.SignalIntegrator
             foreach (PointLever_Setter aPoint in pointInstances)
             {
                 int aPointRoute = aPoint.get_current_To_Index();
-                if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPoint = " + aPoint.name, this);
-                if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPointRoute = " + aPointRoute, this);
+                if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPoint = " + aPoint.name, this);
+                if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] aPointRoute = " + aPointRoute, this);
 
                 int aControlRouteCorresponding = 0;
-                foreach (int anRoute in ControlToRouteIndexMap[pointIdx])
+                foreach (int anRoute in controlToRouteIndexMap[pointIdx])
                 {
                     if(anRoute == aPointRoute)
                     {
-                        if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] anRoute = " + anRoute, this);
+                        if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] anRoute = " + anRoute, this);
                         if (controlRouteCorresponding == -2) controlRouteCorresponding = aControlRouteCorresponding;
                         else if (controlRouteCorresponding != aControlRouteCorresponding)
                         {
@@ -179,24 +180,24 @@ namespace frou01.RBUR.SignalIntegrator
                     }
                     aControlRouteCorresponding++;
                 }
-                if (aControlRouteCorresponding == ControlToRouteIndexMap[pointIdx].Length) controlRouteCorresponding = -1;//Not Found
+                if (aControlRouteCorresponding == controlToRouteIndexMap[pointIdx].Length) controlRouteCorresponding = -1;//Not Found
                 pointIdx++;
             }
-            CurrentPointRouteMapIndex = controlRouteCorresponding;
-            foreach (Animator animator in PointSideAnimators)
+            currentPointRouteMapIndex = controlRouteCorresponding;
+            foreach (Animator animator in pointSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
                 {
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(currentRouteParamater, (float)CurrentPointRouteMapIndex / (float)(ControlToRouteIndexMap[0].Length-1));
+                animator.SetFloat(currentRouteParamName, (float)currentPointRouteMapIndex / (float)(controlToRouteIndexMap[0].Length-1));
             }
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] prevPointRouteIndex = " + prevPointRouteIndex, this);
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PointRouteIndex = " + CurrentPointRouteMapIndex, this);
-            if (prevPointRouteIndex != CurrentPointRouteMapIndex)
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] prevPointRouteIndex = " + prevPointRouteIndex, this);
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(PointUpdate) + "] PointRouteIndex = " + currentPointRouteMapIndex, this);
+            if (prevPointRouteIndex != currentPointRouteMapIndex)
             {
-                prevPointRouteIndex = CurrentPointRouteMapIndex;
+                prevPointRouteIndex = currentPointRouteMapIndex;
                 UpdateInterlocks();
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(PointUpdate));
@@ -224,7 +225,7 @@ namespace frou01.RBUR.SignalIntegrator
         {
             base.OnDrawGizmosSelected();
             GUIStyle guiStyle = new GUIStyle();
-            foreach (Animator animator in PointSideAnimators)
+            foreach (Animator animator in pointSideAnimators)
             {
                 Gizmos.color = new Color(0.5f, 0f, 1f, 1f);
                 guiStyle.normal.textColor = Gizmos.color;
@@ -232,7 +233,7 @@ namespace frou01.RBUR.SignalIntegrator
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
 
-            ControlToRouteIndexMap = GetComponent<PointLeverControlToRouteIndexHolder>().GetControlToRouteIndexMap();
+            controlToRouteIndexMap = GetComponent<PointLeverControlToRouteIndexHolder>().GetControlToRouteIndexMap();
             int pointIdx = 0;
             foreach (AbstractPointSetter pointSetter in pointInstances)
             {
@@ -246,10 +247,10 @@ namespace frou01.RBUR.SignalIntegrator
                 pointSetter.DrawGizmo_From();
                 Vector4 colorVecStart = new Vector4(0.2f, 0.2f, 1f, 1f);
                 Vector4 colorVecEnd = new Vector4(1f, 0f, 0f, 1f);
-                float routeNum = ControlToRouteIndexMap[pointIdx].Length - 1;
+                float routeNum = controlToRouteIndexMap[pointIdx].Length - 1;
                 float idx = 0;
                 Rail_Script[] routes = pointSetter.getRoutes();
-                foreach (int routeIndex in ControlToRouteIndexMap[pointIdx])
+                foreach (int routeIndex in controlToRouteIndexMap[pointIdx])
                 {
                     Vector4 currentCol = Vector4.Lerp(colorVecStart, colorVecEnd, idx / routeNum);
                     Gizmos.color = new Color(currentCol.x, currentCol.y, currentCol.z, currentCol.w);
