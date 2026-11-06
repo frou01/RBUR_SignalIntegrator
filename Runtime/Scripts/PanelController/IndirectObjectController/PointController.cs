@@ -129,7 +129,7 @@ namespace frou01.RBUR.SignalIntegrator
                     animator.enabled = true;
                     int mapSection = Mathf.FloorToInt(changeProgress / changeTimeLength);
                     float mapStart = controlToParameterMap[animatorIdx][mapSection];
-                    float mapEnd = controlToParameterMap[animatorIdx][mapSection + mapSection == controlToParameterMap[animatorIdx].Length ? 0 : 1];
+                    float mapEnd = controlToParameterMap[animatorIdx][mapSection + (mapSection + 1 == controlToParameterMap[animatorIdx].Length ? 0 : 1)];
                     animator.SetFloat(progressParamName, Mathf.Lerp(mapStart, mapEnd,(changeProgress / changeTimeLength) - mapSection));
                     animatorIdx++;
                 }
