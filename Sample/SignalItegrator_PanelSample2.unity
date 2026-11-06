@@ -148,31 +148,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[0]
-      value: 
-      objectReference: {fileID: 73533670}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[1]
-      value: 
-      objectReference: {fileID: 1731882305197672279}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[2]
-      value: 
-      objectReference: {fileID: 4728980181231292899}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[3]
-      value: 
-      objectReference: {fileID: 1731882305197672279}
     - target: {fileID: 2029101138456741613, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
       propertyPath: target
@@ -513,31 +488,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[0]
-      value: 
-      objectReference: {fileID: 1431434198}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[1]
-      value: 
-      objectReference: {fileID: 4728980181231292899}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[2]
-      value: 
-      objectReference: {fileID: 4728980181231292899}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[3]
-      value: 
-      objectReference: {fileID: 1731882305197672279}
     - target: {fileID: 2029101138456741613, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
       propertyPath: target
@@ -1129,31 +1079,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[0]
-      value: 
-      objectReference: {fileID: 4457645061710611199}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[1]
-      value: 
-      objectReference: {fileID: 4920066874882511089}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[2]
-      value: 
-      objectReference: {fileID: 4728980181231292899}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[3]
-      value: 
-      objectReference: {fileID: 1731882305197672279}
     - target: {fileID: 2029101138456741613, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
       propertyPath: target
@@ -7389,31 +7314,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[0]
-      value: 
-      objectReference: {fileID: 3979830836920148083}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[1]
-      value: 
-      objectReference: {fileID: 4728980181231292899}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[2]
-      value: 
-      objectReference: {fileID: 4728980181231292899}
-    - target: {fileID: 1672870722210427936, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
-        type: 3}
-      propertyPath: controlledLevers.Array.data[3]
-      value: 
-      objectReference: {fileID: 1731882305197672279}
     - target: {fileID: 2029101138456741613, guid: d8c76d5dbf4ab4b4db1a51a3c2f7e975,
         type: 3}
       propertyPath: target

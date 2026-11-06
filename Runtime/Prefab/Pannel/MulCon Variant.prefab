@@ -576,48 +576,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
+    - Name: m_SwitchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 1|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
       Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 2|System.Int32[], mscorlib
-    - Name: 
-      Entry: 14
-      Data: 2
-    - Name: 
-      Entry: 3
-      Data: 0
-    - Name: 
-      Entry: 3
-      Data: 1
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
     - Name: 
       Entry: 13
       Data: 
@@ -632,7 +596,7 @@ MonoBehaviour:
   switchAnimationParamater: SwitchPosition
   SwitchPositionNum: 0
   ReferingInterlocks: []
-  controlledLevers: []
+  m_controlledLevers: []
 --- !u!114 &3979832869742275261
 MonoBehaviour:
   m_ObjectHideFlags: 0

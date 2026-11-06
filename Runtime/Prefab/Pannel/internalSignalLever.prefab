@@ -244,8 +244,17 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: switchToControllerMap
-      Entry: 6
+    - Name: m_SwitchToControllerMap
+      Entry: 7
+      Data: 0|System.Int32[][], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 554080677433783657}
   eventStackHolder: {fileID: 0}
@@ -254,8 +263,7 @@ MonoBehaviour:
   switchAnimationParamater: SwitchPosition
   SwitchPositionNum: 0
   ReferingInterlocks: []
-  controlledLevers:
-  - {fileID: 9013001743477330019}
+  m_controlledLevers: []
 --- !u!114 &7506985118619515636
 MonoBehaviour:
   m_ObjectHideFlags: 0
