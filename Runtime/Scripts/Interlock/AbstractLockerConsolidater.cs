@@ -113,20 +113,20 @@ namespace RBUR_SignalIntegrator
                 if (triedFrom == locker) return false;
             }
 
-            UdonSharpBehaviour[] newLockingScripts = new UdonSharpBehaviour[lockerInstances.Length+1];
-            lockerInstances.CopyTo(newLockingScripts, 0);
-            newLockingScripts[lockerInstances.Length] = triedFrom;
-            lockerInstances = newLockingScripts;
+            UdonSharpBehaviour[] newLockerInstances = new UdonSharpBehaviour[lockerInstances.Length+1];
+            lockerInstances.CopyTo(newLockerInstances, 0);
+            newLockerInstances[lockerInstances.Length] = triedFrom;
+            lockerInstances = newLockerInstances;
 
-            bool[] newSettedLockStates = new bool[SettedLockStates.Length + 1];
-            SettedLockStates.CopyTo(newSettedLockStates, 0);
-            newSettedLockStates[SettedLockStates.Length] = false;
-            SettedLockStates = newSettedLockStates;
+            bool[] newLockStates = new bool[SettedLockStates.Length + 1];
+            SettedLockStates.CopyTo(newLockStates, 0);
+            newLockStates[SettedLockStates.Length] = false;
+            SettedLockStates = newLockStates;
 
-            int[] newSettedLockPosition = new int[SettedLockIndex.Length + 1];
-            SettedLockIndex.CopyTo(newSettedLockPosition, 0);
-            newSettedLockPosition[SettedLockIndex.Length] = 0;
-            SettedLockIndex = newSettedLockPosition;
+            int[] newLockIndexes = new int[SettedLockIndex.Length + 1];
+            SettedLockIndex.CopyTo(newLockIndexes, 0);
+            newLockIndexes[SettedLockIndex.Length] = 0;
+            SettedLockIndex = newLockIndexes;
 
             return true;
         }

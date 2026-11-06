@@ -78,18 +78,18 @@ namespace RBUR_SignalIntegrator
             UpdateInterlock();
         }
 
-        bool Initial_Fetching = true;
-        bool Prev_SignalOpenned;
-        bool Prev_canOpenSignal;
+        bool isInitialFetch = true;
+        bool prevIsSignalOpened;
+        bool prevCanOpenSignal;
         /// <summary>
         /// 鎖錠の更新を行う。From_Lockerの状態と、toLocker_States、RouteLocker(進路鎖錠)の状態を確認する
         /// From_LockerがOpen位置であればtoLocker_StatesとRouteLockerを位置変更及びロックする。From_Lockerが閉鎖位置であれば、toLocker_StatesとRouteLockerを解放する。
         /// toLocker_StatesとRouteLockerいずれかが適合位置でない場合、From_Lockerを閉鎖位置にロックする。
         /// </summary>
-        /// <param name="update_AffectedInterlock">関係する鎖錠も更新するかどうか</param>
+        /// <param name="updateAffectedInterlock">関係する鎖錠も更新するかどうか</param>
         /// <returns>関係するLockerについて、位置の変更を行ったかどうか</returns>
         [RecursiveMethod]
-        public bool UpdateInterlock(bool update_AffectedInterlock)
+        public bool UpdateInterlock(bool updateAffectedInterlock)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateInterlock));
 
@@ -100,24 +100,24 @@ namespace RBUR_SignalIntegrator
 
             //Fetching State
             bool canOpenSignal = GetRouteLocker().isRouteOpen();
-            bool isSignalOpenned = false;
+            bool isSignalOpened = false;
             foreach (LockerAndMeetPosition interlockState in toLocker_States)
             {
                 canOpenSignal &= interlockState.Check();
             }
             int currentSignalPos = From_Locker.GetCurrentPosition();
-            foreach (int OpenPosition in OpenPositionIndexes)
+            foreach (int openPosition in OpenPositionIndexes)
             {
-                if (currentSignalPos == OpenPosition)
+                if (currentSignalPos == openPosition)
                 {
-                    isSignalOpenned = true;
+                    isSignalOpened = true;
                     break;
                 }
             }
 
-            if (Initial_Fetching || (isSignalOpenned != Prev_SignalOpenned) || (canOpenSignal != Prev_canOpenSignal))//Edge Only
+            if (isInitialFetch || (isSignalOpened != prevIsSignalOpened) || (canOpenSignal != prevCanOpenSignal))//Edge Only
             {
-                Initial_Fetching = false;//For detouring on first call.
+                isInitialFetch = false;//For detouring on first call.
 
 
                 //Initialize controller for update detection.
@@ -128,21 +128,21 @@ namespace RBUR_SignalIntegrator
                 //Flag for Affected Object Search
                 FailSafeCalled = false;
 
-                Prev_SignalOpenned = isSignalOpenned;
-                Prev_canOpenSignal = canOpenSignal;
+                prevIsSignalOpened = isSignalOpened;
+                prevCanOpenSignal = canOpenSignal;
 
-                if (isSignalOpenned)
+                if (isSignalOpened)
                 {
-                    bool LockSuccess = true;
+                    bool lockSucceeded = true;
                     if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
                     foreach (LockerAndMeetPosition interlockState in toLocker_States)
                     {
-                        LockSuccess &= interlockState.UpdateLock(true);
+                        lockSucceeded &= interlockState.UpdateLock(true);
                     }
-                    LockSuccess &= GetRouteLocker().UpdateLockRoute(true, From_Locker.isControllerOwner());
+                    lockSucceeded &= GetRouteLocker().UpdateLockRoute(true, From_Locker.isControllerOwner());
 
-                    if (logging) Debug.Log(this.name + ": UpdateInterlock.LockResult " + LockSuccess, this.gameObject);
-                    if (!LockSuccess && From_Locker.isControllerOwner())
+                    if (logging) Debug.Log(this.name + ": UpdateInterlock.LockResult " + lockSucceeded, this.gameObject);
+                    if (!lockSucceeded && From_Locker.isControllerOwner())
                     {
                         Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
                         this.RelayFailSafe();
@@ -161,10 +161,10 @@ namespace RBUR_SignalIntegrator
                     if (!canOpenSignal)
                     {
                         if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
-                        bool LockSuccess = From_Locker.tryUpdateLocking(this, true, ClosePositionIndex);
-                        if (!LockSuccess)
+                        bool lockSucceeded = From_Locker.tryUpdateLocking(this, true, ClosePositionIndex);
+                        if (!lockSucceeded)
                         {
-                            Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on anohter position", From_Locker);
+                            Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on another position", From_Locker);
                         }
                     }
                     else
@@ -175,12 +175,12 @@ namespace RBUR_SignalIntegrator
                 }
             }
 
-            bool LockerUpdated = false;
+            bool lockerUpdated = false;
             foreach (AbstractLockerConsolidater locker in affectedLockers)
             {
                 if (locker.GetFlagPosChangeOnLockDetector())
                 {
-                    LockerUpdated = true;
+                    lockerUpdated = true;
                     break;
                 }
             }
@@ -189,7 +189,7 @@ namespace RBUR_SignalIntegrator
                 locker.ResetFlagPosChangeOnLockDetector();//フラグを降ろしておかないと関係他鎖錠の更新時に壊れる事になる
             }
 
-            if (LockerUpdated && update_AffectedInterlock)
+            if (lockerUpdated && updateAffectedInterlock)
             {
                 int loopLimit = 10;
                 bool needNextUpdate;
@@ -213,7 +213,7 @@ namespace RBUR_SignalIntegrator
             }
 
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateInterlock));
-            return LockerUpdated;
+            return lockerUpdated;
         }
         public void UpdateInterlock()//called by Controller Pickup Event
         {
@@ -222,7 +222,7 @@ namespace RBUR_SignalIntegrator
 
         public void RelayFailSafe()
         {
-            //Search all Intelock/
+            //Search all Interlock/
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
             if (!FailSafeCalled)
             {

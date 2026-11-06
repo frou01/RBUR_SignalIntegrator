@@ -112,13 +112,13 @@ namespace RBUR_SignalIntegrator
         /// Lock/UnlockRoute.
         /// State=False, unlockroute
         /// State=True,
-        ///     Syncing_mode = True, try to lock witch control overwrite(use on synced).
-        ///     Syncing_mode = False, check route open, then try to lock
+        ///     syncingMode = True, try to lock witch control overwrite(use on synced).
+        ///     syncingMode = False, check route open, then try to lock
         /// </summary>
-        /// <param name="State">True: lock, False: release</param>
-        /// <param name="Syncing_mode">True: overwrite current route, False: dont overwrite current route</param>
+        /// <param name="state">True: lock, False: release</param>
+        /// <param name="syncingMode">True: overwrite current route, False: dont overwrite current route</param>
         /// <returns></returns>
-        public bool UpdateLockRoute(bool State,bool Syncing_mode)
+        public bool UpdateLockRoute(bool state,bool syncingMode)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLockRoute));
             if (m_lockers.Length == 0)
@@ -126,7 +126,7 @@ namespace RBUR_SignalIntegrator
                 if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return true;
             }
-            if (!State)
+            if (!state)
             {
                 foreach (AbstractLockerConsolidater locker in m_lockers)
                 {
@@ -137,7 +137,7 @@ namespace RBUR_SignalIntegrator
             }
             else
             {
-                if (Syncing_mode && !isRouteOpen())
+                if (syncingMode && !isRouteOpen())
                 {
                     if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                     return false;
@@ -157,43 +157,43 @@ namespace RBUR_SignalIntegrator
         }
 
 
-        bool FailSafeLoopCancel;
+        bool isRelayingFailSafe;
         public void RelayFailSafe()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
-            if (!FailSafeLoopCancel)
+            if (!isRelayingFailSafe)
             {
-                FailSafeLoopCancel = true;
+                isRelayingFailSafe = true;
                 if (!interlocking.FailSafeCalled)
                     foreach (AbstractLockerConsolidater locker in m_lockers)
                     {
                         locker.RelayFailSafe();
                     }
             }
-            FailSafeLoopCancel = false;
+            isRelayingFailSafe = false;
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         void OnDrawGizmosSelected()
         {
-            int point_idx = 0;
-            int route_idx;
+            int pointIdx = 0;
+            int routeIdx;
             if (m_TargetPoints != null)
             {
                 foreach (AbstractPointSetter setter in m_TargetPoints)
                 {
-                    route_idx = 0;
+                    routeIdx = 0;
                     Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
                     setter.DrawGizmo_From();
 
                     foreach (Rail_Script route in setter.getRoutes())
                     {
-                        if (route_idx == m_TargetRoute[point_idx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
+                        if (routeIdx == m_TargetRoute[pointIdx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
                         else Gizmos.color = new Color(1f, 0f, 0f, 1f);
                         setter.DrawGizmo_To(route);
-                        route_idx++;
+                        routeIdx++;
                     }
-                    point_idx++;
+                    pointIdx++;
                 }
             }
         }

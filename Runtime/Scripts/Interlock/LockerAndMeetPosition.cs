@@ -41,7 +41,7 @@ namespace RBUR_SignalIntegrator
             return false;
         }
 
-        //return: Sucess?
+        //return: Success?
         public virtual bool UpdateLock(bool isLocking)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLock));
@@ -62,17 +62,17 @@ namespace RBUR_SignalIntegrator
             return res;
         }
 
-        bool FailSafeLoopCancel;
+        bool isRelayingFailSafe;
         public void RelayFailSafe()
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
-            if (!FailSafeLoopCancel)
+            if (!isRelayingFailSafe)
             {
-                FailSafeLoopCancel = true;
+                isRelayingFailSafe = true;
                 if (!interlocking.FailSafeCalled)
                     locker.RelayFailSafe();
             }
-            FailSafeLoopCancel = false;
+            isRelayingFailSafe = false;
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(RelayFailSafe));
         }
         public void SetupLocker()

@@ -691,13 +691,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Initial_Fetching
+      Data: isInitialFetch
     - Name: $v
       Entry: 7
       Data: 49|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: Initial_Fetching
+      Data: isInitialFetch
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 3
@@ -739,13 +739,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Prev_SignalOpenned
+      Data: prevIsSignalOpened
     - Name: $v
       Entry: 7
       Data: 51|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: Prev_SignalOpenned
+      Data: prevIsSignalOpened
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 3
@@ -787,13 +787,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Prev_canOpenSignal
+      Data: prevCanOpenSignal
     - Name: $v
       Entry: 7
       Data: 53|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: Prev_canOpenSignal
+      Data: prevCanOpenSignal
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 3
