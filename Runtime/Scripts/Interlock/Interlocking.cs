@@ -13,7 +13,7 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] bool logging;
 
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [SerializeField] AbstractLockerConsolidater From_Locker;//GAC以外も制御できるように間を挟む
+        [SerializeField] AbstractLockerConsolidator From_Locker;//GAC以外も制御できるように間を挟む
         [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
         [SerializeField] LockerAndMeetPosition[] toLocker_States = new LockerAndMeetPosition[0];//進路以外の進行要件
         [FormerlySerializedAs("ReleasePositionIndex")]
@@ -22,7 +22,7 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] int[] OpenPositionIndexes;
         [HideInInspector][SerializeField] public bool FailSafeCalled;
         [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;//自身を含む関係する鎖錠
-        [HideInInspector][SerializeField] public AbstractLockerConsolidater[] affectedLockers;//直接自身に関係する鎖錠
+        [HideInInspector][SerializeField] public AbstractLockerConsolidator[] affectedLockers;//直接自身に関係する鎖錠
 
         public void Start()
         {
@@ -40,7 +40,7 @@ namespace frou01.RBUR.SignalIntegrator
         {
             return toLocker_States;
         }
-        public AbstractLockerConsolidater GetFromLocker()
+        public AbstractLockerConsolidator GetFromLocker()
         {
             return From_Locker;
         }
@@ -121,7 +121,7 @@ namespace frou01.RBUR.SignalIntegrator
 
 
                 //Initialize controller for update detection.
-                foreach (AbstractLockerConsolidater locker in affectedLockers)
+                foreach (AbstractLockerConsolidator locker in affectedLockers)
                 {
                     locker.ResetFlagPosChangeOnLockDetector();
                 }
@@ -176,7 +176,7 @@ namespace frou01.RBUR.SignalIntegrator
             }
 
             bool lockerUpdated = false;
-            foreach (AbstractLockerConsolidater locker in affectedLockers)
+            foreach (AbstractLockerConsolidator locker in affectedLockers)
             {
                 if (locker.GetFlagPosChangeOnLockDetector())
                 {
@@ -184,7 +184,7 @@ namespace frou01.RBUR.SignalIntegrator
                     break;
                 }
             }
-            foreach (AbstractLockerConsolidater locker in affectedLockers)
+            foreach (AbstractLockerConsolidator locker in affectedLockers)
             {
                 locker.ResetFlagPosChangeOnLockDetector();//フラグを降ろしておかないと関係他鎖錠の更新時に壊れる事になる
             }

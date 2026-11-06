@@ -8,10 +8,10 @@ namespace frou01.RBUR.SignalIntegrator
     public class LockerAndMeetPosition : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [SerializeField] protected AbstractLockerConsolidater locker;
+        [SerializeField] protected AbstractLockerConsolidator locker;
         [SerializeField] protected int[] MeetPositionIndex;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
-        public AbstractLockerConsolidater getLocker()
+        public AbstractLockerConsolidator getLocker()
         {
             return locker;
         }
@@ -23,7 +23,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// <summary>
         /// ビルド処理から対象の Locker と適合位置を設定する
         /// </summary>
-        public void SetLockerAndMeetPosition(AbstractLockerConsolidater locker, int[] meetPositionIndex)
+        public void SetLockerAndMeetPosition(AbstractLockerConsolidator locker, int[] meetPositionIndex)
         {
             this.locker = locker;
             MeetPositionIndex = meetPositionIndex;

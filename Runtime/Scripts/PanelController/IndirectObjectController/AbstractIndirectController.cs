@@ -29,7 +29,7 @@ namespace frou01.RBUR.SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
     abstract
 #endif
-        class AbstractIndirectController : AbstractLockerConsolidater
+        class AbstractIndirectController : AbstractLockerConsolidator
     {
         public bool Logging = false;
         [SerializeField][HideInInspector] public Interlocking[] ReferingInterlocks;

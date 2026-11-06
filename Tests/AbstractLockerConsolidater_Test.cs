@@ -55,7 +55,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             Interlocking interlocking = interlockingObject.AddComponent<Interlocking>();
 
             RouteLocker routeLocker = interlockingObject.AddComponent<RouteLocker>();
-            routeLocker.Lockers = new AbstractLockerConsolidater[0];
+            routeLocker.Lockers = new AbstractLockerConsolidator[0];
             routeLocker.setParentInterlock(interlocking);
 
             GameObject fromLockerObject = CreateChild(root, name + "_FromLocker");
@@ -65,7 +65,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             SetRequiredField(interlocking, "From_Locker", fromLocker);
             SetRequiredField(interlocking, "toLocker_States", new LockerAndMeetPosition[0]);
             interlocking.affectedInterlockings = new Interlocking[0];
-            interlocking.affectedLockers = new AbstractLockerConsolidater[0];
+            interlocking.affectedLockers = new AbstractLockerConsolidator[0];
 
             return interlocking;
         }
@@ -366,7 +366,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         }
     }
 
-    public class TestLockerConsolidater : AbstractLockerConsolidater
+    public class TestLockerConsolidater : AbstractLockerConsolidator
     {
         public bool PositionWasApplied { get; private set; }
         public int LastAppliedPosition { get; private set; }
@@ -457,14 +457,14 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         private void SetField(string fieldName, object value)
         {
-            FieldInfo field = typeof(AbstractLockerConsolidater).GetField(
+            FieldInfo field = typeof(AbstractLockerConsolidator).GetField(
                 fieldName,
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (field == null)
             {
                 throw new InvalidOperationException(
-                    typeof(AbstractLockerConsolidater).Name + "." + fieldName + " が見つかりません。");
+                    typeof(AbstractLockerConsolidator).Name + "." + fieldName + " が見つかりません。");
             }
 
             field.SetValue(this, value);
@@ -472,21 +472,21 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         private T GetField<T>(string fieldName) where T : class
         {
-            FieldInfo field = typeof(AbstractLockerConsolidater).GetField(
+            FieldInfo field = typeof(AbstractLockerConsolidator).GetField(
                 fieldName,
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (field == null)
             {
                 throw new InvalidOperationException(
-                    typeof(AbstractLockerConsolidater).Name + "." + fieldName + " が見つかりません。");
+                    typeof(AbstractLockerConsolidator).Name + "." + fieldName + " が見つかりません。");
             }
 
             T value = field.GetValue(this) as T;
             if (value == null)
             {
                 throw new InvalidOperationException(
-                    typeof(AbstractLockerConsolidater).Name + "." + fieldName + " が null です。");
+                    typeof(AbstractLockerConsolidator).Name + "." + fieldName + " が null です。");
             }
 
             return value;

@@ -8,7 +8,7 @@ namespace frou01.RBUR.SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         abstract
 #endif
-        class AbstractLockerConsolidater : UdonSharpBehaviour
+        class AbstractLockerConsolidator : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] private protected bool[] SettedLockStates = new bool[0];

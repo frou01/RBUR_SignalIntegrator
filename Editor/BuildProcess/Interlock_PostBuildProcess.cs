@@ -32,7 +32,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             }
 
             List<Interlocking> interlocks = FindComponents<Interlocking>(scene);
-            Dictionary<AbstractLockerConsolidater, Interlocking> interlockByFromLocker = CollectFromLockers(interlocks);
+            Dictionary<AbstractLockerConsolidator, Interlocking> interlockByFromLocker = CollectFromLockers(interlocks);
             WarnMutualLocking(interlocks, interlockByFromLocker);
             Debug.Log("InterlockLink Process End");
         }
@@ -68,9 +68,9 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         /// <summary>
         /// Interlocking に影響を受ける全ての Locker。更新終了検知で使う
         /// </summary>
-        private static AbstractLockerConsolidater[] GetAffectedLockers(Interlocking currentInterlock)
+        private static AbstractLockerConsolidator[] GetAffectedLockers(Interlocking currentInterlock)
         {
-            List<AbstractLockerConsolidater> controllers = new List<AbstractLockerConsolidater>();
+            List<AbstractLockerConsolidator> controllers = new List<AbstractLockerConsolidator>();
             foreach (LockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
             {
                 controllers.Add(stateLinker.getLocker());
@@ -83,9 +83,9 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         /// <summary>
         /// From_Locker -> Interlocking の対応表。同じ From_Locker を持つ Interlocking が複数あればエラーを出す
         /// </summary>
-        private static Dictionary<AbstractLockerConsolidater, Interlocking> CollectFromLockers(List<Interlocking> interlocks)
+        private static Dictionary<AbstractLockerConsolidator, Interlocking> CollectFromLockers(List<Interlocking> interlocks)
         {
-            Dictionary<AbstractLockerConsolidater, Interlocking> interlockByFromLocker = new Dictionary<AbstractLockerConsolidater, Interlocking>();
+            Dictionary<AbstractLockerConsolidator, Interlocking> interlockByFromLocker = new Dictionary<AbstractLockerConsolidator, Interlocking>();
             foreach (Interlocking currentInterlock in interlocks)
             {
                 if (!currentInterlock.GetFromLocker()) continue;
@@ -105,11 +105,11 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         /// <summary>
         /// 2つの Interlocking が互いの From_Locker を鎖錠し合っていれば警告する
         /// </summary>
-        private static void WarnMutualLocking(List<Interlocking> interlocks, Dictionary<AbstractLockerConsolidater, Interlocking> interlockByFromLocker)
+        private static void WarnMutualLocking(List<Interlocking> interlocks, Dictionary<AbstractLockerConsolidator, Interlocking> interlockByFromLocker)
         {
             foreach (Interlocking interlockA in interlocks)
             {
-                foreach (AbstractLockerConsolidater lockerAffectedFromA in interlockA.affectedLockers)
+                foreach (AbstractLockerConsolidator lockerAffectedFromA in interlockA.affectedLockers)
                 {
                     Interlocking interlockB;
                     if (lockerAffectedFromA == null || !interlockByFromLocker.TryGetValue(lockerAffectedFromA, out interlockB)) continue;

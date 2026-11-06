@@ -26,7 +26,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             Debug.Log("InterlockLink GAC Start Process");
             List<Controller_Base> controllers = FindComponents<Controller_Base>(scene);
-            List<GACLockerConsolidater> gacLockers = FindComponents<GACLockerConsolidater>(scene);
+            List<GACLockerConsolidator> gacLockers = FindComponents<GACLockerConsolidator>(scene);
 
             ResolveRouteLockerGACLockers(scene, controllers, gacLockers);
             //以降は RouteLocker.Lockers(GAC分)が解決済みであることが前提
@@ -43,9 +43,9 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// 分岐器のAnimatorを制御している Controller_Base を探し、対応する GACLockerConsolidater を RouteLocker.Lockers に登録する
+        /// 分岐器のAnimatorを制御している Controller_Base を探し、対応する GACLockerConsolidator を RouteLocker.Lockers に登録する
         /// </summary>
-        private static void ResolveRouteLockerGACLockers(Scene scene, List<Controller_Base> controllers, List<GACLockerConsolidater> gacLockers)
+        private static void ResolveRouteLockerGACLockers(Scene scene, List<Controller_Base> controllers, List<GACLockerConsolidator> gacLockers)
         {
             foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
             {
@@ -60,10 +60,10 @@ namespace frou01.RBUR.SignalIntegrator.Editor
                         pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator));
                     if (!pointController) continue;
 
-                    GACLockerConsolidater pointLocker = gacLockers.FirstOrDefault(checkingLocker => pointController == checkingLocker.getGACController());
+                    GACLockerConsolidator pointLocker = gacLockers.FirstOrDefault(checkingLocker => pointController == checkingLocker.getGACController());
                     if (pointLocker == null)
                     {
-                        Debug.LogError("Correspond GACLockerConsolidater not found", pointController);
+                        Debug.LogError("Correspond GACLockerConsolidator not found", pointController);
                     }
                     else
                     {
@@ -81,7 +81,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             bool success = true;
             UdonBehaviour interlockUdon = UdonSharpEditorUtility.GetBackingUdonBehaviour(interlocking);
-            foreach (GACLockerConsolidater locker in GetGACLockers(interlocking))
+            foreach (GACLockerConsolidator locker in GetGACLockers(interlocking))
             {
                 VRCPickup pickup = locker.GetComponentInChildren<VRCPickup>();
                 if (!pickup) continue;
@@ -105,15 +105,15 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// Interlocking が使う Locker のうち GACLockerConsolidater のもの (From_Locker / RouteLocker / toLocker_States)
+        /// Interlocking が使う Locker のうち GACLockerConsolidator のもの (From_Locker / RouteLocker / toLocker_States)
         /// </summary>
-        private static List<GACLockerConsolidater> GetGACLockers(Interlocking interlocking)
+        private static List<GACLockerConsolidator> GetGACLockers(Interlocking interlocking)
         {
-            List<AbstractLockerConsolidater> lockers = new List<AbstractLockerConsolidater>();
+            List<AbstractLockerConsolidator> lockers = new List<AbstractLockerConsolidator>();
             lockers.Add(interlocking.GetFromLocker());
             if (interlocking.GetRouteLocker()) lockers.AddRange(interlocking.GetRouteLocker().Lockers);
             lockers.AddRange(interlocking.GetInterlockStateLinker().Select(stateLocker => stateLocker.getLocker()));
-            return lockers.OfType<GACLockerConsolidater>().ToList();
+            return lockers.OfType<GACLockerConsolidator>().ToList();
         }
     }
 }

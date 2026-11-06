@@ -44,7 +44,7 @@ namespace frou01.RBUR.SignalIntegrator
 
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [HideInInspector][SerializeField] public int[] ControlTargetIndex = new int[0];
-        [HideInInspector][SerializeField] protected AbstractLockerConsolidater[] m_lockers = new AbstractLockerConsolidater[0];
+        [HideInInspector][SerializeField] protected AbstractLockerConsolidator[] m_lockers = new AbstractLockerConsolidator[0];
         [HideInInspector][SerializeField] protected Interlocking interlocking;
         /// <summary>
         /// Return user preset Points
@@ -58,7 +58,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// <summary>
         /// Current found Point controller Locker array / overwrite 
         /// </summary>
-        public AbstractLockerConsolidater[] Lockers
+        public AbstractLockerConsolidator[] Lockers
         {
             get
             {
@@ -72,7 +72,7 @@ namespace frou01.RBUR.SignalIntegrator
 
         public void SetupLocker()
         {
-            foreach (AbstractLockerConsolidater locker in m_lockers)
+            foreach (AbstractLockerConsolidator locker in m_lockers)
             {
                 if (locker != null) locker.AddNewLocker(this);
             }
@@ -128,7 +128,7 @@ namespace frou01.RBUR.SignalIntegrator
             }
             if (!state)
             {
-                foreach (AbstractLockerConsolidater locker in m_lockers)
+                foreach (AbstractLockerConsolidator locker in m_lockers)
                 {
                     locker.tryUpdateLocking(this,false,-1);
                 }
@@ -146,7 +146,7 @@ namespace frou01.RBUR.SignalIntegrator
                 bool result = true;
 
                 int idx = 0;
-                foreach (AbstractLockerConsolidater locker in m_lockers)
+                foreach (AbstractLockerConsolidator locker in m_lockers)
                 {
                     result &= locker.tryUpdateLocking(this, true, ControlTargetIndex[idx]);
                     idx++;
@@ -165,7 +165,7 @@ namespace frou01.RBUR.SignalIntegrator
             {
                 isRelayingFailSafe = true;
                 if (!interlocking.FailSafeCalled)
-                    foreach (AbstractLockerConsolidater locker in m_lockers)
+                    foreach (AbstractLockerConsolidator locker in m_lockers)
                     {
                         locker.RelayFailSafe();
                     }

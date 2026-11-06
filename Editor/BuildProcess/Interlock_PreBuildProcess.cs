@@ -55,7 +55,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             {
                 con.eventStackHolder = eventStackHolder;
             }
-            foreach (AbstractLockerConsolidater con in FindComponents<AbstractLockerConsolidater>(scene, false))
+            foreach (AbstractLockerConsolidator con in FindComponents<AbstractLockerConsolidator>(scene, false))
             {
                 con.eventStackHolder = eventStackHolder;
             }
@@ -72,7 +72,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
                 int pointCount = routeLocker.TargetPoints == null ? 0 : routeLocker.TargetPoints.Length;
                 if (routeLocker.Lockers == null || routeLocker.Lockers.Length != pointCount)
                 {
-                    routeLocker.Lockers = new AbstractLockerConsolidater[pointCount];
+                    routeLocker.Lockers = new AbstractLockerConsolidator[pointCount];
                 }
             }
         }

@@ -5,7 +5,7 @@ using VRC.SDKBase;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    public class GACLockerConsolidater : AbstractLockerConsolidater
+    public class GACLockerConsolidator : AbstractLockerConsolidator
     {
         [SerializeField] private protected float[] lockPositions;
         [SerializeField] private protected Controller_Base target;

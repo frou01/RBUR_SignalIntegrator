@@ -133,7 +133,7 @@ MonoBehaviour:
       Data: 9|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: frou01.RBUR.SignalIntegrator.AbstractLockerConsolidater, frou01.RBUR.SignalIntegrator.Runtime
+      Data: frou01.RBUR.SignalIntegrator.AbstractLockerConsolidator, frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 

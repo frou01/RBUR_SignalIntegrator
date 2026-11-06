@@ -187,7 +187,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         /// </summary>
         private static List<AbstractIndirectController> GetIndirectControllers(Interlocking interlock)
         {
-            List<AbstractLockerConsolidater> lockers = new List<AbstractLockerConsolidater>();
+            List<AbstractLockerConsolidator> lockers = new List<AbstractLockerConsolidator>();
             lockers.AddRange(interlock.GetInterlockStateLinker().Select(stateLocker => stateLocker.getLocker()));
             if (interlock.GetRouteLocker()) lockers.AddRange(interlock.GetRouteLocker().Lockers);
             lockers.Add(interlock.GetFromLocker());
