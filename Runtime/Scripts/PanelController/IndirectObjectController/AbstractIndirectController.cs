@@ -16,7 +16,7 @@ using UnityEngine.UIElements;
 using UnityEditor;
 #endif
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
 
     /// <summary>

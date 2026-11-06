@@ -3,7 +3,7 @@ using frou01.GrabController;
 using UnityEngine;
 using VRC.SDKBase;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     public class GACLockerConsolidater : AbstractLockerConsolidater
     {

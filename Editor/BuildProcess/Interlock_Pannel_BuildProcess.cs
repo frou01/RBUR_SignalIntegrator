@@ -1,5 +1,5 @@
 ﻿using frou01.RigidBodyTrain;
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,9 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static RBUR_SignalIntegrator_Editor.BuildProcessUtility;
+using static frou01.RBUR.SignalIntegrator.Editor.BuildProcessUtility;
 
-namespace RBUR_SignalIntegrator_Editor
+namespace frou01.RBUR.SignalIntegrator.Editor
 {
     /// <summary>
     /// 制御盤(てこ類)の設定反映と、Interlocking との相互参照の構築

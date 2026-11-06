@@ -7,9 +7,9 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Serialization;
-using static RBUR_SignalIntegrator.PointLever_ControlToRouteIndexHolder;
+using static frou01.RBUR.SignalIntegrator.PointLever_ControlToRouteIndexHolder;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     [ExecuteAlways]
     public class PointLever_ControlToParamaterHolder : MonoBehaviour

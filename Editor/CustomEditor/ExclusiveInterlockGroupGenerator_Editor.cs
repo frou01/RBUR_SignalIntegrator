@@ -1,14 +1,14 @@
 ﻿using frou01.RigidBodyTrain;
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace RBUR_SignalIntegrator_Editor
+namespace frou01.RBUR.SignalIntegrator.Editor
 {
     [CustomEditor(typeof(ExclusiveInterlockGroupGenerator))]
-    public class ExclusiveInterlockGroupGenerator_Editor : Editor
+    public class ExclusiveInterlockGroupGenerator_Editor : UnityEditor.Editor
     {
         SerializedProperty targetInterlocksProperty;
         SerializedProperty generatedGroupsProperty;

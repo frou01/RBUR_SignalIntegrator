@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     public class EventStackHolder : UdonSharpBehaviour
     {

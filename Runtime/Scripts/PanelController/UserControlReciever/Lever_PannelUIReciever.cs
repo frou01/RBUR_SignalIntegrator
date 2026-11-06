@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     public class Lever_PannelUIReciever : UdonSharpBehaviour
     {

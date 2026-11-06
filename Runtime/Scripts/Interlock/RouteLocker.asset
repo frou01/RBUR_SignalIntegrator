@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: -8329629910393103125
+  scriptID: 620709973080860689
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -265,7 +265,7 @@ MonoBehaviour:
       Data: 19|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.EventStackHolder, frou01.RBUR.SignalIntegrator.Runtime
+      Data: frou01.RBUR.SignalIntegrator.EventStackHolder, frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -397,7 +397,7 @@ MonoBehaviour:
       Data: 29|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.AbstractLockerConsolidater[], frou01.RBUR.SignalIntegrator.Runtime
+      Data: frou01.RBUR.SignalIntegrator.AbstractLockerConsolidater[], frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -463,7 +463,7 @@ MonoBehaviour:
       Data: 34|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.Interlocking, frou01.RBUR.SignalIntegrator.Runtime
+      Data: frou01.RBUR.SignalIntegrator.Interlocking, frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 

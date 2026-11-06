@@ -8,7 +8,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     [ExecuteAlways]
     public class PointLever_ControlToRouteIndexHolder : MonoBehaviour

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using NUnit.Framework;
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using UdonSharp;
 using UnityEngine;
 
-namespace RBUR_SignalIntegrator.Test
+namespace frou01.RBUR.SignalIntegrator.Tests
 {
     public class AbstractLockerConsolidater_Test
     {

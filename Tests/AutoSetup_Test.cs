@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RBUR_SignalIntegrator.Test
+namespace frou01.RBUR.SignalIntegrator.Tests
 {
     public class AutoSetup_Test : MonoBehaviour
     {

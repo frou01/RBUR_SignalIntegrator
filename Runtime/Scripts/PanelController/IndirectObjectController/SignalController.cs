@@ -6,7 +6,7 @@ using frou01.util;
 using UnityEditor;
 #endif
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     public class SignalController : AbstractIndirectController
     {

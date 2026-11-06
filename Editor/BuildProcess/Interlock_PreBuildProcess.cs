@@ -1,11 +1,11 @@
-﻿using RBUR_SignalIntegrator;
+﻿using frou01.RBUR.SignalIntegrator;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static RBUR_SignalIntegrator_Editor.BuildProcessUtility;
+using static frou01.RBUR.SignalIntegrator.Editor.BuildProcessUtility;
 
-namespace RBUR_SignalIntegrator_Editor
+namespace frou01.RBUR.SignalIntegrator.Editor
 {
     /// <summary>
     /// 各Udonへの EventStackHolder の配布と、RouteLocker.Lockers 配列の確保

@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 8815286179883538659
+  scriptID: 3865192845219167866
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -361,7 +361,7 @@ MonoBehaviour:
       Data: 23|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.RouteSelector_EndButton[][], frou01.RBUR.SignalIntegrator.Runtime
+      Data: frou01.RBUR.SignalIntegrator.RouteSelector_EndButton[][], frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -433,7 +433,7 @@ MonoBehaviour:
       Data: 29|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.MultiLeverController[][], frou01.RBUR.SignalIntegrator.Runtime
+      Data: frou01.RBUR.SignalIntegrator.MultiLeverController[][], frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 

@@ -1,7 +1,7 @@
 ﻿using frou01.GrabController;
 using frou01.RigidBodyTrain;
 using frou01.util;
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using System.Collections.Generic;
 using System.Linq;
 using UdonSharpEditor;
@@ -11,9 +11,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDK3.Components;
 using VRC.Udon;
-using static RBUR_SignalIntegrator_Editor.BuildProcessUtility;
+using static frou01.RBUR.SignalIntegrator.Editor.BuildProcessUtility;
 
-namespace RBUR_SignalIntegrator_Editor
+namespace frou01.RBUR.SignalIntegrator.Editor
 {
     /// <summary>
     /// GAC(GrabAnimatorController) で操作するてこと Interlocking の連携

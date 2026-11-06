@@ -7,7 +7,7 @@ using VRC.SDKBase;
 using VRC.Udon;
 using VRC.Udon.Serialization.OdinSerializer;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     [RequireComponent(typeof(MultiLever_SwitchToControlMapsHolder))]
     public class MultiLeverController : UdonSharpBehaviour

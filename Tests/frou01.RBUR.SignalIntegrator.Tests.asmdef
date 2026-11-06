@@ -1,6 +1,6 @@
 {
     "name": "frou01.RBUR.SignalIntegrator.Tests",
-    "rootNamespace": "RBUR_SignalIntegrator.Test",
+    "rootNamespace": "frou01.RBUR.SignalIntegrator.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

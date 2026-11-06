@@ -8,7 +8,7 @@ using VRC.Udon;
 using VRC.Udon.Common;
 using VRC.Udon.Serialization.OdinSerializer;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     [RequireComponent(typeof(PointLever_ControlToRouteIndexHolder),typeof(PointLever_ControlToParamaterHolder))]
     public class PointController : AbstractIndirectController

@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     public class RouteLocker : UdonSharpBehaviour
     {

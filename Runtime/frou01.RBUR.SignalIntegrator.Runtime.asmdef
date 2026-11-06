@@ -1,6 +1,6 @@
 {
     "name": "frou01.RBUR.SignalIntegrator.Runtime",
-    "rootNamespace": "RBUR_SignalIntegrator",
+    "rootNamespace": "frou01.RBUR.SignalIntegrator",
     "references": [
         "GUID:6b028180e99825e469ef5f1e3f2318f3",
         "GUID:99835874ee819da44948776e0df4ff1d",

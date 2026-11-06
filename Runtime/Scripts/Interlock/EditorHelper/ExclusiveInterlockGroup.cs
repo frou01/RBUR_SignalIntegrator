@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     /// <summary>
     /// 互いに排他とする信号(Interlocking)のグループ。

@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine.SceneManagement;
-using static RBUR_SignalIntegrator.MultiLever_SwitchToControlMapsHolder;
-using static RBUR_SignalIntegrator.PointLever_ControlToRouteIndexHolder;
+using static frou01.RBUR.SignalIntegrator.MultiLever_SwitchToControlMapsHolder;
+using static frou01.RBUR.SignalIntegrator.PointLever_ControlToRouteIndexHolder;
 #endif
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     /// <summary>
     /// Interlockの進路条件を取得して進路てこのてこ設定に変換する
@@ -92,7 +92,7 @@ namespace RBUR_SignalIntegrator
             }
         }
         [CustomEditor(typeof(MultiLever_ReferRouteLocker)), CanEditMultipleObjects]
-        public class MultiLever_ReferRouteLocker_CustomEditor : Editor
+        public class MultiLever_ReferRouteLocker_CustomEditor : UnityEditor.Editor
         {
             public override void OnInspectorGUI()
             {

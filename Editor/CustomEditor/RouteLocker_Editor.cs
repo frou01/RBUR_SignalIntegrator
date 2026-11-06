@@ -1,5 +1,5 @@
 ﻿using frou01.RigidBodyTrain;
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +7,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace RBUR_SignalIntegrator_Editor
+namespace frou01.RBUR.SignalIntegrator.Editor
 {
     [CustomEditor(typeof(RouteLocker))]
     [CanEditMultipleObjects]
-    public class RouteLocker_Editor : Editor
+    public class RouteLocker_Editor : UnityEditor.Editor
     {
         SerializedProperty targetPointsProperty;
         SerializedProperty targetRouteProperty;

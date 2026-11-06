@@ -1,4 +1,4 @@
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using System.Collections.Generic;
 using System.Linq;
 using UdonSharpEditor;
@@ -8,7 +8,7 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace RBUR_SignalIntegrator_Editor
+namespace frou01.RBUR.SignalIntegrator.Editor
 {
     /// <summary>
     /// ExclusiveInterlockGroup から、排他条件の LockerAndMeetPosition を生成して Interlocking に登録する。

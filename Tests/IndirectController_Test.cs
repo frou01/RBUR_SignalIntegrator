@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using NUnit.Framework;
-using RBUR_SignalIntegrator;
+using frou01.RBUR.SignalIntegrator;
 using UdonSharp;
 using UnityEngine;
 using VRC.Udon;
 
-namespace RBUR_SignalIntegrator.Test
+namespace frou01.RBUR.SignalIntegrator.Tests
 {
     /// <summary>
     /// Unit tests for AbstractIndirectController

@@ -10,7 +10,7 @@ using System.Linq;
 using HarmonyLib;
 #endif
 
-namespace RBUR_SignalIntegrator
+namespace frou01.RBUR.SignalIntegrator
 {
     [ExecuteAlways]
     public class MultiLever_SwitchToControlMapsHolder : MonoBehaviour
