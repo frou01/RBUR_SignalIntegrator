@@ -71,7 +71,7 @@ namespace frou01.RBUR.SignalIntegrator
                 RequestSerialization();
             }
         }
-        public void OnValueChanged()
+        public void _OnValueChanged()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
             if (LinkedSlider != null) Switch_Position = (int)LinkedSlider.value;

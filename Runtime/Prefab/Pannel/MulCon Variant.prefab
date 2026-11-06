@@ -343,7 +343,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: OnValueChanged
+          m_StringArgument: _OnValueChanged
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &8444874115264168161

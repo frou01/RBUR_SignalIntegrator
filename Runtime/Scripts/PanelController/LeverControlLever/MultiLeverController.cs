@@ -88,15 +88,15 @@ namespace frou01.RBUR.SignalIntegrator
         {
             if(Networking.IsOwner(this.gameObject))this.RequestSerialization();
         }
-        public virtual void OnValueChanged()
+        public virtual void _OnValueChanged()
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnValueChanged));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(_OnValueChanged));
 
             if (LinkedSlider != null) switchPosition = (int)LinkedSlider.value;
             SyncUI(switchPosition, false);
             if (LinkedSlider != null) SetControlToLevers(switchPosition, true);
 
-            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnValueChanged));
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(_OnValueChanged));
         }
         public override void OnDeserialization()
         {

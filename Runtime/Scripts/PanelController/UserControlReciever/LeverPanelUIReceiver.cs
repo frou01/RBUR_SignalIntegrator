@@ -39,7 +39,7 @@ namespace frou01.RBUR.SignalIntegrator
             SyncUI(true);
             targetController.TrySetControlTarget(this, switchToControllerMap[switchPosition], true);
         }
-        public virtual void OnValueChanged()//Call by UI
+        public virtual void _OnValueChanged()//Call by UI
         {
             if (LinkedSlider != null) switchPosition = (int)LinkedSlider.value;
 

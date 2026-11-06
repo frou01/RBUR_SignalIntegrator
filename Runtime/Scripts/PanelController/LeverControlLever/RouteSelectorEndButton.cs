@@ -8,7 +8,7 @@ namespace frou01.RBUR.SignalIntegrator
     public class RouteSelectorEndButton : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public RouteSelectorStartLever[] StartLevers;
-        public void OnPerform()
+        public void _OnPerform()
         {
             //Route End Button Pushed
             foreach (RouteSelectorStartLever startLever in StartLevers)
