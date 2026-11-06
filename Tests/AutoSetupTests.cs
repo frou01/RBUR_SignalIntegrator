@@ -58,14 +58,14 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             switchMapHolder.switchPositionNum = 2;
             switchMapHolder.Switch_To_ControlMaps.Add(new MultiLeverSwitchToControlMapsHolder.ToControllerMap(signal, new int[] { 0, 1 }));
 
-            AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "From_Locker", signal);
+            AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "fromLocker", signal);
 
             RouteLocker routeLocker = _locker1.gameObject.AddComponent<RouteLocker>();
             routeLocker.Lockers = new AbstractLockerConsolidator[0];
             routeLocker.SetParentInterlock(_locker1);
             routeLocker.TargetPoints = new AbstractPointSetter[] { _pointSetter };
-            routeLocker.TargetRoute = new int[] { 1 };
-            AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "interlock_Route", routeLocker);
+            routeLocker.TargetRoutes = new int[] { 1 };
+            AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "routeLocker", routeLocker);
             //TODO: routeLockerにPointと進路(1)を設定
 
             referRouteLocker.ApplyToControlMap();

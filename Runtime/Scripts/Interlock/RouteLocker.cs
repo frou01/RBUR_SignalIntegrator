@@ -13,38 +13,38 @@ namespace frou01.RBUR.SignalIntegrator
         /// Route array [index = points-index]
         /// </summary>
         [FormerlySerializedAs("TargetPoints")]
-        [SerializeField] protected AbstractPointSetter[] m_TargetPoints;
+        [FormerlySerializedAs("m_TargetPoints")][SerializeField] protected AbstractPointSetter[] targetPoints;
         
         public AbstractPointSetter[] TargetPoints//TODO: カスタムエディタを用意して分岐器-進路を外部設定にするべき。EditorGUI.BeginChangeCheck()を使えば探索を組める。
         {
             get
             {
-                return m_TargetPoints;
+                return targetPoints;
             }
             set
             {
-                m_TargetPoints = value;
+                targetPoints = value;
             }
         }
         [FormerlySerializedAs("TargetRoute")]
-        [SerializeField] protected int[] m_TargetRoute;
-        public int[] TargetRoute
+        [FormerlySerializedAs("m_TargetRoute")][SerializeField] protected int[] targetRoutes;
+        public int[] TargetRoutes
         {
             get
             {
-                return m_TargetRoute;
+                return targetRoutes;
             }
             set
             {
-                m_TargetRoute = value;
+                targetRoutes = value;
             }
         }
 
-        [HideInInspector][SerializeField] public Rail_Script[] Route_Rails;//カスタムエディタ向けの経路情報保持用
+        [FormerlySerializedAs("Route_Rails")][HideInInspector][SerializeField] public Rail_Script[] routeRails;//カスタムエディタ向けの経路情報保持用
 
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] public int[] ControlTargetIndex = new int[0];
-        [HideInInspector][SerializeField] protected AbstractLockerConsolidator[] m_lockers = new AbstractLockerConsolidator[0];
+        [FormerlySerializedAs("ControlTargetIndex")][HideInInspector][SerializeField] public int[] controlTargetIndexes = new int[0];
+        [FormerlySerializedAs("m_lockers")][HideInInspector][SerializeField] protected AbstractLockerConsolidator[] lockers = new AbstractLockerConsolidator[0];
         [HideInInspector][SerializeField] protected Interlocking interlocking;
         /// <summary>
         /// Return user preset Points
@@ -52,7 +52,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// <returns>Points array [index = route-index]</returns>
         public AbstractPointSetter[] GetTargetPoints()
         {
-            return m_TargetPoints;
+            return targetPoints;
         }
 
         /// <summary>
@@ -62,17 +62,17 @@ namespace frou01.RBUR.SignalIntegrator
         {
             get
             {
-                return m_lockers;
+                return lockers;
             }
             set
             {
-                m_lockers = value;
+                lockers = value;
             }
         }
 
         public void SetupLocker()
         {
-            foreach (AbstractLockerConsolidator locker in m_lockers)
+            foreach (AbstractLockerConsolidator locker in lockers)
             {
                 if (locker != null) locker.AddNewLocker(this);
             }
@@ -87,9 +87,9 @@ namespace frou01.RBUR.SignalIntegrator
             bool isOpen = true;
 
             int idx = 0;
-            foreach (AbstractPointSetter setter in m_TargetPoints)
+            foreach (AbstractPointSetter setter in targetPoints)
             {
-                if (m_TargetRoute[idx] != setter.get_current_To_Index())
+                if (targetRoutes[idx] != setter.get_current_To_Index())
                 {
                     isOpen = false;
                     break;
@@ -121,14 +121,14 @@ namespace frou01.RBUR.SignalIntegrator
         public bool UpdateLockRoute(bool state,bool syncingMode)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLockRoute));
-            if (m_lockers.Length == 0)
+            if (lockers.Length == 0)
             {
                 if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return true;
             }
             if (!state)
             {
-                foreach (AbstractLockerConsolidator locker in m_lockers)
+                foreach (AbstractLockerConsolidator locker in lockers)
                 {
                     locker.TryUpdateLocking(this,false,-1);
                 }
@@ -146,9 +146,9 @@ namespace frou01.RBUR.SignalIntegrator
                 bool result = true;
 
                 int idx = 0;
-                foreach (AbstractLockerConsolidator locker in m_lockers)
+                foreach (AbstractLockerConsolidator locker in lockers)
                 {
-                    result &= locker.TryUpdateLocking(this, true, ControlTargetIndex[idx]);
+                    result &= locker.TryUpdateLocking(this, true, controlTargetIndexes[idx]);
                     idx++;
                 }
                 if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
@@ -164,8 +164,8 @@ namespace frou01.RBUR.SignalIntegrator
             if (!isRelayingFailSafe)
             {
                 isRelayingFailSafe = true;
-                if (!interlocking.FailSafeCalled)
-                    foreach (AbstractLockerConsolidator locker in m_lockers)
+                if (!interlocking.isFailSafeCalled)
+                    foreach (AbstractLockerConsolidator locker in lockers)
                     {
                         locker.RelayFailSafe();
                     }
@@ -178,9 +178,9 @@ namespace frou01.RBUR.SignalIntegrator
         {
             int pointIdx = 0;
             int routeIdx;
-            if (m_TargetPoints != null)
+            if (targetPoints != null)
             {
-                foreach (AbstractPointSetter setter in m_TargetPoints)
+                foreach (AbstractPointSetter setter in targetPoints)
                 {
                     routeIdx = 0;
                     Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
@@ -188,7 +188,7 @@ namespace frou01.RBUR.SignalIntegrator
 
                     foreach (Rail_Script route in setter.getRoutes())
                     {
-                        if (routeIdx == m_TargetRoute[pointIdx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
+                        if (routeIdx == targetRoutes[pointIdx]) Gizmos.color = new Color(0f, 0.5f, 0f, 1f);
                         else Gizmos.color = new Color(1f, 0f, 0f, 1f);
                         setter.DrawGizmo_To(route);
                         routeIdx++;

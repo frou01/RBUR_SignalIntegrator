@@ -1,5 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace frou01.RBUR.SignalIntegrator
 {
@@ -11,24 +12,24 @@ namespace frou01.RBUR.SignalIntegrator
         class AbstractLockerConsolidator : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [HideInInspector][SerializeField] private protected bool[] SettedLockStates = new bool[0];
+        [FormerlySerializedAs("SettedLockStates")][HideInInspector][SerializeField] private protected bool[] lockStates = new bool[0];
         [HideInInspector][SerializeField] private protected UdonSharpBehaviour[] lockerInstances = new UdonSharpBehaviour[0];
-        [HideInInspector][SerializeField] private protected int[] SettedLockIndex = new int[0];
-        [HideInInspector][SerializeField] private bool PositionUpdatedByLocking = false;
+        [FormerlySerializedAs("SettedLockIndex")][HideInInspector][SerializeField] private protected int[] lockIndexes = new int[0];
+        [FormerlySerializedAs("PositionUpdatedByLocking")][HideInInspector][SerializeField] private bool isPositionUpdatedByLocking = false;
 
         public void ResetFlagPosChangeOnLockDetector()
         {
-            PositionUpdatedByLocking = false;
+            isPositionUpdatedByLocking = false;
         }
 
         protected void SetFlagPosChangeOnLockDetector()
         {
-            PositionUpdatedByLocking = true;
+            isPositionUpdatedByLocking = true;
         }
 
         public bool GetFlagPosChangeOnLockDetector()
         {
-            return PositionUpdatedByLocking;
+            return isPositionUpdatedByLocking;
         }
 
 
@@ -70,8 +71,8 @@ namespace frou01.RBUR.SignalIntegrator
                 AddNewLocker(triedFromInstance);
             }
 
-            SettedLockStates[triedInstanceIndex] = lockState;
-            SettedLockIndex[triedInstanceIndex] = lockPositionSelector;
+            lockStates[triedInstanceIndex] = lockState;
+            lockIndexes[triedInstanceIndex] = lockPositionSelector;
 
             bool locked = IsLocked();
             bool lockFault;
@@ -118,15 +119,15 @@ namespace frou01.RBUR.SignalIntegrator
             newLockerInstances[lockerInstances.Length] = triedFrom;
             lockerInstances = newLockerInstances;
 
-            bool[] newLockStates = new bool[SettedLockStates.Length + 1];
-            SettedLockStates.CopyTo(newLockStates, 0);
-            newLockStates[SettedLockStates.Length] = false;
-            SettedLockStates = newLockStates;
+            bool[] newLockStates = new bool[lockStates.Length + 1];
+            lockStates.CopyTo(newLockStates, 0);
+            newLockStates[lockStates.Length] = false;
+            lockStates = newLockStates;
 
-            int[] newLockIndexes = new int[SettedLockIndex.Length + 1];
-            SettedLockIndex.CopyTo(newLockIndexes, 0);
-            newLockIndexes[SettedLockIndex.Length] = 0;
-            SettedLockIndex = newLockIndexes;
+            int[] newLockIndexes = new int[lockIndexes.Length + 1];
+            lockIndexes.CopyTo(newLockIndexes, 0);
+            newLockIndexes[lockIndexes.Length] = 0;
+            lockIndexes = newLockIndexes;
 
             return true;
         }
@@ -137,7 +138,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// <returns>True if the controller is locked, false otherwise.</returns>
         public virtual bool IsLocked()
         {
-            foreach(bool lockState in SettedLockStates)
+            foreach(bool lockState in lockStates)
             {
                 if (lockState) return true;
             }
@@ -151,7 +152,7 @@ namespace frou01.RBUR.SignalIntegrator
         {
             Debug.Log("Log locking state " + this.name, this);
             int idx = 0;
-            foreach (bool lockState in SettedLockStates)
+            foreach (bool lockState in lockStates)
             {
                 if(lockState && lockerInstances[idx]) Debug.Log("locked by " + lockerInstances[idx].name, lockerInstances[idx]);
                 idx++;
@@ -178,17 +179,17 @@ namespace frou01.RBUR.SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(SetToFailSafePosition));
             SetControllerOwner();
             int idx = 0;
-            foreach (bool lockedState in SettedLockStates)
+            foreach (bool lockedState in lockStates)
             {
-                SettedLockStates[idx] = false;
-                SettedLockIndex[idx] = failSafeIndex;
+                lockStates[idx] = false;
+                lockIndexes[idx] = failSafeIndex;
 
                 idx++;
             }
             if (failSafeIndex != -1 && GetCurrentPosition() != failSafeIndex)
             {
                 //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
-                PositionUpdatedByLocking = true;
+                isPositionUpdatedByLocking = true;
             }
             ApplyPositionToController(failSafeIndex);
 
@@ -251,12 +252,12 @@ namespace frou01.RBUR.SignalIntegrator
             lockFault = false;
             lockIndex = -1;
             int checkingIndex = 0;
-            foreach (bool lockedState in SettedLockStates)
+            foreach (bool lockedState in lockStates)
             {
                 if (lockedState)
                 {
-                    if (lockIndex == -1) lockIndex = SettedLockIndex[checkingIndex];
-                    else if (lockIndex != SettedLockIndex[checkingIndex]) lockFault = true;
+                    if (lockIndex == -1) lockIndex = lockIndexes[checkingIndex];
+                    else if (lockIndex != lockIndexes[checkingIndex]) lockFault = true;
                 }
 
                 checkingIndex++;

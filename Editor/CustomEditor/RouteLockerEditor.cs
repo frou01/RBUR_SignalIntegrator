@@ -14,20 +14,20 @@ namespace frou01.RBUR.SignalIntegrator.Editor
     public class RouteLockerEditor : UnityEditor.Editor
     {
         SerializedProperty targetPointsProperty;
-        SerializedProperty targetRouteProperty;
+        SerializedProperty targetRoutesProperty;
         SerializedProperty routeRailsProperty;
 
         void OnEnable()
         {
-            targetPointsProperty = serializedObject.FindProperty("m_TargetPoints");
-            targetRouteProperty = serializedObject.FindProperty("m_TargetRoute");
-            routeRailsProperty = serializedObject.FindProperty("Route_Rails");
+            targetPointsProperty = serializedObject.FindProperty("targetPoints");
+            targetRoutesProperty = serializedObject.FindProperty("targetRoutes");
+            routeRailsProperty = serializedObject.FindProperty("routeRails");
         }
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
             EditorGUILayout.PropertyField(targetPointsProperty);
-            EditorGUILayout.PropertyField(targetRouteProperty);
+            EditorGUILayout.PropertyField(targetRoutesProperty);
             EditorGUILayout.PropertyField(routeRailsProperty);
             serializedObject.ApplyModifiedProperties();
 
@@ -55,21 +55,21 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// Route_Rails を辿って TargetPoints / TargetRoute を設定する
+        /// routeRails を辿って TargetPoints / TargetRoutes を設定する
         /// 複数編集時に共通の serializedObject へ書くと全員に同じ値が入るので、個別の SerializedObject を使う
         /// </summary>
         private static bool AutoSetupRoute(RouteLocker routeLocker, AbstractPointSetter[] allPoints)
         {
             List<AbstractPointSetter> points;
             List<int> routes;
-            if (!SearchRoute(routeLocker.Route_Rails, allPoints, out points, out routes))
+            if (!SearchRoute(routeLocker.routeRails, allPoints, out points, out routes))
             {
                 Debug.LogWarning($"[RouteLocker] {routeLocker.name} : auto setup failed", routeLocker);
                 return false;
             }
             SerializedObject routeLockerObject = new SerializedObject(routeLocker);
-            SerializedProperty assignedPoints = routeLockerObject.FindProperty("m_TargetPoints");
-            SerializedProperty assignedRoutes = routeLockerObject.FindProperty("m_TargetRoute");
+            SerializedProperty assignedPoints = routeLockerObject.FindProperty("targetPoints");
+            SerializedProperty assignedRoutes = routeLockerObject.FindProperty("targetRoutes");
             assignedPoints.arraySize = points.Count;
             assignedRoutes.arraySize = routes.Count;
             for (int i = 0; i < points.Count; i++)
@@ -119,7 +119,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// Route_Rails を [0]->[1]->...->[end] の順に辿り、通過する分岐器と進路を集める
+        /// routeRails を [0]->[1]->...->[end] の順に辿り、通過する分岐器と進路を集める
         /// </summary>
         private static bool SearchRoute(Rail_Script[] routeRails, AbstractPointSetter[] allPoints, out List<AbstractPointSetter> points, out List<int> routes)
         {
@@ -127,12 +127,12 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             routes = new List<int>();
             if (routeRails == null || routeRails.Length < 2)
             {
-                Debug.LogWarning("[RouteLocker] Route_Rails needs at least 2 rails");
+                Debug.LogWarning("[RouteLocker] routeRails needs at least 2 rails");
                 return false;
             }
             if (routeRails.Any(rail => rail == null))
             {
-                Debug.LogWarning("[RouteLocker] Route_Rails contains an empty element");
+                Debug.LogWarning("[RouteLocker] routeRails contains an empty element");
                 return false;
             }
             foreach (AbstractPointSetter point in allPoints)

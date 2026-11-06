@@ -62,8 +62,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             FakeLockerConsolidator fromLocker = fromLockerObject.AddComponent<FakeLockerConsolidator>();
             fromLocker.SetLockData(new UdonSharpBehaviour[0], new bool[0], new int[0]);
 
-            SetRequiredField(interlocking, "From_Locker", fromLocker);
-            SetRequiredField(interlocking, "toLocker_States", new LockerAndMeetPosition[0]);
+            SetRequiredField(interlocking, "fromLocker", fromLocker);
+            SetRequiredField(interlocking, "stateLinkers", new LockerAndMeetPosition[0]);
             interlocking.affectedInterlockings = new Interlocking[0];
             interlocking.affectedLockers = new AbstractLockerConsolidator[0];
 
@@ -341,7 +341,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
             _consolidator.RelayFailSafe();
 
-            Assert.IsTrue(_locker1.FailSafeCalled);
+            Assert.IsTrue(_locker1.isFailSafeCalled);
         }
 
         [Test]
@@ -378,8 +378,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             int[] lockIndices)
         {
             SetField("lockerInstances", lockers);
-            SetField("SettedLockStates", lockStates);
-            SetField("SettedLockIndex", lockIndices);
+            SetField("lockStates", lockStates);
+            SetField("lockIndexes", lockIndices);
         }
 
         public void SetCurrentPosition(int position)
@@ -394,7 +394,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         public void SetUpdatedDetectorFlag(bool value)
         {
-            SetField("PositionUpdatedByLocking", value);
+            SetField("isPositionUpdatedByLocking", value);
         }
 
         public int GetLockerInstanceCount()
@@ -404,22 +404,22 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         public int GetLockStateCount()
         {
-            return GetField<bool[]>("SettedLockStates").Length;
+            return GetField<bool[]>("lockStates").Length;
         }
 
         public int GetLockIndexCount()
         {
-            return GetField<int[]>("SettedLockIndex").Length;
+            return GetField<int[]>("lockIndexes").Length;
         }
 
         public bool GetLockState(int index)
         {
-            return GetField<bool[]>("SettedLockStates")[index];
+            return GetField<bool[]>("lockStates")[index];
         }
 
         public int GetLockIndex(int index)
         {
-            return GetField<int[]>("SettedLockIndex")[index];
+            return GetField<int[]>("lockIndexes")[index];
         }
 
         public void EvaluateLockFault(out bool lockFault, out int lockIndex)

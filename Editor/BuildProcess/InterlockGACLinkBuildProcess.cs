@@ -105,7 +105,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// Interlocking が使う Locker のうち GACLockerConsolidator のもの (From_Locker / RouteLocker / toLocker_States)
+        /// Interlocking が使う Locker のうち GACLockerConsolidator のもの (fromLocker / RouteLocker / stateLinkers)
         /// </summary>
         private static List<GACLockerConsolidator> GetGACLockers(Interlocking interlocking)
         {

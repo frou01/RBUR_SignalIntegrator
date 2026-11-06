@@ -10,54 +10,54 @@ namespace frou01.RBUR.SignalIntegrator
 {
     public class Interlocking : UdonSharpBehaviour
     {
-        [SerializeField] bool logging;
+        [FormerlySerializedAs("logging")][SerializeField] bool isLogging;
 
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [SerializeField] AbstractLockerConsolidator From_Locker;//GAC以外も制御できるように間を挟む
-        [SerializeField] RouteLocker interlock_Route;//進路開通取得と、開通状態で固定用
-        [SerializeField] LockerAndMeetPosition[] toLocker_States = new LockerAndMeetPosition[0];//進路以外の進行要件
+        [FormerlySerializedAs("From_Locker")][SerializeField] AbstractLockerConsolidator fromLocker;//GAC以外も制御できるように間を挟む
+        [FormerlySerializedAs("interlock_Route")][SerializeField] RouteLocker routeLocker;//進路開通取得と、開通状態で固定用
+        [FormerlySerializedAs("toLocker_States")][SerializeField] LockerAndMeetPosition[] stateLinkers = new LockerAndMeetPosition[0];//進路以外の進行要件
         [FormerlySerializedAs("ReleasePositionIndex")]
-        [SerializeField] int ClosePositionIndex;
+        [FormerlySerializedAs("ClosePositionIndex")][SerializeField] int closePositionIndex;
         [FormerlySerializedAs("LockPositionIndexes")]
-        [SerializeField] int[] OpenPositionIndexes;
-        [HideInInspector][SerializeField] public bool FailSafeCalled;
+        [FormerlySerializedAs("OpenPositionIndexes")][SerializeField] int[] openPositionIndexes;
+        [FormerlySerializedAs("FailSafeCalled")][HideInInspector][SerializeField] public bool isFailSafeCalled;
         [HideInInspector][SerializeField] public Interlocking[] affectedInterlockings;//自身を含む関係する鎖錠
         [HideInInspector][SerializeField] public AbstractLockerConsolidator[] affectedLockers;//直接自身に関係する鎖錠
 
         public void Start()
         {
-            if (From_Locker) From_Locker.AddNewLocker(this);
-            if (interlock_Route) interlock_Route.SetParentInterlock(this);
+            if (fromLocker) fromLocker.AddNewLocker(this);
+            if (routeLocker) routeLocker.SetParentInterlock(this);
             UpdateInterlock(false);
         }
         public RouteLocker GetRouteLocker()
         {
-            if (!interlock_Route) interlock_Route = GetComponentInChildren<RouteLocker>();
-            if (interlock_Route) interlock_Route.SetParentInterlock(this);
-            return interlock_Route;
+            if (!routeLocker) routeLocker = GetComponentInChildren<RouteLocker>();
+            if (routeLocker) routeLocker.SetParentInterlock(this);
+            return routeLocker;
         }
         public LockerAndMeetPosition[] GetInterlockStateLinker()
         {
-            return toLocker_States;
+            return stateLinkers;
         }
         public AbstractLockerConsolidator GetFromLocker()
         {
-            return From_Locker;
+            return fromLocker;
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public int GetClosePositionIndex()
         {
-            return ClosePositionIndex;
+            return closePositionIndex;
         }
         /// <summary>
         /// ビルド処理から進行要件を追加する
         /// </summary>
         public void AddInterlockStateLinker(LockerAndMeetPosition stateLinker)
         {
-            LockerAndMeetPosition[] newStates = new LockerAndMeetPosition[toLocker_States.Length + 1];
-            toLocker_States.CopyTo(newStates, 0);
-            newStates[toLocker_States.Length] = stateLinker;
-            toLocker_States = newStates;
+            LockerAndMeetPosition[] newStates = new LockerAndMeetPosition[stateLinkers.Length + 1];
+            stateLinkers.CopyTo(newStates, 0);
+            newStates[stateLinkers.Length] = stateLinker;
+            stateLinkers = newStates;
         }
 #endif
 
@@ -82,7 +82,7 @@ namespace frou01.RBUR.SignalIntegrator
         bool prevIsSignalOpened;
         bool prevCanOpenSignal;
         /// <summary>
-        /// 鎖錠の更新を行う。From_Lockerの状態と、toLocker_States、RouteLocker(進路鎖錠)の状態を確認する
+        /// 鎖錠の更新を行う。From_Lockerの状態と、stateLinkers、RouteLocker(進路鎖錠)の状態を確認する
         /// From_LockerがOpen位置であればtoLocker_StatesとRouteLockerを位置変更及びロックする。From_Lockerが閉鎖位置であれば、toLocker_StatesとRouteLockerを解放する。
         /// toLocker_StatesとRouteLockerいずれかが適合位置でない場合、From_Lockerを閉鎖位置にロックする。
         /// </summary>
@@ -93,20 +93,20 @@ namespace frou01.RBUR.SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateInterlock));
 
-            if (logging) Debug.Log(this.name + ": UpdateInterlock.Start", this);
+            if (isLogging) Debug.Log(this.name + ": UpdateInterlock.Start", this);
 
 
-            if (logging) Debug.Log(this.name + ": UpdateInterlock.Check_To");
+            if (isLogging) Debug.Log(this.name + ": UpdateInterlock.Check_To");
 
             //Fetching State
             bool canOpenSignal = GetRouteLocker().IsRouteOpen();
             bool isSignalOpened = false;
-            foreach (LockerAndMeetPosition interlockState in toLocker_States)
+            foreach (LockerAndMeetPosition interlockState in stateLinkers)
             {
                 canOpenSignal &= interlockState.Check();
             }
-            int currentSignalPos = From_Locker.GetCurrentPosition();
-            foreach (int openPosition in OpenPositionIndexes)
+            int currentSignalPos = fromLocker.GetCurrentPosition();
+            foreach (int openPosition in openPositionIndexes)
             {
                 if (currentSignalPos == openPosition)
                 {
@@ -126,7 +126,7 @@ namespace frou01.RBUR.SignalIntegrator
                     locker.ResetFlagPosChangeOnLockDetector();
                 }
                 //Flag for Affected Object Search
-                FailSafeCalled = false;
+                isFailSafeCalled = false;
 
                 prevIsSignalOpened = isSignalOpened;
                 prevCanOpenSignal = canOpenSignal;
@@ -134,25 +134,25 @@ namespace frou01.RBUR.SignalIntegrator
                 if (isSignalOpened)
                 {
                     bool lockSucceeded = true;
-                    if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
-                    foreach (LockerAndMeetPosition interlockState in toLocker_States)
+                    if (isLogging) Debug.Log(this.name + ": UpdateInterlock.Lock_To", this);
+                    foreach (LockerAndMeetPosition interlockState in stateLinkers)
                     {
                         lockSucceeded &= interlockState.UpdateLock(true);
                     }
-                    lockSucceeded &= GetRouteLocker().UpdateLockRoute(true, From_Locker.IsControllerOwner());
+                    lockSucceeded &= GetRouteLocker().UpdateLockRoute(true, fromLocker.IsControllerOwner());
 
-                    if (logging) Debug.Log(this.name + ": UpdateInterlock.LockResult " + lockSucceeded, this.gameObject);
-                    if (!lockSucceeded && From_Locker.IsControllerOwner())
+                    if (isLogging) Debug.Log(this.name + ": UpdateInterlock.LockResult " + lockSucceeded, this.gameObject);
+                    if (!lockSucceeded && fromLocker.IsControllerOwner())
                     {
                         Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
                         this.RelayFailSafe();
                     }
-                    if (canOpenSignal) From_Locker.TryUpdateLocking(this, false, ClosePositionIndex);
+                    if (canOpenSignal) fromLocker.TryUpdateLocking(this, false, closePositionIndex);
                 }
                 else
                 {
-                    if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
-                    foreach (LockerAndMeetPosition interlockState in toLocker_States)
+                    if (isLogging) Debug.Log(this.name + ": UpdateInterlock.Release_To", this);
+                    foreach (LockerAndMeetPosition interlockState in stateLinkers)
                     {
                         interlockState.UpdateLock(false);
                     }
@@ -160,17 +160,17 @@ namespace frou01.RBUR.SignalIntegrator
 
                     if (!canOpenSignal)
                     {
-                        if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
-                        bool lockSucceeded = From_Locker.TryUpdateLocking(this, true, ClosePositionIndex);
+                        if (isLogging) Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
+                        bool lockSucceeded = fromLocker.TryUpdateLocking(this, true, closePositionIndex);
                         if (!lockSucceeded)
                         {
-                            Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on another position", From_Locker);
+                            Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock fromLocker to close position. Already locked on another position", fromLocker);
                         }
                     }
                     else
                     {
-                        if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
-                        From_Locker.TryUpdateLocking(this, false, ClosePositionIndex);
+                        if (isLogging) Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
+                        fromLocker.TryUpdateLocking(this, false, closePositionIndex);
                     }
                 }
             }
@@ -224,12 +224,12 @@ namespace frou01.RBUR.SignalIntegrator
         {
             //Search all Interlock/
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(RelayFailSafe));
-            if (!FailSafeCalled)
+            if (!isFailSafeCalled)
             {
-                FailSafeCalled = true;
-                From_Locker.SetToFailSafePosition();
-                From_Locker.RelayFailSafe();
-                foreach (LockerAndMeetPosition interlockState in toLocker_States)
+                isFailSafeCalled = true;
+                fromLocker.SetToFailSafePosition();
+                fromLocker.RelayFailSafe();
+                foreach (LockerAndMeetPosition interlockState in stateLinkers)
                 {
                     interlockState.RelayFailSafe();
                 }
@@ -239,7 +239,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public void SetupLocker()
         {
-            if(From_Locker)From_Locker.AddNewLocker(this);
+            if(fromLocker)fromLocker.AddNewLocker(this);
         }
     }
 

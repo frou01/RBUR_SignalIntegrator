@@ -81,7 +81,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// From_Locker -> Interlocking の対応表。同じ From_Locker を持つ Interlocking が複数あればエラーを出す
+        /// fromLocker -> Interlocking の対応表。同じ fromLocker を持つ Interlocking が複数あればエラーを出す
         /// </summary>
         private static Dictionary<AbstractLockerConsolidator, Interlocking> CollectFromLockers(List<Interlocking> interlocks)
         {
@@ -103,7 +103,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// 2つの Interlocking が互いの From_Locker を鎖錠し合っていれば警告する
+        /// 2つの Interlocking が互いの fromLocker を鎖錠し合っていれば警告する
         /// </summary>
         private static void WarnMutualLocking(List<Interlocking> interlocks, Dictionary<AbstractLockerConsolidator, Interlocking> interlockByFromLocker)
         {

@@ -119,7 +119,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// RouteLocker の TargetPoints / TargetRoute が有効な Interlocking を、TargetPoints の少ない順に返す
+        /// RouteLocker の TargetPoints / TargetRoutes が有効な Interlocking を、TargetPoints の少ない順に返す
         /// </summary>
         private static List<Interlocking> CollectRouteInterlocks(ExclusiveInterlockGroupGenerator generator)
         {
@@ -129,7 +129,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             {
                 if (!interlock.GetFromLocker())
                 {
-                    Debug.LogWarning($"[ExclusiveInterlockGroupGenerator] {generator.name} : {interlock.name} has no From_Locker. Skipped", interlock);
+                    Debug.LogWarning($"[ExclusiveInterlockGroupGenerator] {generator.name} : {interlock.name} has no fromLocker. Skipped", interlock);
                     continue;
                 }
                 RouteLocker routeLocker = interlock.GetRouteLocker();
@@ -138,9 +138,9 @@ namespace frou01.RBUR.SignalIntegrator.Editor
                     Debug.LogWarning($"[ExclusiveInterlockGroupGenerator] {generator.name} : {interlock.name} has no RouteLocker points. Skipped", interlock);
                     continue;
                 }
-                if (routeLocker.TargetRoute == null || routeLocker.TargetRoute.Length != routeLocker.TargetPoints.Length)
+                if (routeLocker.TargetRoutes == null || routeLocker.TargetRoutes.Length != routeLocker.TargetPoints.Length)
                 {
-                    Debug.LogWarning($"[ExclusiveInterlockGroupGenerator] {generator.name} : {interlock.name} TargetPoints and TargetRoute have different lengths. Skipped", interlock);
+                    Debug.LogWarning($"[ExclusiveInterlockGroupGenerator] {generator.name} : {interlock.name} TargetPoints and TargetRoutes have different lengths. Skipped", interlock);
                     continue;
                 }
                 interlocks.Add(interlock);
@@ -194,7 +194,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             for (int i = 0; i < routeLocker.TargetPoints.Length; i++)
             {
                 if (routeLocker.TargetPoints[i] == null) continue;
-                routeMap[routeLocker.TargetPoints[i]] = routeLocker.TargetRoute[i];
+                routeMap[routeLocker.TargetPoints[i]] = routeLocker.TargetRoutes[i];
             }
             return routeMap;
         }

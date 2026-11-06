@@ -35,7 +35,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             {
                 if (!interlock.GetFromLocker())
                 {
-                    Debug.LogWarning($"[ExclusiveInterlockGroup] {group.name} : {interlock.name} has no From_Locker. Skipped", interlock);
+                    Debug.LogWarning($"[ExclusiveInterlockGroup] {group.name} : {interlock.name} has no fromLocker. Skipped", interlock);
                 }
             }
             interlocks = interlocks.Where(val => val.GetFromLocker() != null).ToArray();

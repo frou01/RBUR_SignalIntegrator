@@ -1,5 +1,6 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -9,7 +10,7 @@ namespace frou01.RBUR.SignalIntegrator
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
         [SerializeField] protected AbstractLockerConsolidator locker;
-        [SerializeField] protected int[] MeetPositionIndex;
+        [FormerlySerializedAs("MeetPositionIndex")][SerializeField] protected int[] meetPositionIndexes;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
         public AbstractLockerConsolidator GetLocker()
         {
@@ -26,12 +27,12 @@ namespace frou01.RBUR.SignalIntegrator
         public void SetLockerAndMeetPosition(AbstractLockerConsolidator locker, int[] meetPositionIndex)
         {
             this.locker = locker;
-            MeetPositionIndex = meetPositionIndex;
+            meetPositionIndexes = meetPositionIndex;
         }
 #endif
         public virtual bool Check()
         {
-            foreach (int meet in MeetPositionIndex)
+            foreach (int meet in meetPositionIndexes)
             {
                 if (locker.GetCurrentPosition() == meet)
                 {
@@ -55,7 +56,7 @@ namespace frou01.RBUR.SignalIntegrator
                 if (isLocking && !locker.IsControllerOwner()) res = false;
                 else
                 {
-                    res = locker.TryUpdateLocking(this, isLocking, MeetPositionIndex[0]);
+                    res = locker.TryUpdateLocking(this, isLocking, meetPositionIndexes[0]);
                 }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLock));
@@ -69,7 +70,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (!isRelayingFailSafe)
             {
                 isRelayingFailSafe = true;
-                if (!interlocking.FailSafeCalled)
+                if (!interlocking.isFailSafeCalled)
                     locker.RelayFailSafe();
             }
             isRelayingFailSafe = false;

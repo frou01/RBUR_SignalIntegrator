@@ -66,7 +66,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (controller && routeLocker)
             {
                 int pointIdx = 0;
-                int[] targetRoutes = routeLocker.TargetRoute;
+                int[] targetRoutes = routeLocker.TargetRoutes;
                 foreach (AbstractPointSetter targetPoint in routeLocker.TargetPoints)
                 {
                     PointController pointCorrespondController = pointControllers.FirstOrDefault(val => val.GetPointInstances().Contains(targetPoint));

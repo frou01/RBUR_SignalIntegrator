@@ -577,8 +577,8 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             int[] lockIndices)
         {
             SetField("lockerInstances", lockers);
-            SetField("SettedLockStates", lockStates);
-            SetField("SettedLockIndex", lockIndices);
+            SetField("lockStates", lockStates);
+            SetField("lockIndexes", lockIndices);
         }
 
         public void SetTargeterData(

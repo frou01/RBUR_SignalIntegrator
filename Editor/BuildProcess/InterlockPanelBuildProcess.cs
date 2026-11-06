@@ -90,7 +90,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
             {
                 int lockerIdx = -1;
-                routeLocker.ControlTargetIndex = (int[])routeLocker.TargetRoute.Clone();
+                routeLocker.controlTargetIndexes = (int[])routeLocker.TargetRoutes.Clone();
                 foreach (AbstractPointSetter point in routeLocker.TargetPoints)
                 {
                     lockerIdx++;
@@ -100,7 +100,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
 
                         if (pointIdx >= 0)
                         {
-                            routeLocker.ControlTargetIndex[lockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.TargetRoute[lockerIdx]);
+                            routeLocker.controlTargetIndexes[lockerIdx] = Array.IndexOf(pointController.GetControlToRouteIndexMap()[pointIdx], routeLocker.TargetRoutes[lockerIdx]);
                             routeLocker.Lockers[lockerIdx] = pointController;
                             break;
                         }
@@ -183,7 +183,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// Interlocking が使う IndirectController (toLocker_States / RouteLocker / From_Locker のうち該当するもの)
+        /// Interlocking が使う IndirectController (stateLinkers / RouteLocker / fromLocker のうち該当するもの)
         /// </summary>
         private static List<AbstractIndirectController> GetIndirectControllers(Interlocking interlock)
         {
