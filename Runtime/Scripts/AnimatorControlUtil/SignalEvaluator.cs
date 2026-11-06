@@ -35,8 +35,8 @@ namespace frou01.RBUR.SignalIntegrator
             }
             receivedSignals[triedIndex] = signal;
 
-            int currentOutSig = shouldPrioritizeMaximum ? int.MinValue : int.MaxValue;
-            foreach(int received in receivedSignals)
+            float currentOutSig = shouldPrioritizeMaximum ? float.MinValue : float.MaxValue;
+            foreach(float received in receivedSignals)
             {
                 if (shouldPrioritizeMaximum)
                 {
