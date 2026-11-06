@@ -41,7 +41,7 @@ namespace frou01.RBUR.SignalIntegrator
             get
             {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-                return GetComponent<MultiLeverSwitchToControlMapsHolder>().get_Switch_to_Controller_Map();
+                return GetComponent<MultiLeverSwitchToControlMapsHolder>().GetSwitchToControllerMap();
 #else
                 return m_SwitchToControllerMap;
 #endif
@@ -80,7 +80,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (LinkedSlider) LinkedSlider.maxValue = (SwitchPositionNum - 1);
             OnDeserialization();
         }
-        public virtual void setControllerOwner()
+        public virtual void SetControllerOwner()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
         }
@@ -118,7 +118,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (newSwitchPosition != prevAppliedPos)
             {
                 switchPosition = prevAppliedPos = newSwitchPosition;
-                if(takeOwner) setControllerOwner();
+                if(takeOwner) SetControllerOwner();
 
                 //Try control Controllers without interlock update
                 int idx = 0;
@@ -126,7 +126,7 @@ namespace frou01.RBUR.SignalIntegrator
                 {
                     int nextControl = m_SwitchToControllerMap[idx][switchPosition];
 
-                    if(takeOwner && nextControl != -1) panelController.setControllerOwner();
+                    if(takeOwner && nextControl != -1) panelController.SetControllerOwner();
                     panelController.TrySetControlTarget(this, m_SwitchToControllerMap[idx][switchPosition], false);
                     idx++;
                 }

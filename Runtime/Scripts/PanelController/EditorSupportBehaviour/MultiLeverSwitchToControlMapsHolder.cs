@@ -18,17 +18,17 @@ namespace frou01.RBUR.SignalIntegrator
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] public int switchPositionNum = 2;
         [SerializeField] public List<ToControllerMap> Switch_To_ControlMaps = new List<ToControllerMap>();
-        public void apply_mulCon_to_Con_Map()
+        public void ApplyToMultiLeverController()
         {
             MultiLeverController targetMulCon = GetComponent<MultiLeverController>();
             if (targetMulCon)
             {
-                targetMulCon.SwitchToControllerMap = get_Switch_to_Controller_Map();
+                targetMulCon.SwitchToControllerMap = GetSwitchToControllerMap();
                 targetMulCon.ControlledLevers = GetControllers();
             }
         }
 
-        public int[][] get_Switch_to_Controller_Map()
+        public int[][] GetSwitchToControllerMap()
         {
             return Switch_To_ControlMaps
                 .Select(val => val.Switch_To_Control)//List<ToControllerMap> -> List<int[]>

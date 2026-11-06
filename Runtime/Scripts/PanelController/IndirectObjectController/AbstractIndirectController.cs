@@ -84,7 +84,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(TrySetControlTarget));
             hasCachedControl = false;
             int targeterIdx;
-            getTargeterIndex(targeterInstance, out targeterIdx);
+            GetTargeterIndex(targeterInstance, out targeterIdx);
             if (TargeterInstances.Length == targeterIdx)
             {
                 AddNewTargeter(targeterInstance);
@@ -95,11 +95,11 @@ namespace frou01.RBUR.SignalIntegrator
                 UserDirectIndex = targeterIdx;
             }
             int nextControlTarget = EvaluateControlTarget();
-            if (!isLocked() && GetCurrentPosition()!= nextControlTarget)
+            if (!IsLocked() && GetCurrentPosition()!= nextControlTarget)
             {
-                if (isControllerOwner())
+                if (IsControllerOwner())
                 {
-                    applyPositionToController(nextControlTarget);
+                    ApplyPositionToController(nextControlTarget);
                     SyncController();
                 }
             }
@@ -139,7 +139,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// </summary>
         /// <param name="triedFrom">The targeter instance to find the index for.</param>
         /// <param name="triedIndex">The index of the targeter instance.</param>
-        protected void getTargeterIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
+        protected void GetTargeterIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {
             triedIndex = 0;
             foreach (UdonSharpBehaviour targeter in TargeterInstances)
@@ -206,17 +206,17 @@ namespace frou01.RBUR.SignalIntegrator
         protected override bool UpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector, out int triedInstanceIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLocking));
-            bool prevLock = isLocked();
+            bool prevLock = IsLocked();
             bool res = base.UpdateLocking(triedFromInstance, lockState, lockPositionSelector, out triedInstanceIndex);
-            if(isLocked() != prevLock)
+            if(IsLocked() != prevLock)
             {
-                if (!isLocked())
+                if (!IsLocked())
                 {
                     int nextControlTarget = EvaluateControlTarget();
                     if (nextControlTarget != -1 && nextControlTarget != controllingPosition)
                     {
                         Debug.Log("SetUpdatedDetectorFlag " + this.name + ", GetCurrentPosition: " + GetCurrentPosition() + ", nextControlTarget: " + nextControlTarget, this);
-                        applyPositionToController(nextControlTarget);
+                        ApplyPositionToController(nextControlTarget);
                         SetFlagPosChangeOnLockDetector();
                     }
                 }
@@ -225,7 +225,7 @@ namespace frou01.RBUR.SignalIntegrator
 
             return res;
         }
-        protected override void applyLockToController(bool state)
+        protected override void ApplyLockToController(bool state)
         {
             //There is No Other instance for apply lock. bool array has updated.
         }
@@ -236,14 +236,14 @@ namespace frou01.RBUR.SignalIntegrator
         /// Override this method in derived classes to implement specific behavior for applying the position to the related-Objects.
         /// </summary>
         /// <param name="posIndex">The position index to apply to the controller.</param>
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(ApplyPositionToController));
             if (posIndex != -1)
             {
                 controllingPosition = posIndex;
             }
-            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(ApplyPositionToController));
         }
 
         //Getters
@@ -251,20 +251,20 @@ namespace frou01.RBUR.SignalIntegrator
         {
             return controllingPosition;
         }
-        public override bool isControllerOwner()
+        public override bool IsControllerOwner()
         {
             return Networking.IsOwner(this.gameObject);
         }
 
         //Networking control methods
-        public override void setControllerOwner()
+        public override void SetControllerOwner()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
         }
         protected override void SyncController()
         {
             isNetworkUpdateNeeded = true;
-            if (isControllerOwner() && sendControllingPosition != controllingPosition)
+            if (IsControllerOwner() && sendControllingPosition != controllingPosition)
             {
                 if (!this.enabled) this.enabled = true;
                 this.RequestSerialization();
@@ -277,7 +277,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
             if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
 
-            applyPositionToController(controllingPosition);//Force Apply Control
+            ApplyPositionToController(controllingPosition);//Force Apply Control
             if(sendControllingPosition != controllingPosition)
             {
                 UpdateInterlocks();

@@ -67,7 +67,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             {
                 pointCon.GetComponent<PointLeverControlToRouteIndexHolder>().ApplyToUdonBehaviour();
                 pointCon.GetComponent<PointLeverControlToParameterHolder>().ApplyToUdonBehaviour();
-                foreach (AbstractPointSetter point in pointCon.getPointInstances())
+                foreach (AbstractPointSetter point in pointCon.GetPointInstances())
                 {
                     point.callbackUdons = point.callbackUdons.AddUnique(pointCon);
                 }
@@ -78,7 +78,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         {
             foreach (MultiLeverController mulCon in FindComponents<MultiLeverController>(scene))
             {
-                mulCon.GetComponent<MultiLeverSwitchToControlMapsHolder>().apply_mulCon_to_Con_Map();
+                mulCon.GetComponent<MultiLeverSwitchToControlMapsHolder>().ApplyToMultiLeverController();
             }
         }
 
@@ -96,7 +96,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
                     lockerIdx++;
                     foreach (PointController pointController in pointControllers)
                     {
-                        int pointIdx = Array.IndexOf(pointController.getPointInstances(), point);
+                        int pointIdx = Array.IndexOf(pointController.GetPointInstances(), point);
 
                         if (pointIdx >= 0)
                         {
@@ -175,7 +175,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             foreach (RouteSelectorStartLever startLever in FindComponents<RouteSelectorStartLever>(scene))
             {
                 startLever.AssignMaps();
-                foreach (RouteSelectorEndButton end in startLever.getRouteEnds().SelectMany(val => val))
+                foreach (RouteSelectorEndButton end in startLever.GetRouteEnds().SelectMany(val => val))
                 {
                     end.StartLevers = end.StartLevers.AddUnique(startLever);
                 }
@@ -188,7 +188,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         private static List<AbstractIndirectController> GetIndirectControllers(Interlocking interlock)
         {
             List<AbstractLockerConsolidator> lockers = new List<AbstractLockerConsolidator>();
-            lockers.AddRange(interlock.GetInterlockStateLinker().Select(stateLocker => stateLocker.getLocker()));
+            lockers.AddRange(interlock.GetInterlockStateLinker().Select(stateLocker => stateLocker.GetLocker()));
             if (interlock.GetRouteLocker()) lockers.AddRange(interlock.GetRouteLocker().Lockers);
             lockers.Add(interlock.GetFromLocker());
             return lockers.OfType<AbstractIndirectController>().ToList();

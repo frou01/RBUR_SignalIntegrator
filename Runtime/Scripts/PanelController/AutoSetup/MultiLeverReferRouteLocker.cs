@@ -69,7 +69,7 @@ namespace frou01.RBUR.SignalIntegrator
                 int[] targetRoutes = routeLocker.TargetRoute;
                 foreach (AbstractPointSetter targetPoint in routeLocker.TargetPoints)
                 {
-                    PointController pointCorrespondController = pointControllers.FirstOrDefault(val => val.getPointInstances().Contains(targetPoint));
+                    PointController pointCorrespondController = pointControllers.FirstOrDefault(val => val.GetPointInstances().Contains(targetPoint));
                     if (pointCorrespondController)
                     {
                         MultiLeverSwitchToControlMapsHolder switchMapHolder = controller.GetComponent<MultiLeverSwitchToControlMapsHolder>();

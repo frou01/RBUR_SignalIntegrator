@@ -47,7 +47,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// <param name="lockState">The desired lock state.</param>
         /// <param name="lockPositionSelector">The position selector for the lock.</param>
         /// <returns>True if the update was successful, false otherwise(lock position conflict).</returns>
-        public bool tryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector)
+        public bool TryUpdateLocking(UdonSharpBehaviour triedFrom, bool lockState, int lockPositionSelector)
         {
             return UpdateLocking(triedFrom, lockState, lockPositionSelector,out int idx);
         }
@@ -64,7 +64,7 @@ namespace frou01.RBUR.SignalIntegrator
         protected virtual bool UpdateLocking(UdonSharpBehaviour triedFromInstance, bool lockState, int lockPositionSelector,out int triedInstanceIndex)
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateLocking));
-            getCallingBehaviourIndex(triedFromInstance, out triedInstanceIndex);
+            GetCallingBehaviourIndex(triedFromInstance, out triedInstanceIndex);
             if (lockerInstances.Length == triedInstanceIndex)
             {
                 AddNewLocker(triedFromInstance);
@@ -73,7 +73,7 @@ namespace frou01.RBUR.SignalIntegrator
             SettedLockStates[triedInstanceIndex] = lockState;
             SettedLockIndex[triedInstanceIndex] = lockPositionSelector;
 
-            bool locked = isLocked();
+            bool locked = IsLocked();
             bool lockFault;
             int lockIndex;
             CheckFaultAndGetLockIndex(out lockFault, out lockIndex);
@@ -82,7 +82,7 @@ namespace frou01.RBUR.SignalIntegrator
             {
                 locked = false;
             }
-            applyLockToController(locked);
+            ApplyLockToController(locked);
             if (locked)
             {
                 if (lockIndex != -1)
@@ -93,7 +93,7 @@ namespace frou01.RBUR.SignalIntegrator
 
                         Debug.Log("SetUpdatedDetectorFlag " + this.name + ", GetCurrentPosition: " + GetCurrentPosition() + ", lockIndex: " + lockIndex, this);
                     }
-                    applyPositionToController(lockIndex);
+                    ApplyPositionToController(lockIndex);
                 }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLocking));
@@ -135,7 +135,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// Checks if the controller is currently locked.
         /// </summary>
         /// <returns>True if the controller is locked, false otherwise.</returns>
-        public virtual bool isLocked()
+        public virtual bool IsLocked()
         {
             foreach(bool lockState in SettedLockStates)
             {
@@ -176,7 +176,7 @@ namespace frou01.RBUR.SignalIntegrator
         public virtual void SetToFailSafePosition()//for exception
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(SetToFailSafePosition));
-            setControllerOwner();
+            SetControllerOwner();
             int idx = 0;
             foreach (bool lockedState in SettedLockStates)
             {
@@ -190,7 +190,7 @@ namespace frou01.RBUR.SignalIntegrator
                 //Debug.Log("Update Position " + GetCurrentPosition() + " -> " + posIndex, this);
                 PositionUpdatedByLocking = true;
             }
-            applyPositionToController(failSafeIndex);
+            ApplyPositionToController(failSafeIndex);
 
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(SetToFailSafePosition));
         }
@@ -206,19 +206,19 @@ namespace frou01.RBUR.SignalIntegrator
         /// Applies the lock state to the controller-Object.
         /// </summary>
         /// <param name="state">The lock state to apply.</param>
-        protected abstract void applyLockToController(bool state);
+        protected abstract void ApplyLockToController(bool state);
         /// <summary>
         /// Applies the position to the controller-Object.
         /// </summary>
         /// <param name="posIndex">The position index to apply.</param>
-        protected abstract void applyPositionToController(int posIndex);
+        protected abstract void ApplyPositionToController(int posIndex);
 
         /// <returns>Is the controller is currently the owner?</returns>
-        public abstract bool isControllerOwner();
+        public abstract bool IsControllerOwner();
         /// <summary>
         /// Sets the LocalPlayer as the owner of the controller-Object.
         /// </summary>
-        public abstract void setControllerOwner();
+        public abstract void SetControllerOwner();
 
         /// <summary>
         /// synchronizes the controller-Object state across the network. This method should be implemented to handle the specifics of how the controller's state is synchronized in your application.
@@ -229,17 +229,17 @@ namespace frou01.RBUR.SignalIntegrator
         {
             return -1;
         }
-        protected virtual void applyLockToController(bool state)
+        protected virtual void ApplyLockToController(bool state)
         {
         }
-        protected virtual void applyPositionToController(int posIndex)
+        protected virtual void ApplyPositionToController(int posIndex)
         {
         }
-        public virtual bool isControllerOwner()
+        public virtual bool IsControllerOwner()
         {
             return false;
         }
-        public virtual void setControllerOwner()
+        public virtual void SetControllerOwner()
         {
         }
         protected virtual void SyncController()
@@ -263,7 +263,7 @@ namespace frou01.RBUR.SignalIntegrator
             }
         }
 
-        protected void getCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
+        protected void GetCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {
             triedIndex = 0;
             foreach (UdonSharpBehaviour locker in lockerInstances)
@@ -282,17 +282,17 @@ namespace frou01.RBUR.SignalIntegrator
         {
             return -1;
         }
-        protected override void applyLockToController(bool state)
+        protected override void ApplyLockToController(bool state)
         {
         }
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
         }
-        public override bool isControllerOwner()
+        public override bool IsControllerOwner()
         {
             return true;
         }
-        public override void setControllerOwner()
+        public override void SetControllerOwner()
         {
         }
         public override void SyncController()

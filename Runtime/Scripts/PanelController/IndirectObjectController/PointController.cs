@@ -19,13 +19,13 @@ namespace frou01.RBUR.SignalIntegrator
         [HideInInspector][OdinSerialize][SerializeField] protected float[][] ControlToParamaterMap;//2nd index:route, value:animationParamater.
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        public void setPointInstances(AbstractPointSetter[] points)
+        public void SetPointInstances(AbstractPointSetter[] points)
         {
             this.pointInstances = points;
         }
-        public AbstractPointSetter[] getPointInstances()
+        public AbstractPointSetter[] GetPointInstances()
         {
-            return GetComponent<PointLeverControlToRouteIndexHolder>().get_assignedPointArray();
+            return GetComponent<PointLeverControlToRouteIndexHolder>().GetAssignedPoints();
         }
         public void SetControlToRouteIndexMap(int[][] controlToRouteIndexMap)
         {
@@ -33,7 +33,7 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public int[][] GetControlToRouteIndexMap()
         {
-            return GetComponent<PointLeverControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
+            return GetComponent<PointLeverControlToRouteIndexHolder>().GetControlToRouteIndexMap();
         }
         public void SetAttachedPointAnimator(Animator[] animators)
         {
@@ -41,15 +41,15 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public Animator[] GetAttachedPointAnimator()
         {
-            return GetComponent<PointLeverControlToParameterHolder>().get_Attached_Animators();
+            return GetComponent<PointLeverControlToParameterHolder>().GetAttachedAnimators();
         }
-        public void SetControlToParamaterMap(float[][] controlToParameterMap)
+        public void SetControlToParameterMap(float[][] controlToParameterMap)
         {
             this.ControlToParamaterMap = controlToParameterMap;
         }
-        public float[][] GetRouteToParamaterMap()
+        public float[][] GetControlToParameterMap()
         {
-            return GetComponent<PointLeverControlToParameterHolder>().get_Control_to_Paramater_Map();
+            return GetComponent<PointLeverControlToParameterHolder>().GetControlToParameterMap();
         }
 #endif
         [SerializeField] string currentRouteParamater = "PointRoute";
@@ -71,12 +71,12 @@ namespace frou01.RBUR.SignalIntegrator
         {
             return controllingPosition;
         }
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
-            base.applyPositionToController(posIndex);
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(ApplyPositionToController));
+            base.ApplyPositionToController(posIndex);
             this.enabled = true;
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(ApplyPositionToController));
         }
 
         bool isDisabledForSinglePlayer = false;
@@ -135,7 +135,7 @@ namespace frou01.RBUR.SignalIntegrator
             }
             else
             {
-                if (!IsNeedNetworkUpdate() || !isControllerOwner() || (isDisabledForSinglePlayer = VRCPlayerApi.GetPlayerCount() == 1))
+                if (!IsNeedNetworkUpdate() || !IsControllerOwner() || (isDisabledForSinglePlayer = VRCPlayerApi.GetPlayerCount() == 1))
                 {
                     this.enabled = false;
                 }
@@ -232,7 +232,7 @@ namespace frou01.RBUR.SignalIntegrator
                 Handles.Label(Vector3.Lerp(GizmoExtension.getCenter(this.transform), GizmoExtension.getCenter(animator.transform), 0.8f), animator.name, guiStyle);
             }
 
-            ControlToRouteIndexMap = GetComponent<PointLeverControlToRouteIndexHolder>().get_Control_to_RouteIndex_Map();
+            ControlToRouteIndexMap = GetComponent<PointLeverControlToRouteIndexHolder>().GetControlToRouteIndexMap();
             int pointIdx = 0;
             foreach (AbstractPointSetter pointSetter in pointInstances)
             {

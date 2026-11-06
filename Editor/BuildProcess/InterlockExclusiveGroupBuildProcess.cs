@@ -59,7 +59,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
 
         private static bool HasStateLinker(Interlocking interlock, AbstractLockerConsolidator locker)
         {
-            return interlock.GetInterlockStateLinker().Any(val => val != null && val.getLocker() == locker);
+            return interlock.GetInterlockStateLinker().Any(val => val != null && val.GetLocker() == locker);
         }
 
         /// <summary>

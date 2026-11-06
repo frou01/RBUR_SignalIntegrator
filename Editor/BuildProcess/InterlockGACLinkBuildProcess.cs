@@ -60,7 +60,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
                         pointAnimator == checkingController.TargetAnimator || checkingController.MultiTargetAnimators.Contains(pointAnimator));
                     if (!pointController) continue;
 
-                    GACLockerConsolidator pointLocker = gacLockers.FirstOrDefault(checkingLocker => pointController == checkingLocker.getGACController());
+                    GACLockerConsolidator pointLocker = gacLockers.FirstOrDefault(checkingLocker => pointController == checkingLocker.GetGACController());
                     if (pointLocker == null)
                     {
                         Debug.LogError("Correspond GACLockerConsolidator not found", pointController);
@@ -112,7 +112,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             List<AbstractLockerConsolidator> lockers = new List<AbstractLockerConsolidator>();
             lockers.Add(interlocking.GetFromLocker());
             if (interlocking.GetRouteLocker()) lockers.AddRange(interlocking.GetRouteLocker().Lockers);
-            lockers.AddRange(interlocking.GetInterlockStateLinker().Select(stateLocker => stateLocker.getLocker()));
+            lockers.AddRange(interlocking.GetInterlockStateLinker().Select(stateLocker => stateLocker.GetLocker()));
             return lockers.OfType<GACLockerConsolidator>().ToList();
         }
     }

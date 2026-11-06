@@ -27,13 +27,13 @@ namespace frou01.RBUR.SignalIntegrator
         public void Start()
         {
             if (From_Locker) From_Locker.AddNewLocker(this);
-            if (interlock_Route) interlock_Route.setParentInterlock(this);
+            if (interlock_Route) interlock_Route.SetParentInterlock(this);
             UpdateInterlock(false);
         }
         public RouteLocker GetRouteLocker()
         {
             if (!interlock_Route) interlock_Route = GetComponentInChildren<RouteLocker>();
-            if (interlock_Route) interlock_Route.setParentInterlock(this);
+            if (interlock_Route) interlock_Route.SetParentInterlock(this);
             return interlock_Route;
         }
         public LockerAndMeetPosition[] GetInterlockStateLinker()
@@ -99,7 +99,7 @@ namespace frou01.RBUR.SignalIntegrator
             if (logging) Debug.Log(this.name + ": UpdateInterlock.Check_To");
 
             //Fetching State
-            bool canOpenSignal = GetRouteLocker().isRouteOpen();
+            bool canOpenSignal = GetRouteLocker().IsRouteOpen();
             bool isSignalOpened = false;
             foreach (LockerAndMeetPosition interlockState in toLocker_States)
             {
@@ -139,15 +139,15 @@ namespace frou01.RBUR.SignalIntegrator
                     {
                         lockSucceeded &= interlockState.UpdateLock(true);
                     }
-                    lockSucceeded &= GetRouteLocker().UpdateLockRoute(true, From_Locker.isControllerOwner());
+                    lockSucceeded &= GetRouteLocker().UpdateLockRoute(true, From_Locker.IsControllerOwner());
 
                     if (logging) Debug.Log(this.name + ": UpdateInterlock.LockResult " + lockSucceeded, this.gameObject);
-                    if (!lockSucceeded && From_Locker.isControllerOwner())
+                    if (!lockSucceeded && From_Locker.IsControllerOwner())
                     {
                         Debug.LogError(this.name + ": inconsistency Interlocking. Reset All Signals", this.gameObject);
                         this.RelayFailSafe();
                     }
-                    if (canOpenSignal) From_Locker.tryUpdateLocking(this, false, ClosePositionIndex);
+                    if (canOpenSignal) From_Locker.TryUpdateLocking(this, false, ClosePositionIndex);
                 }
                 else
                 {
@@ -161,7 +161,7 @@ namespace frou01.RBUR.SignalIntegrator
                     if (!canOpenSignal)
                     {
                         if (logging) Debug.Log(this.name + ": UpdateInterlock.Lock_From", this);
-                        bool lockSucceeded = From_Locker.tryUpdateLocking(this, true, ClosePositionIndex);
+                        bool lockSucceeded = From_Locker.TryUpdateLocking(this, true, ClosePositionIndex);
                         if (!lockSucceeded)
                         {
                             Debug.LogError(this.name + ": Interlock Preset Error. Cannot lock From_Locker to close position. Already locked on another position", From_Locker);
@@ -170,7 +170,7 @@ namespace frou01.RBUR.SignalIntegrator
                     else
                     {
                         if (logging) Debug.Log(this.name + ": UpdateInterlock.Release_From", this);
-                        From_Locker.tryUpdateLocking(this, false, ClosePositionIndex);
+                        From_Locker.TryUpdateLocking(this, false, ClosePositionIndex);
                     }
                 }
             }

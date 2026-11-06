@@ -20,14 +20,14 @@ namespace frou01.RBUR.SignalIntegrator
 
         [SerializeField] protected SignalEvaluator[] childEvaluators;
 
-        public virtual void updateSignal(UdonSharpBehaviour callingInstance,float signal)
+        public virtual void UpdateSignal(UdonSharpBehaviour callingInstance,float signal)
         {
-            updateSignal(callingInstance, signal, out int triedIndex);
+            UpdateSignal(callingInstance, signal, out int triedIndex);
         }
-        public virtual void updateSignal(UdonSharpBehaviour callingInstance, float signal, out int triedIndex)
+        public virtual void UpdateSignal(UdonSharpBehaviour callingInstance, float signal, out int triedIndex)
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(updateSignal));
-            getCallingBehaviourIndex(callingInstance,out triedIndex);
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(UpdateSignal));
+            GetCallingBehaviourIndex(callingInstance,out triedIndex);
             if (senderInstance.Length == triedIndex)
             {
                 AddNewSender(callingInstance);
@@ -65,11 +65,11 @@ namespace frou01.RBUR.SignalIntegrator
 
             foreach (SignalEvaluator evaluator in childEvaluators)
             {
-                evaluator.updateSignal(this, currentOutSig * SignalMultiplier);
+                evaluator.UpdateSignal(this, currentOutSig * SignalMultiplier);
             }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(updateSignal));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateSignal));
         }
-        protected void getCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
+        protected void GetCallingBehaviourIndex(UdonSharpBehaviour triedFrom, out int triedIndex)
         {
             triedIndex = 0;
             foreach (UdonSharpBehaviour locker in senderInstance)

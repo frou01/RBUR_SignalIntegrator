@@ -11,11 +11,11 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] protected AbstractLockerConsolidator locker;
         [SerializeField] protected int[] MeetPositionIndex;
         [HideInInspector][SerializeField] protected Interlocking interlocking;
-        public AbstractLockerConsolidator getLocker()
+        public AbstractLockerConsolidator GetLocker()
         {
             return locker;
         }
-        public void setParentInterlock(Interlocking val)
+        public void SetParentInterlock(Interlocking val)
         {
             interlocking = val;
         }
@@ -48,14 +48,14 @@ namespace frou01.RBUR.SignalIntegrator
             bool res;
             if (Check())
             {
-                res = locker.tryUpdateLocking(this, isLocking, locker.GetCurrentPosition());
+                res = locker.TryUpdateLocking(this, isLocking, locker.GetCurrentPosition());
             }
             else
             {
-                if (isLocking && !locker.isControllerOwner()) res = false;
+                if (isLocking && !locker.IsControllerOwner()) res = false;
                 else
                 {
-                    res = locker.tryUpdateLocking(this, isLocking, MeetPositionIndex[0]);
+                    res = locker.TryUpdateLocking(this, isLocking, MeetPositionIndex[0]);
                 }
             }
             if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLock));

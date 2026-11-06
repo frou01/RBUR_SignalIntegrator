@@ -16,7 +16,7 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] private string switchAnimationParamater = "SwitchPosition";
         [SerializeField] private int switchAnimationOffset;
         [HideInInspector][SerializeField] private RouteSelectorEndButton[][] RouteEnds;
-        public RouteSelectorEndButton[][] getRouteEnds()
+        public RouteSelectorEndButton[][] GetRouteEnds()
         {
             return RouteEnds;
         }

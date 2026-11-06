@@ -62,7 +62,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
             RouteLocker routeLocker = _locker1.gameObject.AddComponent<RouteLocker>();
             routeLocker.Lockers = new AbstractLockerConsolidator[0];
-            routeLocker.setParentInterlock(_locker1);
+            routeLocker.SetParentInterlock(_locker1);
             routeLocker.TargetPoints = new AbstractPointSetter[] { _pointSetter };
             routeLocker.TargetRoute = new int[] { 1 };
             AbstractLockerConsolidatorTests.SetRequiredField(_locker1, "interlock_Route", routeLocker);

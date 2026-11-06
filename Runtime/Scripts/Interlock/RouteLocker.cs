@@ -82,7 +82,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// Check all points are opened to setted routes.
         /// </summary>
         /// <returns>is route opened</returns>
-        public virtual bool isRouteOpen()
+        public virtual bool IsRouteOpen()
         {
             bool isOpen = true;
 
@@ -103,7 +103,7 @@ namespace frou01.RBUR.SignalIntegrator
         /// Set Parent Interlock
         /// </summary>
         /// <param name="val"></param>
-        public void setParentInterlock(Interlocking val)
+        public void SetParentInterlock(Interlocking val)
         {
             interlocking = val;
         }
@@ -130,14 +130,14 @@ namespace frou01.RBUR.SignalIntegrator
             {
                 foreach (AbstractLockerConsolidator locker in m_lockers)
                 {
-                    locker.tryUpdateLocking(this,false,-1);
+                    locker.TryUpdateLocking(this,false,-1);
                 }
                 if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                 return true;
             }
             else
             {
-                if (syncingMode && !isRouteOpen())
+                if (syncingMode && !IsRouteOpen())
                 {
                     if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));
                     return false;
@@ -148,7 +148,7 @@ namespace frou01.RBUR.SignalIntegrator
                 int idx = 0;
                 foreach (AbstractLockerConsolidator locker in m_lockers)
                 {
-                    result &= locker.tryUpdateLocking(this, true, ControlTargetIndex[idx]);
+                    result &= locker.TryUpdateLocking(this, true, ControlTargetIndex[idx]);
                     idx++;
                 }
                 if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(UpdateLockRoute));

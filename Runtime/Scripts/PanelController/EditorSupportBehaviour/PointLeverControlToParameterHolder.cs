@@ -25,16 +25,16 @@ namespace frou01.RBUR.SignalIntegrator
                 Debug.LogError("PointController not found on the same GameObject.", this);
                 return;
             }
-            pointController.SetControlToParamaterMap(get_Control_to_Paramater_Map());
-            pointController.SetAttachedPointAnimator(get_Attached_Animators());
+            pointController.SetControlToParameterMap(GetControlToParameterMap());
+            pointController.SetAttachedPointAnimator(GetAttachedAnimators());
         }
-        public float[][] get_Control_to_Paramater_Map()
+        public float[][] GetControlToParameterMap()
         {
             return Control_To_ParamaterMaps
                 .Select(val => val.Control_To_Paramater)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
-        public Animator[] get_Attached_Animators()
+        public Animator[] GetAttachedAnimators()
         {
             return Control_To_ParamaterMaps
                 .Select(val => val.linkedAnimator)//List<ToControllerMap> -> List<int[]>

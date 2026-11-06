@@ -24,17 +24,17 @@ namespace frou01.RBUR.SignalIntegrator
                 Debug.LogError("PointController not found on the same GameObject.", this);
                 return;
             }
-            pointController.SetControlToRouteIndexMap(get_Control_to_RouteIndex_Map());
-            pointController.setPointInstances(get_assignedPointArray());
+            pointController.SetControlToRouteIndexMap(GetControlToRouteIndexMap());
+            pointController.SetPointInstances(GetAssignedPoints());
         }
-        public int[][] get_Control_to_RouteIndex_Map()
+        public int[][] GetControlToRouteIndexMap()
         {
             return control_To_RouteIndexMaps
                 .Select(val => val.Control_To_RouteIndex)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
 
-        public AbstractPointSetter[] get_assignedPointArray()
+        public AbstractPointSetter[] GetAssignedPoints()
         {
             return control_To_RouteIndexMaps.Select(val => val.linkedPoint).ToArray();
         }

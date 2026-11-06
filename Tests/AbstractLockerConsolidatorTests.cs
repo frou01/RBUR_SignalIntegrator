@@ -56,7 +56,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
             RouteLocker routeLocker = interlockingObject.AddComponent<RouteLocker>();
             routeLocker.Lockers = new AbstractLockerConsolidator[0];
-            routeLocker.setParentInterlock(interlocking);
+            routeLocker.SetParentInterlock(interlocking);
 
             GameObject fromLockerObject = CreateChild(root, name + "_FromLocker");
             FakeLockerConsolidator fromLocker = fromLockerObject.AddComponent<FakeLockerConsolidator>();
@@ -104,7 +104,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { false, false },
                 new[] { 0, 0 });
 
-            Assert.IsFalse(_consolidator.isLocked());
+            Assert.IsFalse(_consolidator.IsLocked());
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { false, true },
                 new[] { 0, 5 });
 
-            Assert.IsTrue(_consolidator.isLocked());
+            Assert.IsTrue(_consolidator.IsLocked());
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new bool[0],
                 new int[0]);
 
-            Assert.IsFalse(_consolidator.isLocked());
+            Assert.IsFalse(_consolidator.IsLocked());
         }
 
         [Test]
@@ -190,11 +190,11 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new bool[0],
                 new int[0]);
 
-            bool result = _consolidator.tryUpdateLocking(_locker1, true, 5);
+            bool result = _consolidator.TryUpdateLocking(_locker1, true, 5);
 
             Assert.IsTrue(result);
             Assert.AreEqual(1, _consolidator.GetLockerInstanceCount());
-            Assert.IsTrue(_consolidator.isLocked());
+            Assert.IsTrue(_consolidator.IsLocked());
             Assert.AreEqual(5, _consolidator.LastAppliedPosition);
         }
 
@@ -206,10 +206,10 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidator.tryUpdateLocking(_locker1, false, 5);
+            bool result = _consolidator.TryUpdateLocking(_locker1, false, 5);
 
             Assert.IsTrue(result);
-            Assert.IsFalse(_consolidator.isLocked());
+            Assert.IsFalse(_consolidator.IsLocked());
         }
 
         [Test]
@@ -220,11 +220,11 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidator.tryUpdateLocking(_locker2, true, 5);
+            bool result = _consolidator.TryUpdateLocking(_locker2, true, 5);
 
             Assert.IsTrue(result);
             Assert.AreEqual(2, _consolidator.GetLockerInstanceCount());
-            Assert.IsTrue(_consolidator.isLocked());
+            Assert.IsTrue(_consolidator.IsLocked());
         }
 
         [Test]
@@ -235,7 +235,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { true },
                 new[] { 5 });
 
-            bool result = _consolidator.tryUpdateLocking(_locker1, true, 10);
+            bool result = _consolidator.TryUpdateLocking(_locker1, true, 10);
 
             Assert.IsTrue(result);
             Assert.AreEqual(10, _consolidator.GetLockIndex(0));
@@ -250,16 +250,16 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { false, false },
                 new[] { 0, 0 });
 
-            bool firstLockResult = _consolidator.tryUpdateLocking(_locker1, true, 5);
-            bool conflictingLockResult = _consolidator.tryUpdateLocking(_locker2, true, 10);
+            bool firstLockResult = _consolidator.TryUpdateLocking(_locker1, true, 5);
+            bool conflictingLockResult = _consolidator.TryUpdateLocking(_locker2, true, 10);
 
             Assert.IsTrue(firstLockResult);
             Assert.IsFalse(conflictingLockResult);
 
-            bool unlockResult = _consolidator.tryUpdateLocking(_locker2, false, 10);
+            bool unlockResult = _consolidator.TryUpdateLocking(_locker2, false, 10);
 
             Assert.IsTrue(unlockResult);
-            Assert.IsTrue(_consolidator.isLocked());
+            Assert.IsTrue(_consolidator.IsLocked());
             Assert.IsFalse(_consolidator.GetLockState(1));
             Assert.IsTrue(_consolidator.GetLockState(0));
             Assert.AreEqual(5, _consolidator.LastAppliedPosition);
@@ -273,7 +273,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new bool[0],
                 new int[0]);
 
-            bool result = _consolidator.tryUpdateLocking(_locker1, true, 5);
+            bool result = _consolidator.TryUpdateLocking(_locker1, true, 5);
 
             Assert.IsTrue(result);
             Assert.AreEqual(string.Empty, _eventStackHolder.GetCurrentStackString());
@@ -356,7 +356,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
             _consolidator.SetToFailSafePosition();
 
-            Assert.IsFalse(_consolidator.isLocked());
+            Assert.IsFalse(_consolidator.IsLocked());
             Assert.IsFalse(_consolidator.GetLockState(0));
             Assert.IsFalse(_consolidator.GetLockState(1));
             Assert.AreEqual(0, _consolidator.GetLockIndex(0));
@@ -432,22 +432,22 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             return _testCurrentPosition;
         }
 
-        protected override void applyLockToController(bool state)
+        protected override void ApplyLockToController(bool state)
         {
         }
 
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
             PositionWasApplied = true;
             LastAppliedPosition = posIndex;
         }
 
-        public override bool isControllerOwner()
+        public override bool IsControllerOwner()
         {
             return true;
         }
 
-        public override void setControllerOwner()
+        public override void SetControllerOwner()
         {
         }
 

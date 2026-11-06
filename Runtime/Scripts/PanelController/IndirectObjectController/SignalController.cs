@@ -15,13 +15,13 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] int signalLargestLevel;
         [SerializeField] protected SignalEvaluator[] Evaluators;
 
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
 
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
-            base.applyPositionToController(posIndex);
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(ApplyPositionToController));
+            base.ApplyPositionToController(posIndex);
 
-            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(applyPositionToController) + "] : controllingPosition = " + controllingPosition, this);
+            if (Logging) Debug.Log("Debug [on " + this.name + "," + nameof(ApplyPositionToController) + "] : controllingPosition = " + controllingPosition, this);
             foreach (Animator animator in SignalSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
@@ -33,9 +33,9 @@ namespace frou01.RBUR.SignalIntegrator
             }
             foreach (SignalEvaluator evaluator in Evaluators)
             {
-                evaluator.updateSignal(this, controllingPosition);
+                evaluator.UpdateSignal(this, controllingPosition);
             }
-            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+            if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(ApplyPositionToController));
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

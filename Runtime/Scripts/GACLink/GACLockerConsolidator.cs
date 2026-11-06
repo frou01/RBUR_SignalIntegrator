@@ -10,7 +10,7 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] private protected float[] lockPositions;
         [SerializeField] private protected Controller_Base target;
 
-        public Controller_Base getGACController()
+        public Controller_Base GetGACController()
         {
             return target;
         }
@@ -33,31 +33,31 @@ namespace frou01.RBUR.SignalIntegrator
             return res;
         }
 
-        protected override void applyLockToController(bool state)
+        protected override void ApplyLockToController(bool state)
         {
             target.locked = state;
         }
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
-            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(ApplyPositionToController));
             if (target.controllerPosition_Exposed[0] != lockPositions[posIndex])
             {
                 target.SetPosition(lockPositions[posIndex]);
                 SyncController();
             }
-            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(applyPositionToController));
+            if(eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(ApplyPositionToController));
         }
-        public override bool isControllerOwner()
+        public override bool IsControllerOwner()
         {
             return Networking.IsOwner(target.gameObject);
         }
-        public override void setControllerOwner()
+        public override void SetControllerOwner()
         {
             Networking.SetOwner(Networking.LocalPlayer, target.gameObject);
         }
         protected override void SyncController()
         {
-            if (isControllerOwner())
+            if (IsControllerOwner())
             {
                 target.RequestSerialization();
             }

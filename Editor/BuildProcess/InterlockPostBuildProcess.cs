@@ -58,10 +58,10 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         /// </summary>
         private static void SetParentInterlock(Interlocking currentInterlock)
         {
-            if (currentInterlock.GetRouteLocker() != null) currentInterlock.GetRouteLocker().setParentInterlock(currentInterlock);
+            if (currentInterlock.GetRouteLocker() != null) currentInterlock.GetRouteLocker().SetParentInterlock(currentInterlock);
             foreach (LockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
             {
-                stateLinker.setParentInterlock(currentInterlock);
+                stateLinker.SetParentInterlock(currentInterlock);
             }
         }
 
@@ -73,7 +73,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             List<AbstractLockerConsolidator> controllers = new List<AbstractLockerConsolidator>();
             foreach (LockerAndMeetPosition stateLinker in currentInterlock.GetInterlockStateLinker())
             {
-                controllers.Add(stateLinker.getLocker());
+                controllers.Add(stateLinker.GetLocker());
             }
             if (currentInterlock.GetRouteLocker() != null) controllers.AddRange(currentInterlock.GetRouteLocker().Lockers);
             controllers.Add(currentInterlock.GetFromLocker());

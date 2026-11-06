@@ -12,7 +12,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
     /// Unit tests for AbstractIndirectController
     /// Tests cover: TrySetControlTarget(), AddNewTargeter(), EvaluateControlTarget(), 
     /// EvaluateUserDirectControl(), isLocalOverride(), UpdateLocking() override, 
-    /// applyPositionToController() override, and related functionality
+    /// ApplyPositionToController() override, and related functionality
     /// 
     /// Design:
     /// - Uses FakeLocker instead of VRC SDK dependencies
@@ -313,7 +313,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             Assert.AreEqual(-1, result);
         }
 
-        // ========== applyPositionToController() Override Tests ==========
+        // ========== ApplyPositionToController() Override Tests ==========
 
         [Test]
         public void ApplyPositionToController_WithDifferentPosition_UpdatesControllingPosition()
@@ -455,7 +455,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { 10 });
             _indirectController.SetCurrentPosition(5);
 
-            _indirectController.tryUpdateLocking(_locker1, true, 5);
+            _indirectController.TryUpdateLocking(_locker1, true, 5);
 
             // ロック時は位置を適用しない
             Assert.AreNotEqual(10, _indirectController.GetCurrentPosition());
@@ -474,9 +474,9 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { 15 });
             _indirectController.SetCurrentPosition(5);
 
-            _indirectController.tryUpdateLocking(_locker1, false, 5);
+            _indirectController.TryUpdateLocking(_locker1, false, 5);
 
-            Assert.IsFalse(_indirectController.isLocked());
+            Assert.IsFalse(_indirectController.IsLocked());
             Assert.AreEqual(15, _indirectController.GetCurrentPosition());
         }
 
@@ -492,7 +492,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { 5 });
             _indirectController.SetCurrentPosition(5);
 
-            _indirectController.tryUpdateLocking(_locker1, false, 5);
+            _indirectController.TryUpdateLocking(_locker1, false, 5);
 
             // 位置が同じなので UpdatedDetectorFlag は立たない
             Assert.IsFalse(_indirectController.GetFlagPosChangeOnLockDetector());
@@ -510,7 +510,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
                 new[] { -1 });
             _indirectController.SetCurrentPosition(0);
 
-            _indirectController.tryUpdateLocking(_locker1, false, 5);
+            _indirectController.TryUpdateLocking(_locker1, false, 5);
 
             // 位置が同じなので UpdatedDetectorFlag は立たない
             Assert.IsFalse(_indirectController.GetFlagPosChangeOnLockDetector());
@@ -621,7 +621,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         public void ApplyPositionPublic(int posIndex)
         {
-            base.applyPositionToController(posIndex);
+            base.ApplyPositionToController(posIndex);
         }
 
         public void OnDeserializationPublic()
@@ -630,12 +630,12 @@ namespace frou01.RBUR.SignalIntegrator.Tests
         }
 
         // Override only what's necessary for testing (VRC Networking dependencies)
-        public override bool isControllerOwner()
+        public override bool IsControllerOwner()
         {
             return true;
         }
 
-        public override void setControllerOwner()
+        public override void SetControllerOwner()
         {
             // Test stub - no-op
         }
@@ -645,9 +645,9 @@ namespace frou01.RBUR.SignalIntegrator.Tests
             // Test stub - no-op
         }
 
-        protected override void applyPositionToController(int posIndex)
+        protected override void ApplyPositionToController(int posIndex)
         {
-            base.applyPositionToController(posIndex);
+            base.ApplyPositionToController(posIndex);
         }
 
         private void SetField(string fieldName, object value)
