@@ -70,10 +70,10 @@ namespace RBUR_SignalIntegrator
             [SerializeField] public AbstractPointSetter linkedPoint;
             [SerializeField] public int[] Control_To_RouteIndex;
 
-            public Control_To_RouteIndexMap(AbstractPointSetter linkedPoint, int[] Control_To_RouteIndexMap)
+            public Control_To_RouteIndexMap(AbstractPointSetter linkedPoint, int[] controlToRouteIndex)
             {
                 this.linkedPoint = linkedPoint;
-                this.Control_To_RouteIndex = Control_To_RouteIndexMap;
+                this.Control_To_RouteIndex = controlToRouteIndex;
             }
         }
 #endif

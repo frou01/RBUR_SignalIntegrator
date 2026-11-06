@@ -49,10 +49,10 @@ namespace RBUR_SignalIntegrator
             [FormerlySerializedAs("Route_To_Paramater")]
             [SerializeField] public float[] Control_To_Paramater;
 
-            public To_Paramater(Animator linkedAnimator, float[] Control_To_Paramater)
+            public To_Paramater(Animator linkedAnimator, float[] controlToParameter)
             {
                 this.linkedAnimator = linkedAnimator;
-                this.Control_To_Paramater = Control_To_Paramater;
+                this.Control_To_Paramater = controlToParameter;
             }
         }
 #endif

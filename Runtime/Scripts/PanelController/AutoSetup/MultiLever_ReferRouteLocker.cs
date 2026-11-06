@@ -34,13 +34,13 @@ namespace RBUR_SignalIntegrator
                 return -1;
             }
         }
-        private static void SetControlToMap(MultiLever_SwitchToControlMapsHolder switchMapHolder, PointController pointController, int TargetControl, int targetMulConSwitch)
+        private static void SetControlToMap(MultiLever_SwitchToControlMapsHolder switchMapHolder, PointController pointController, int targetControl, int targetMulConSwitch)
         {
             List<Control_To_RouteIndexMap> controlToRoute = pointController.GetComponent<PointLever_ControlToRouteIndexHolder>().control_To_RouteIndexMaps;
             To_ControllerMap map = switchMapHolder.Switch_To_ControlMaps.FirstOrDefault(val => val.linkedController == pointController);
             if (map != null)
             {
-                map.Switch_To_Control[targetMulConSwitch] = TargetControl;
+                map.Switch_To_Control[targetMulConSwitch] = targetControl;
             }
         }
 
@@ -76,8 +76,8 @@ namespace RBUR_SignalIntegrator
                         Undo.RecordObject(switchMapHolder, "Fetching Point Controller/Route settings");
                         if (!controller.ControlledLevers.Contains(pointCorrespondController))
                         {
-                            int[] MultileverControlMap = Enumerable.Repeat(-1, switchMapHolder.switchPositionNum).ToArray();
-                            switchMapHolder.Switch_To_ControlMaps.Add(new To_ControllerMap(pointCorrespondController, MultileverControlMap));
+                            int[] multiLeverControlMap = Enumerable.Repeat(-1, switchMapHolder.switchPositionNum).ToArray();
+                            switchMapHolder.Switch_To_ControlMaps.Add(new To_ControllerMap(pointCorrespondController, multiLeverControlMap));
                         }
                         int controlTarget = GetControlFromRoute(pointCorrespondController, targetPoint, targetRoutes[pointIdx]);
                         if (controlTarget != -1)
