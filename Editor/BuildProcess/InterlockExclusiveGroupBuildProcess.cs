@@ -12,9 +12,9 @@ namespace frou01.RBUR.SignalIntegrator.Editor
 {
     /// <summary>
     /// ExclusiveInterlockGroup から、排他条件の LockerAndMeetPosition を生成して Interlocking に登録する。
-    /// 生成したLockerAndMeetPositionにもeventStackHolderを配らせるため、Interlock_PreBuildProcess(-200)より前に実行する。
+    /// 生成したLockerAndMeetPositionにもeventStackHolderを配らせるため、InterlockPreBuildProcess(-200)より前に実行する。
     /// </summary>
-    public class Interlock_ExclusiveGroup_BuildProcess : IProcessSceneWithReport
+    public class InterlockExclusiveGroupBuildProcess : IProcessSceneWithReport
     {
         public int callbackOrder => -250;
 
@@ -41,7 +41,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
             interlocks = interlocks.Where(val => val.GetFromLocker() != null).ToArray();
 
             //片方向の条件だけで排他になる(Aが進行中はBを停止位置に鎖錠し、Bが進行中はAが進行条件を満たさない)
-            //双方向に張ると Interlock_PostBuildProcess の相互鎖錠警告に当たるので i<j の向きだけ生成する
+            //双方向に張ると InterlockPostBuildProcess の相互鎖錠警告に当たるので i<j の向きだけ生成する
             for (int i = 0; i < interlocks.Length; i++)
             {
                 for (int j = i + 1; j < interlocks.Length; j++)

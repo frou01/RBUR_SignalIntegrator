@@ -8,7 +8,7 @@ using UnityEngine;
 namespace frou01.RBUR.SignalIntegrator.Editor
 {
     [CustomEditor(typeof(ExclusiveInterlockGroupGenerator))]
-    public class ExclusiveInterlockGroupGenerator_Editor : UnityEditor.Editor
+    public class ExclusiveInterlockGroupGeneratorEditor : UnityEditor.Editor
     {
         SerializedProperty targetInterlocksProperty;
         SerializedProperty generatedGroupsProperty;

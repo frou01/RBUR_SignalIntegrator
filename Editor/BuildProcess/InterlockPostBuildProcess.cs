@@ -11,9 +11,9 @@ namespace frou01.RBUR.SignalIntegrator.Editor
 {
     /// <summary>
     /// Locker への登録、Interlocking との親子参照・affectedLockers の構築と、設定の検証
-    /// Pannel / GACLink で RouteLocker.Lockers が解決済みであることが前提
+    /// Panel / GACLink で RouteLocker.Lockers が解決済みであることが前提
     /// </summary>
-    public class Interlock_PostBuildProcess : IProcessSceneWithReport
+    public class InterlockPostBuildProcess : IProcessSceneWithReport
     {
         public int callbackOrder => -99;
 

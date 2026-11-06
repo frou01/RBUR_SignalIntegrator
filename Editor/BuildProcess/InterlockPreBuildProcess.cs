@@ -10,7 +10,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
     /// <summary>
     /// 各Udonへの EventStackHolder の配布と、RouteLocker.Lockers 配列の確保
     /// </summary>
-    public class Interlock_PreBuildProcess : IProcessSceneWithReport
+    public class InterlockPreBuildProcess : IProcessSceneWithReport
     {
         public int callbackOrder => -200;
 
@@ -62,11 +62,11 @@ namespace frou01.RBUR.SignalIntegrator.Editor
         }
 
         /// <summary>
-        /// 後段(Pannel / GACLink)で Lockers[idx] に代入するため、TargetPoints と同じ長さの配列を確保する
+        /// 後段(Panel / GACLink)で Lockers[idx] に代入するため、TargetPoints と同じ長さの配列を確保する
         /// </summary>
         private static void AllocateRouteLockerLockers(Scene scene)
         {
-            //Pannel / GACLink は非アクティブな RouteLocker も処理するので、ここでも含める
+            //Panel / GACLink は非アクティブな RouteLocker も処理するので、ここでも含める
             foreach (RouteLocker routeLocker in FindComponents<RouteLocker>(scene))
             {
                 int pointCount = routeLocker.TargetPoints == null ? 0 : routeLocker.TargetPoints.Length;

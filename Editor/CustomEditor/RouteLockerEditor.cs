@@ -11,7 +11,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
 {
     [CustomEditor(typeof(RouteLocker))]
     [CanEditMultipleObjects]
-    public class RouteLocker_Editor : UnityEditor.Editor
+    public class RouteLockerEditor : UnityEditor.Editor
     {
         SerializedProperty targetPointsProperty;
         SerializedProperty targetRouteProperty;

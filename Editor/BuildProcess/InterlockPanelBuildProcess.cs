@@ -14,7 +14,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
     /// <summary>
     /// 制御盤(てこ類)の設定反映と、Interlocking との相互参照の構築
     /// </summary>
-    public class Interlock_Pannel_BuildProcess : IProcessSceneWithReport
+    public class InterlockPanelBuildProcess : IProcessSceneWithReport
     {
         public int callbackOrder => -101;
 

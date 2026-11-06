@@ -18,7 +18,7 @@ namespace frou01.RBUR.SignalIntegrator.Editor
     /// <summary>
     /// GAC(GrabAnimatorController) で操作するてこと Interlocking の連携
     /// </summary>
-    public class Interlock_GACLink_BuildProcess : IProcessSceneWithReport
+    public class InterlockGACLinkBuildProcess : IProcessSceneWithReport
     {
         public int callbackOrder => -100;
 

@@ -4,7 +4,7 @@ namespace frou01.RBUR.SignalIntegrator
 {
     /// <summary>
     /// 対象の信号(Interlocking)の RouteLocker から、同時に開通できる進路の組を割り出して ExclusiveInterlockGroup を子に生成する。
-    /// 生成はカスタムエディタ(ExclusiveInterlockGroupGenerator_Editor)のボタンから行う。
+    /// 生成はカスタムエディタ(ExclusiveInterlockGroupGeneratorEditor)のボタンから行う。
     /// </summary>
     public class ExclusiveInterlockGroupGenerator : MonoBehaviour
     {
