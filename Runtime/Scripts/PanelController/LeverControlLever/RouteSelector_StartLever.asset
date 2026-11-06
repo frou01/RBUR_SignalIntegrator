@@ -361,7 +361,7 @@ MonoBehaviour:
       Data: 23|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.RouteSelector_EndButton[][], RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.RouteSelector_EndButton[][], frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -433,7 +433,7 @@ MonoBehaviour:
       Data: 29|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.MultiLeverController[][], RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.MultiLeverController[][], frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 

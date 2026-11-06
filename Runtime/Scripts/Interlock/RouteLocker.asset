@@ -265,7 +265,7 @@ MonoBehaviour:
       Data: 19|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.EventStackHolder, RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.EventStackHolder, frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -397,7 +397,7 @@ MonoBehaviour:
       Data: 29|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.AbstractLockerConsolidater[], RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.AbstractLockerConsolidater[], frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
@@ -463,7 +463,7 @@ MonoBehaviour:
       Data: 34|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.Interlocking, RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.Interlocking, frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 

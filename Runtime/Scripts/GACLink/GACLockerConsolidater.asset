@@ -61,7 +61,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: RBUR_SignalIntegrator.EventStackHolder, RBUR_SignalIntegrator_ASMDEF
+      Data: RBUR_SignalIntegrator.EventStackHolder, frou01.RBUR.SignalIntegrator.Runtime
     - Name: 
       Entry: 8
       Data: 
