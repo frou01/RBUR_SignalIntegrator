@@ -8,15 +8,15 @@ using VRC.Udon;
 namespace frou01.RBUR.SignalIntegrator
 {
     [RequireComponent(typeof(RouteSelector_EndToPresetMapHolder))]
-    public class RouteSelector_StartLever : UdonSharpBehaviour
+    public class RouteSelectorStartLever : UdonSharpBehaviour
     {
         [UdonSynced][SerializeField] private int Switch_Position;
         [UdonSynced] private bool routeSelected;
         [SerializeField] private Animator[] SwitchSideAnimator;
         [SerializeField] private string switchAnimationParamater = "SwitchPosition";
         [SerializeField] private int switchAnimationOffset;
-        [HideInInspector][SerializeField] private RouteSelector_EndButton[][] RouteEnds;
-        public RouteSelector_EndButton[][] getRouteEnds()
+        [HideInInspector][SerializeField] private RouteSelectorEndButton[][] RouteEnds;
+        public RouteSelectorEndButton[][] getRouteEnds()
         {
             return RouteEnds;
         }
@@ -51,13 +51,13 @@ namespace frou01.RBUR.SignalIntegrator
             OnDeserialization();
         }
 
-        public void SelectRoute(RouteSelector_EndButton endButton)
+        public void SelectRoute(RouteSelectorEndButton endButton)
         {
             if (!routeSelected && RouteEnds[Switch_Position].Length > 0)
             {
                 Networking.SetOwner(Networking.LocalPlayer,this.gameObject);
                 int selectedRoute = 0;
-                foreach (RouteSelector_EndButton routeEnd in RouteEnds[Switch_Position])
+                foreach (RouteSelectorEndButton routeEnd in RouteEnds[Switch_Position])
                 {
                     if (routeEnd == endButton) break;
                     selectedRoute++;

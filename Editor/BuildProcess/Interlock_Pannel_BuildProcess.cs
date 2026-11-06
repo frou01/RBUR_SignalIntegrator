@@ -168,14 +168,14 @@ namespace frou01.RBUR.SignalIntegrator.Editor
 
         private static void SetupRouteSelectors(Scene scene)
         {
-            foreach (RouteSelector_EndButton end in FindComponents<RouteSelector_EndButton>(scene))
+            foreach (RouteSelectorEndButton end in FindComponents<RouteSelectorEndButton>(scene))
             {
-                end.StartLevers = new RouteSelector_StartLever[0];
+                end.StartLevers = new RouteSelectorStartLever[0];
             }
-            foreach (RouteSelector_StartLever startLever in FindComponents<RouteSelector_StartLever>(scene))
+            foreach (RouteSelectorStartLever startLever in FindComponents<RouteSelectorStartLever>(scene))
             {
                 startLever.AssignMaps();
-                foreach (RouteSelector_EndButton end in startLever.getRouteEnds().SelectMany(val => val))
+                foreach (RouteSelectorEndButton end in startLever.getRouteEnds().SelectMany(val => val))
                 {
                     end.StartLevers = end.StartLevers.AddUnique(startLever);
                 }

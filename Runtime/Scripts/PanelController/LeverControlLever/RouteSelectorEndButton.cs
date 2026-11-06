@@ -5,13 +5,13 @@ using VRC.Udon;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    public class RouteSelector_EndButton : UdonSharpBehaviour
+    public class RouteSelectorEndButton : UdonSharpBehaviour
     {
-        [HideInInspector][SerializeField] public RouteSelector_StartLever[] StartLevers;
+        [HideInInspector][SerializeField] public RouteSelectorStartLever[] StartLevers;
         public void OnPerform()
         {
             //Route End Button Pushed
-            foreach (RouteSelector_StartLever startLever in StartLevers)
+            foreach (RouteSelectorStartLever startLever in StartLevers)
             {
                 startLever.SelectRoute(this);
             }

@@ -8,7 +8,7 @@ using VRC.Udon;
 
 namespace frou01.RBUR.SignalIntegrator
 {
-    public class Lever_PannelUIReciever : UdonSharpBehaviour
+    public class LeverPanelUIReceiver : UdonSharpBehaviour
     {
         [SerializeField] private protected int[] switchToControllerMap;//index:switch, value:controller. -1 is mid(not lever local control)
         [SerializeField] private protected AbstractIndirectController targetController;//index:switch, value:controller. -1 is mid(not lever local control)
