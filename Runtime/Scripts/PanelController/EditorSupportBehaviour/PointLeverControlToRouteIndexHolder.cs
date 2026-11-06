@@ -7,6 +7,7 @@ using UnityEditor;
 
 #endif
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace frou01.RBUR.SignalIntegrator
 {
@@ -14,7 +15,7 @@ namespace frou01.RBUR.SignalIntegrator
     public class PointLeverControlToRouteIndexHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] public List<ControlToRouteIndexMap> control_To_RouteIndexMaps = new List<ControlToRouteIndexMap>();
+        [FormerlySerializedAs("control_To_RouteIndexMaps")][SerializeField] public List<ControlToRouteIndexMap> controlToRouteIndexMaps = new List<ControlToRouteIndexMap>();
 
         public void ApplyToUdonBehaviour()
         {
@@ -29,32 +30,32 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public int[][] GetControlToRouteIndexMap()
         {
-            return control_To_RouteIndexMaps
-                .Select(val => val.Control_To_RouteIndex)//List<ToControllerMap> -> List<int[]>
+            return controlToRouteIndexMaps
+                .Select(val => val.controlToRouteIndex)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
 
         public AbstractPointSetter[] GetAssignedPoints()
         {
-            return control_To_RouteIndexMaps.Select(val => val.linkedPoint).ToArray();
+            return controlToRouteIndexMaps.Select(val => val.linkedPoint).ToArray();
         }
 
-        [SerializeField] public int RouteIndexNum;
+        [FormerlySerializedAs("RouteIndexNum")][SerializeField] public int routeIndexNum;
 
         public void Update()
         {
             bool isDirty = false;
 
-            foreach (ControlToRouteIndexMap map in control_To_RouteIndexMaps)
+            foreach (ControlToRouteIndexMap map in controlToRouteIndexMaps)
             {
-                if (map.Control_To_RouteIndex.Length != RouteIndexNum)
+                if (map.controlToRouteIndex.Length != routeIndexNum)
                 {
-                    int[] newArray = new int[RouteIndexNum];
-                    for (int i = 0; i < Mathf.Min(map.Control_To_RouteIndex.Length, RouteIndexNum); i++)
+                    int[] newArray = new int[routeIndexNum];
+                    for (int i = 0; i < Mathf.Min(map.controlToRouteIndex.Length, routeIndexNum); i++)
                     {
-                        newArray[i] = map.Control_To_RouteIndex[i];
+                        newArray[i] = map.controlToRouteIndex[i];
                     }
-                    map.Control_To_RouteIndex = newArray;
+                    map.controlToRouteIndex = newArray;
                     isDirty = true;
                 }
             }
@@ -68,12 +69,12 @@ namespace frou01.RBUR.SignalIntegrator
         public class ControlToRouteIndexMap
         {
             [SerializeField] public AbstractPointSetter linkedPoint;
-            [SerializeField] public int[] Control_To_RouteIndex;
+            [FormerlySerializedAs("Control_To_RouteIndex")][SerializeField] public int[] controlToRouteIndex;
 
             public ControlToRouteIndexMap(AbstractPointSetter linkedPoint, int[] controlToRouteIndex)
             {
                 this.linkedPoint = linkedPoint;
-                this.Control_To_RouteIndex = controlToRouteIndex;
+                this.controlToRouteIndex = controlToRouteIndex;
             }
         }
 #endif

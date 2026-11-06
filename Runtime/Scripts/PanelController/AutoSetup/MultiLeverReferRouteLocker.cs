@@ -23,11 +23,11 @@ namespace frou01.RBUR.SignalIntegrator
 
         private static int GetControlFromRoute(PointController pointController, AbstractPointSetter pointSetter, int routeIndex)
         {
-            List<ControlToRouteIndexMap> controlToRoute = pointController.GetComponent<PointLeverControlToRouteIndexHolder>().control_To_RouteIndexMaps;
+            List<ControlToRouteIndexMap> controlToRoute = pointController.GetComponent<PointLeverControlToRouteIndexHolder>().controlToRouteIndexMaps;
             ControlToRouteIndexMap targetedMap = controlToRoute.First(val => val.linkedPoint == pointSetter);
             if (targetedMap != null)
             {
-                return targetedMap.Control_To_RouteIndex.Select((x, i) => (x, i)).FirstOrDefault(map => map.x == routeIndex).i;
+                return targetedMap.controlToRouteIndex.Select((x, i) => (x, i)).FirstOrDefault(map => map.x == routeIndex).i;
             }
             else
             {
@@ -36,11 +36,11 @@ namespace frou01.RBUR.SignalIntegrator
         }
         private static void SetControlToMap(MultiLeverSwitchToControlMapsHolder switchMapHolder, PointController pointController, int targetControl, int targetMulConSwitch)
         {
-            List<ControlToRouteIndexMap> controlToRoute = pointController.GetComponent<PointLeverControlToRouteIndexHolder>().control_To_RouteIndexMaps;
-            ToControllerMap map = switchMapHolder.Switch_To_ControlMaps.FirstOrDefault(val => val.linkedController == pointController);
+            List<ControlToRouteIndexMap> controlToRoute = pointController.GetComponent<PointLeverControlToRouteIndexHolder>().controlToRouteIndexMaps;
+            ToControllerMap map = switchMapHolder.switchToControlMaps.FirstOrDefault(val => val.linkedController == pointController);
             if (map != null)
             {
-                map.Switch_To_Control[targetMulConSwitch] = targetControl;
+                map.switchToControl[targetMulConSwitch] = targetControl;
             }
         }
 
@@ -77,7 +77,7 @@ namespace frou01.RBUR.SignalIntegrator
                         if (!controller.ControlledLevers.Contains(pointCorrespondController))
                         {
                             int[] multiLeverControlMap = Enumerable.Repeat(-1, switchMapHolder.switchPositionNum).ToArray();
-                            switchMapHolder.Switch_To_ControlMaps.Add(new ToControllerMap(pointCorrespondController, multiLeverControlMap));
+                            switchMapHolder.switchToControlMaps.Add(new ToControllerMap(pointCorrespondController, multiLeverControlMap));
                         }
                         int controlTarget = GetControlFromRoute(pointCorrespondController, targetPoint, targetRoutes[pointIdx]);
                         if (controlTarget != -1)

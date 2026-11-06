@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace frou01.RBUR.SignalIntegrator
@@ -12,22 +13,22 @@ namespace frou01.RBUR.SignalIntegrator
     public class RouteSelectorEndToPresetMapHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField] List<SwitchToPresets> Switch_To_EndAndPresetMaps;
+        [FormerlySerializedAs("Switch_To_EndAndPresetMaps")][SerializeField] List<SwitchToPresets> switchToEndAndPresetMaps;
 
         public void ApplyEndToPresetArray(out RouteSelectorEndButton[][] ends,out MultiLeverController[][] presets)
         {
-            ends = Switch_To_EndAndPresetMaps.Select(val =>
-                val.EndAndPresetMulcon.Select(val => val.end).ToArray()
+            ends = switchToEndAndPresetMaps.Select(val =>
+                val.endAndPresets.Select(val => val.end).ToArray()
             ).ToArray();
-            presets = Switch_To_EndAndPresetMaps.Select(val => 
-                val.EndAndPresetMulcon.Select(val => val.preset).ToArray()
+            presets = switchToEndAndPresetMaps.Select(val => 
+                val.endAndPresets.Select(val => val.preset).ToArray()
             ).ToArray();
         }
 
         [Serializable]
         private class SwitchToPresets
         {
-            [SerializeField] public List<EndAndMulcon> EndAndPresetMulcon;
+            [FormerlySerializedAs("EndAndPresetMulcon")][SerializeField] public List<EndAndMulcon> endAndPresets;
         }
 
         [Serializable]
@@ -44,19 +45,19 @@ namespace frou01.RBUR.SignalIntegrator
             Vector4 colorVecStart = new Vector4(0.2f, 0.2f, 1f, 1f);
             Vector4 colorVecEnd = new Vector4(1f, 0f, 0f, 1f);
             int switchIndex = 0;
-            int switchNum = Switch_To_EndAndPresetMaps.Count-1;
+            int switchNum = switchToEndAndPresetMaps.Count-1;
             if (switchNum == 0) switchNum = 1;
-            foreach (SwitchToPresets switchPresets in Switch_To_EndAndPresetMaps)
+            foreach (SwitchToPresets switchPresets in switchToEndAndPresetMaps)
             {
                 Vector4 colorVecSwitchStart = Vector4.Lerp(colorVecStart, colorVecEnd, (float)switchIndex / switchNum);
                 Vector4 colorVecSwitchEnd = Vector4.Lerp(colorVecStart, colorVecEnd, (float)(switchIndex +1) / switchNum);
                 int presetIndex = 0;
-                int presetNum = switchPresets.EndAndPresetMulcon.Count-1;
+                int presetNum = switchPresets.endAndPresets.Count-1;
                 if (presetNum == 0)
                 {
                     presetNum = 1;
                 }
-                foreach (EndAndMulcon endAndMulcon in switchPresets.EndAndPresetMulcon)
+                foreach (EndAndMulcon endAndMulcon in switchPresets.endAndPresets)
                 {
                     Vector4 currentCol = Vector4.Lerp(colorVecSwitchStart, colorVecSwitchEnd, (float)presetIndex / presetNum);
                     Gizmos.color = new Color(currentCol.x, currentCol.y, currentCol.z, currentCol.w);

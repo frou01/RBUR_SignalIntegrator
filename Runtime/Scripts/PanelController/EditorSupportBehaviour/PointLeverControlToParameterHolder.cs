@@ -16,7 +16,7 @@ namespace frou01.RBUR.SignalIntegrator
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [FormerlySerializedAs("Route_To_ParamaterMaps")]
-        [SerializeField] public List<ToParameter> Control_To_ParamaterMaps;
+        [FormerlySerializedAs("Control_To_ParamaterMaps")][SerializeField] public List<ToParameter> controlToParameterMaps;
         public void ApplyToUdonBehaviour()
         {
             PointController pointController = GetComponent<PointController>();
@@ -30,13 +30,13 @@ namespace frou01.RBUR.SignalIntegrator
         }
         public float[][] GetControlToParameterMap()
         {
-            return Control_To_ParamaterMaps
-                .Select(val => val.Control_To_Paramater)//List<ToControllerMap> -> List<int[]>
+            return controlToParameterMaps
+                .Select(val => val.controlToParameter)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
         public Animator[] GetAttachedAnimators()
         {
-            return Control_To_ParamaterMaps
+            return controlToParameterMaps
                 .Select(val => val.linkedAnimator)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
@@ -47,12 +47,12 @@ namespace frou01.RBUR.SignalIntegrator
         {
             [SerializeField] public Animator linkedAnimator;
             [FormerlySerializedAs("Route_To_Paramater")]
-            [SerializeField] public float[] Control_To_Paramater;
+            [FormerlySerializedAs("Control_To_Paramater")][SerializeField] public float[] controlToParameter;
 
             public ToParameter(Animator linkedAnimator, float[] controlToParameter)
             {
                 this.linkedAnimator = linkedAnimator;
-                this.Control_To_Paramater = controlToParameter;
+                this.controlToParameter = controlToParameter;
             }
         }
 #endif

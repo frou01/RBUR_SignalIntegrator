@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEditor;
 using frou01.util;
 
@@ -17,7 +18,7 @@ namespace frou01.RBUR.SignalIntegrator
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] public int switchPositionNum = 2;
-        [SerializeField] public List<ToControllerMap> Switch_To_ControlMaps = new List<ToControllerMap>();
+        [FormerlySerializedAs("Switch_To_ControlMaps")][SerializeField] public List<ToControllerMap> switchToControlMaps = new List<ToControllerMap>();
         public void ApplyToMultiLeverController()
         {
             MultiLeverController targetMulCon = GetComponent<MultiLeverController>();
@@ -30,25 +31,25 @@ namespace frou01.RBUR.SignalIntegrator
 
         public int[][] GetSwitchToControllerMap()
         {
-            return Switch_To_ControlMaps
-                .Select(val => val.Switch_To_Control)//List<ToControllerMap> -> List<int[]>
+            return switchToControlMaps
+                .Select(val => val.switchToControl)//List<ToControllerMap> -> List<int[]>
                 .ToArray();
         }
         public AbstractIndirectController[] GetControllers()
         {
-            return Switch_To_ControlMaps.Select(val => val.linkedController).ToArray();
+            return switchToControlMaps.Select(val => val.linkedController).ToArray();
         }
 
         [System.Serializable]
         public class ToControllerMap
         {
             [SerializeField] public AbstractIndirectController linkedController;
-            [Tooltip("index = switch, value = contro. No overwrite lever value = -1")][SerializeField] public int[] Switch_To_Control;
+            [FormerlySerializedAs("Switch_To_Control")][Tooltip("index = switch, value = contro. No overwrite lever value = -1")][SerializeField] public int[] switchToControl;
 
             public ToControllerMap(AbstractIndirectController linkedController, int[] switchToControl)
             {
                 this.linkedController = linkedController;
-                this.Switch_To_Control = switchToControl;
+                this.switchToControl = switchToControl;
             }
         }
         private void OnDrawGizmosSelected()
@@ -57,7 +58,7 @@ namespace frou01.RBUR.SignalIntegrator
             guiStyle.richText = true;
             Vector4 colorVecStart = new Vector4(0.2f, 0.2f, 1f, 1f);
             Vector4 colorVecEnd = new Vector4(1f, 0f, 0f, 1f);
-            foreach (ToControllerMap controlSetting in Switch_To_ControlMaps)
+            foreach (ToControllerMap controlSetting in switchToControlMaps)
             {
                 Gizmos.color = new Color(0.2f, 1.0f, 0.0f, 1f);
                 Vector3 controlPos = GizmoExtension.getCenter(controlSetting.linkedController.transform);
@@ -65,7 +66,7 @@ namespace frou01.RBUR.SignalIntegrator
 
                 string switchSettingText = controlSetting.linkedController.name;
                 int switchIdx = 0;
-                foreach (int controlOnSwitch in controlSetting.Switch_To_Control)
+                foreach (int controlOnSwitch in controlSetting.switchToControl)
                 {
                     Vector4 switchColor = Vector4.Lerp(colorVecStart, colorVecEnd, (float)switchIdx / (switchPositionNum > 1 ? switchPositionNum - 1 : 1));
                     switchSettingText += "\n" +
