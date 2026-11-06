@@ -35,7 +35,7 @@ namespace frou01.RBUR.SignalIntegrator
         [FormerlySerializedAs("ReferingInterlocks")][SerializeField][HideInInspector] public Interlocking[] referringInterlocks;
 
         [HideInInspector] public int currentUserControl;
-        [SerializeField][UdonSynced] private protected int controllingPosition;//machine controlling position
+        [FormerlySerializedAs("controllingPosition")][SerializeField][UdonSynced] private protected int syncedControllingPosition;//machine controlling position
 
         private int sendControllingPosition = -1;
         private bool isNetworkUpdateNeeded;
@@ -213,7 +213,7 @@ namespace frou01.RBUR.SignalIntegrator
                 if (!IsLocked())
                 {
                     int nextControlTarget = EvaluateControlTarget();
-                    if (nextControlTarget != -1 && nextControlTarget != controllingPosition)
+                    if (nextControlTarget != -1 && nextControlTarget != syncedControllingPosition)
                     {
                         Debug.Log("SetUpdatedDetectorFlag " + this.name + ", GetCurrentPosition: " + GetCurrentPosition() + ", nextControlTarget: " + nextControlTarget, this);
                         ApplyPositionToController(nextControlTarget);
@@ -241,7 +241,7 @@ namespace frou01.RBUR.SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(ApplyPositionToController));
             if (posIndex != -1)
             {
-                controllingPosition = posIndex;
+                syncedControllingPosition = posIndex;
             }
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(ApplyPositionToController));
         }
@@ -249,7 +249,7 @@ namespace frou01.RBUR.SignalIntegrator
         //Getters
         public override int GetCurrentPosition()
         {
-            return controllingPosition;
+            return syncedControllingPosition;
         }
         public override bool IsControllerOwner()
         {
@@ -264,7 +264,7 @@ namespace frou01.RBUR.SignalIntegrator
         protected override void SyncController()
         {
             isNetworkUpdateNeeded = true;
-            if (IsControllerOwner() && sendControllingPosition != controllingPosition)
+            if (IsControllerOwner() && sendControllingPosition != syncedControllingPosition)
             {
                 if (!this.enabled) this.enabled = true;
                 this.RequestSerialization();
@@ -275,16 +275,16 @@ namespace frou01.RBUR.SignalIntegrator
         public override void OnDeserialization()
         {
             if (eventStackHolder != null) eventStackHolder.AddStack(this, nameof(OnDeserialization));
-            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : controllingPosition = " + controllingPosition, this);
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] pre : syncedControllingPosition = " + syncedControllingPosition, this);
 
-            ApplyPositionToController(controllingPosition);//Force Apply Control
-            if(sendControllingPosition != controllingPosition)
+            ApplyPositionToController(syncedControllingPosition);//Force Apply Control
+            if(sendControllingPosition != syncedControllingPosition)
             {
                 UpdateInterlocks();
             }
-            sendControllingPosition = controllingPosition;
+            sendControllingPosition = syncedControllingPosition;
 
-            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: controllingPosition = " + controllingPosition, this);
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(OnDeserialization) + "] post: syncedControllingPosition = " + syncedControllingPosition, this);
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
 
@@ -292,7 +292,7 @@ namespace frou01.RBUR.SignalIntegrator
         {
             if (result.success)
             {
-                sendControllingPosition = controllingPosition;
+                sendControllingPosition = syncedControllingPosition;
                 isNetworkUpdateNeeded = false;
                 PostSync();
             }

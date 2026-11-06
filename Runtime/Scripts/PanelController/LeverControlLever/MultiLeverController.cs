@@ -14,7 +14,7 @@ namespace frou01.RBUR.SignalIntegrator
     public class MultiLeverController : UdonSharpBehaviour
     {
         [HideInInspector][SerializeField] public EventStackHolder eventStackHolder;
-        [UdonSynced][SerializeField] private protected int switchPosition;
+        [FormerlySerializedAs("switchPosition")][UdonSynced][SerializeField] private protected int syncedSwitchPosition;
         [FormerlySerializedAs("SwitchSideAnimator")][SerializeField] private protected Animator[] switchSideAnimators;
         [FormerlySerializedAs("switchAnimationParamater")][SerializeField] private protected string switchAnimationParamName = "SwitchPosition";
         [FormerlySerializedAs("m_controlledLevers")][HideInInspector][SerializeField] private AbstractIndirectController[] controlledLevers;
@@ -93,9 +93,9 @@ namespace frou01.RBUR.SignalIntegrator
         {
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(_OnValueChanged));
 
-            if (LinkedSlider != null) switchPosition = (int)LinkedSlider.value;
-            SyncUI(switchPosition, false);
-            if (LinkedSlider != null) SetControlToLevers(switchPosition, true);
+            if (LinkedSlider != null) syncedSwitchPosition = (int)LinkedSlider.value;
+            SyncUI(syncedSwitchPosition, false);
+            if (LinkedSlider != null) SetControlToLevers(syncedSwitchPosition, true);
 
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(_OnValueChanged));
         }
@@ -104,9 +104,9 @@ namespace frou01.RBUR.SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(OnDeserialization));
             //Update Interlock in controlled-levers.
 
-            SyncUI(switchPosition, true);
+            SyncUI(syncedSwitchPosition, true);
             //ControlPosition synced by controlled-levers.
-            SetControlToLevers(this.switchPosition , false);
+            SetControlToLevers(this.syncedSwitchPosition , false);
 
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(OnDeserialization));
         }
@@ -118,17 +118,17 @@ namespace frou01.RBUR.SignalIntegrator
 
             if (newSwitchPosition != prevAppliedPos)
             {
-                switchPosition = prevAppliedPos = newSwitchPosition;
+                syncedSwitchPosition = prevAppliedPos = newSwitchPosition;
                 if(takeOwner) SetControllerOwner();
 
                 //Try control Controllers without interlock update
                 int idx = 0;
                 foreach (AbstractIndirectController panelController in controlledLevers)
                 {
-                    int nextControl = switchToControllerMap[idx][switchPosition];
+                    int nextControl = switchToControllerMap[idx][syncedSwitchPosition];
 
                     if(takeOwner && nextControl != -1) panelController.SetControllerOwner();
-                    panelController.TrySetControlTarget(this, switchToControllerMap[idx][switchPosition], false);
+                    panelController.TrySetControlTarget(this, switchToControllerMap[idx][syncedSwitchPosition], false);
                     idx++;
                 }
 
@@ -141,11 +141,11 @@ namespace frou01.RBUR.SignalIntegrator
             if (eventStackHolder != null) eventStackHolder.RemoveStack(this, nameof(SetControlToLevers));
         }
 
-        protected virtual void SyncUI(int switchPosition, bool updateSlider)
+        protected virtual void SyncUI(int position, bool updateSlider)
         {
             if (updateSlider && LinkedSlider != null)
             {
-                LinkedSlider.SetValueWithoutNotify(this.switchPosition);
+                LinkedSlider.SetValueWithoutNotify(this.syncedSwitchPosition);
             }
 
             foreach (Animator animator in switchSideAnimators)
@@ -155,7 +155,7 @@ namespace frou01.RBUR.SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamName, (float)switchPosition / (switchPositionNum - 1));
+                animator.SetFloat(switchAnimationParamName, (float)position / (switchPositionNum - 1));
             }
         }
 

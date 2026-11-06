@@ -22,7 +22,7 @@ namespace frou01.RBUR.SignalIntegrator
             if(eventStackHolder != null)eventStackHolder.AddStack(this, nameof(ApplyPositionToController));
             base.ApplyPositionToController(posIndex);
 
-            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(ApplyPositionToController) + "] : controllingPosition = " + controllingPosition, this);
+            if (isLogging) Debug.Log("Debug [on " + this.name + "," + nameof(ApplyPositionToController) + "] : syncedControllingPosition = " + syncedControllingPosition, this);
             foreach (Animator animator in signalSideAnimators)
             {
                 AnimatorSleeper_UdonBehaviour sleeper = animator.GetComponentInChildren<AnimatorSleeper_UdonBehaviour>(); if (sleeper)
@@ -30,11 +30,11 @@ namespace frou01.RBUR.SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(signalAnimationParamName, (float)controllingPosition / signalLargestLevel);
+                animator.SetFloat(signalAnimationParamName, (float)syncedControllingPosition / signalLargestLevel);
             }
             foreach (SignalEvaluator evaluator in evaluators)
             {
-                evaluator.UpdateSignal(this, controllingPosition);
+                evaluator.UpdateSignal(this, syncedControllingPosition);
             }
             if (eventStackHolder != null)eventStackHolder.RemoveStack(this, nameof(ApplyPositionToController));
         }

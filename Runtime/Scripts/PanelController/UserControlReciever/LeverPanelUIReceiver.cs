@@ -15,7 +15,7 @@ namespace frou01.RBUR.SignalIntegrator
         [SerializeField] private protected AbstractIndirectController targetController;//index:switch, value:controller. -1 is mid(not lever local control)
         [FormerlySerializedAs("SwitchSideAnimator")][SerializeField] private protected Animator[] switchSideAnimators = new Animator[0];
         [FormerlySerializedAs("switchAnimationParamater")][SerializeField] private protected string switchAnimationParamName = "SwitchPosition";
-        [SerializeField][UdonSynced] private protected int switchPosition;
+        [FormerlySerializedAs("switchPosition")][SerializeField][UdonSynced] private protected int syncedSwitchPosition;
         Slider LinkedSlider
         {
             get
@@ -38,18 +38,18 @@ namespace frou01.RBUR.SignalIntegrator
         public override void OnDeserialization()
         {
             SyncUI(true);
-            targetController.TrySetControlTarget(this, switchToControllerMap[switchPosition], true);
+            targetController.TrySetControlTarget(this, switchToControllerMap[syncedSwitchPosition], true);
         }
         public virtual void _OnValueChanged()//Call by UI
         {
-            if (LinkedSlider != null) switchPosition = (int)LinkedSlider.value;
+            if (LinkedSlider != null) syncedSwitchPosition = (int)LinkedSlider.value;
 
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
             Networking.SetOwner(Networking.LocalPlayer, targetController.gameObject);
 
             SyncUI(false);
 
-            if (targetController.TrySetControlTarget(this, switchToControllerMap[switchPosition], true))
+            if (targetController.TrySetControlTarget(this, switchToControllerMap[syncedSwitchPosition], true))
             {
                 targetController.UpdateInterlocks();
             }
@@ -61,7 +61,7 @@ namespace frou01.RBUR.SignalIntegrator
         {
             if (updateSlider && LinkedSlider != null)
             {
-                LinkedSlider.SetValueWithoutNotify(this.switchPosition);
+                LinkedSlider.SetValueWithoutNotify(this.syncedSwitchPosition);
             }
 
             foreach (Animator animator in switchSideAnimators)
@@ -71,7 +71,7 @@ namespace frou01.RBUR.SignalIntegrator
                     sleeper.ResetCount();
                 }
                 animator.enabled = true;
-                animator.SetFloat(switchAnimationParamName, (float)switchPosition / (switchToControllerMap.Length - 1));
+                animator.SetFloat(switchAnimationParamName, (float)syncedSwitchPosition / (switchToControllerMap.Length - 1));
             }
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

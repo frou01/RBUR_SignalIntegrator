@@ -70,7 +70,7 @@ namespace frou01.RBUR.SignalIntegrator
 
         public override int GetCurrentPosition()
         {
-            return controllingPosition;
+            return syncedControllingPosition;
         }
         protected override void ApplyPositionToController(int posIndex)
         {
@@ -84,25 +84,25 @@ namespace frou01.RBUR.SignalIntegrator
         protected override void Update()
         {
             base.Update();
-            if (prevControllingPosition != controllingPosition)
+            if (prevControllingPosition != syncedControllingPosition)
             {
                 foreach (AbstractPointSetter pointSetter in pointInstances)
                 {
                     pointSetter.set_route_To(-1);
                 }
-                prevControllingPosition = controllingPosition;
+                prevControllingPosition = syncedControllingPosition;
             }
-            if (currentPointRouteMapIndex != controllingPosition)
+            if (currentPointRouteMapIndex != syncedControllingPosition)
             {
                 int prevChanging = Mathf.RoundToInt(changeProgress / changeTimeLength);
                 int changing;
-                if (controllingPosition * changeTimeLength > changeProgress)
+                if (syncedControllingPosition * changeTimeLength > changeProgress)
                 {
                     prevChanging = Mathf.FloorToInt(changeProgress / changeTimeLength);
                     changeProgress += Time.deltaTime;
                     changing = Mathf.FloorToInt(changeProgress / changeTimeLength);
                 }
-                else if (controllingPosition * changeTimeLength < changeProgress)
+                else if (syncedControllingPosition * changeTimeLength < changeProgress)
                 {
                     prevChanging = Mathf.CeilToInt(changeProgress / changeTimeLength);
                     changeProgress -= Time.deltaTime;
@@ -113,7 +113,7 @@ namespace frou01.RBUR.SignalIntegrator
                     prevChanging = int.MinValue;
                     changing = Mathf.CeilToInt(changeProgress / changeTimeLength);
                 }
-                if (prevChanging != changing && changing == controllingPosition)
+                if (prevChanging != changing && changing == syncedControllingPosition)
                 {
                     changeProgress = changing * changeTimeLength;
                     int pointIdx = 0;

@@ -11,8 +11,8 @@ namespace frou01.RBUR.SignalIntegrator
     [RequireComponent(typeof(RouteSelectorEndToPresetMapHolder))]
     public class RouteSelectorStartLever : UdonSharpBehaviour
     {
-        [UdonSynced][SerializeField] private int Switch_Position;
-        [UdonSynced] private bool routeSelected;
+        [FormerlySerializedAs("Switch_Position")][UdonSynced][SerializeField] private int syncedSwitchPosition;
+        [UdonSynced] private bool syncedRouteSelected;
         [FormerlySerializedAs("SwitchSideAnimator")][SerializeField] private Animator[] switchSideAnimators;
         [FormerlySerializedAs("switchAnimationParamater")][SerializeField] private string switchAnimationParamName = "SwitchPosition";
         [SerializeField] private int switchAnimationOffset;
@@ -54,30 +54,30 @@ namespace frou01.RBUR.SignalIntegrator
 
         public void SelectRoute(RouteSelectorEndButton endButton)
         {
-            if (!routeSelected && routeEnds[Switch_Position].Length > 0)
+            if (!syncedRouteSelected && routeEnds[syncedSwitchPosition].Length > 0)
             {
                 Networking.SetOwner(Networking.LocalPlayer,this.gameObject);
                 int selectedRoute = 0;
-                foreach (RouteSelectorEndButton routeEnd in routeEnds[Switch_Position])
+                foreach (RouteSelectorEndButton routeEnd in routeEnds[syncedSwitchPosition])
                 {
                     if (routeEnd == endButton) break;
                     selectedRoute++;
                 }
-                if(selectedRoute == routeEnds[Switch_Position].Length)
+                if(selectedRoute == routeEnds[syncedSwitchPosition].Length)
                 {
                     return;
                 }
-                routeAndSignalPresets[Switch_Position][selectedRoute].SetControlToLevers(1,true);
-                routeSelected = true;
+                routeAndSignalPresets[syncedSwitchPosition][selectedRoute].SetControlToLevers(1,true);
+                syncedRouteSelected = true;
                 RequestSerialization();
             }
         }
         public void _OnValueChanged()
         {
             Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
-            if (LinkedSlider != null) Switch_Position = (int)LinkedSlider.value;
-            SyncUI(Switch_Position, false);
-            if(routeEnds[Switch_Position].Length <= 0)
+            if (LinkedSlider != null) syncedSwitchPosition = (int)LinkedSlider.value;
+            SyncUI(syncedSwitchPosition, false);
+            if(routeEnds[syncedSwitchPosition].Length <= 0)
             {
                 SwitchDisabledOwnerOnly();
             }
@@ -86,7 +86,7 @@ namespace frou01.RBUR.SignalIntegrator
 
         private void SwitchDisabledOwnerOnly()
         {
-            routeSelected = false;
+            syncedRouteSelected = false;
             foreach (MultiLeverController[] routeArray in routeAndSignalPresets)
             {
                 foreach (MultiLeverController route in routeArray)
@@ -99,7 +99,7 @@ namespace frou01.RBUR.SignalIntegrator
 
         public override void OnDeserialization()
         {
-            SyncUI(Switch_Position, true);
+            SyncUI(syncedSwitchPosition, true);
         }
         protected void SyncUI(int switchPosition, bool updateSlider)
         {

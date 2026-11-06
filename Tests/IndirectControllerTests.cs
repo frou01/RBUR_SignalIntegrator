@@ -591,7 +591,7 @@ namespace frou01.RBUR.SignalIntegrator.Tests
 
         public void SetCurrentPosition(int position)
         {
-            SetField("controllingPosition", position);
+            SetField("syncedControllingPosition", position);
         }
 
         public void SetUserDirectIndex(int index)
