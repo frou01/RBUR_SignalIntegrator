@@ -180,7 +180,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_SwitchToControllerMap
+    - Name: switchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
@@ -194,12 +194,12 @@ MonoBehaviour:
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 73533672}
   eventStackHolder: {fileID: 0}
-  switchPosition: 0
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
-  m_controlledLevers: []
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
+  syncedSwitchPosition: 0
+  switchSideAnimators: []
+  switchAnimationParamName: SwitchPosition
+  controlledLevers: []
+  switchPositionNum: 0
+  referringInterlocks: []
 --- !u!114 &73533672
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -238,9 +238,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switchPositionNum: 2
-  Switch_To_ControlMaps:
+  switchToControlMaps:
   - linkedController: {fileID: 1105354726}
-    Switch_To_Control: 0000000001000000
+    switchToControl: 0000000001000000
 --- !u!114 &73533674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -841,7 +841,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 500647295}
-  debugLog: 1
+  isLogging: 1
 --- !u!1 &513078151
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,13 +969,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 520425863}
-  m_TargetPoints:
+  targetPoints:
   - {fileID: 2061646812}
-  m_TargetRoute: 00000000
-  Route_Rails: []
+  targetRoutes: 00000000
+  routeRails: []
   eventStackHolder: {fileID: 0}
-  ControlTargetIndex: 
-  m_lockers: []
+  controlTargetIndexes: 
+  lockers: []
   interlocking: {fileID: 2103742559}
 --- !u!1 &564722058
 GameObject:
@@ -2722,13 +2722,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 636827582}
-  m_TargetPoints:
+  targetPoints:
   - {fileID: 1498330035}
-  m_TargetRoute: 00000000
-  Route_Rails: []
+  targetRoutes: 00000000
+  routeRails: []
   eventStackHolder: {fileID: 0}
-  ControlTargetIndex: 
-  m_lockers: []
+  controlTargetIndexes: 
+  lockers: []
   interlocking: {fileID: 1942721281}
 --- !u!1 &643552200
 GameObject:
@@ -2811,14 +2811,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 643552202}
-  logging: 0
+  isLogging: 0
   eventStackHolder: {fileID: 0}
-  From_Locker: {fileID: 1855077853}
-  interlock_Route: {fileID: 1725361158}
-  toLocker_States: []
-  ClosePositionIndex: 0
-  OpenPositionIndexes: 01000000
-  FailSafeCalled: 0
+  fromLocker: {fileID: 1855077853}
+  routeLocker: {fileID: 1725361158}
+  stateLinkers: []
+  closePositionIndex: 0
+  openPositionIndexes: 01000000
+  isFailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
 --- !u!1 &690977681
@@ -2862,22 +2862,22 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 690977683}
   eventStackHolder: {fileID: 0}
-  SettedLockStates: 
+  lockStates: 
   lockerInstances: []
-  SettedLockIndex: 
-  PositionUpdatedByLocking: 0
+  lockIndexes: 
+  isPositionUpdatedByLocking: 0
   failSafeIndex: 0
-  Logging: 0
-  ReferingInterlocks: []
+  isLogging: 0
+  referringInterlocks: []
   currentUserControl: 0
-  controllingPosition: 0
-  TargeterInstances: []
-  ControlTargetsArray: 
-  UserDirectIndex: -1
-  SignalSideAnimators: []
-  signalAnimationParamater: SignalRelayPosition
+  syncedControllingPosition: 0
+  targeterInstances: []
+  controlTargets: 
+  userDirectIndex: -1
+  signalSideAnimators: []
+  signalAnimationParamName: SignalRelayPosition
   signalLargestLevel: 2
-  Evaluators:
+  evaluators:
   - {fileID: 6815736638202260799}
   - {fileID: 6794087701146009699}
   - {fileID: 6791280182035380709}
@@ -3103,7 +3103,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_SwitchToControllerMap
+    - Name: switchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
@@ -3117,12 +3117,12 @@ MonoBehaviour:
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 778747645}
   eventStackHolder: {fileID: 0}
-  switchPosition: 0
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
-  m_controlledLevers: []
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
+  syncedSwitchPosition: 0
+  switchSideAnimators: []
+  switchAnimationParamName: SwitchPosition
+  controlledLevers: []
+  switchPositionNum: 0
+  referringInterlocks: []
 --- !u!114 &778747645
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -3161,11 +3161,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switchPositionNum: 2
-  Switch_To_ControlMaps:
+  switchToControlMaps:
   - linkedController: {fileID: 1072270164}
-    Switch_To_Control: 0000000001000000
+    switchToControl: 0000000001000000
   - linkedController: {fileID: 4728980181231292899}
-    Switch_To_Control: ffffffff00000000
+    switchToControl: ffffffff00000000
 --- !u!1 &787602885 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1094421957795851142, guid: 8894fa7e4588a5c4fab98453e558847d,
@@ -10408,23 +10408,23 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1072270165}
   eventStackHolder: {fileID: 0}
-  SettedLockStates: 
+  lockStates: 
   lockerInstances: []
-  SettedLockIndex: 
-  PositionUpdatedByLocking: 0
+  lockIndexes: 
+  isPositionUpdatedByLocking: 0
   failSafeIndex: 0
-  Logging: 0
-  ReferingInterlocks: []
+  isLogging: 0
+  referringInterlocks: []
   currentUserControl: 0
-  controllingPosition: 0
-  TargeterInstances: []
-  ControlTargetsArray: 
-  UserDirectIndex: -1
-  SignalSideAnimators:
+  syncedControllingPosition: 0
+  targeterInstances: []
+  controlTargets: 
+  userDirectIndex: -1
+  signalSideAnimators:
   - {fileID: 252743827}
-  signalAnimationParamater: SignalRelayPosition
+  signalAnimationParamName: SignalRelayPosition
   signalLargestLevel: 1
-  Evaluators:
+  evaluators:
   - {fileID: 6794087701146009699}
   - {fileID: 6791280182035380709}
 --- !u!114 &1072270165
@@ -10645,23 +10645,23 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1105354727}
   eventStackHolder: {fileID: 0}
-  SettedLockStates: 
+  lockStates: 
   lockerInstances: []
-  SettedLockIndex: 
-  PositionUpdatedByLocking: 0
+  lockIndexes: 
+  isPositionUpdatedByLocking: 0
   failSafeIndex: 0
-  Logging: 0
-  ReferingInterlocks: []
+  isLogging: 0
+  referringInterlocks: []
   currentUserControl: 0
-  controllingPosition: 0
-  TargeterInstances: []
-  ControlTargetsArray: 
-  UserDirectIndex: -1
-  SignalSideAnimators:
+  syncedControllingPosition: 0
+  targeterInstances: []
+  controlTargets: 
+  userDirectIndex: -1
+  signalSideAnimators:
   - {fileID: 634859172}
-  signalAnimationParamater: SignalRelayPosition
+  signalAnimationParamName: SignalRelayPosition
   signalLargestLevel: 1
-  Evaluators:
+  evaluators:
   - {fileID: 6791280182035380709}
   - {fileID: 699572952526546278}
 --- !u!114 &1105354727
@@ -11157,7 +11157,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_SwitchToControllerMap
+    - Name: switchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
@@ -11171,12 +11171,12 @@ MonoBehaviour:
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 1431434200}
   eventStackHolder: {fileID: 0}
-  switchPosition: 0
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
-  m_controlledLevers: []
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
+  syncedSwitchPosition: 0
+  switchSideAnimators: []
+  switchAnimationParamName: SwitchPosition
+  controlledLevers: []
+  switchPositionNum: 0
+  referringInterlocks: []
 --- !u!114 &1431434200
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -11215,11 +11215,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switchPositionNum: 2
-  Switch_To_ControlMaps:
+  switchToControlMaps:
   - linkedController: {fileID: 1855077853}
-    Switch_To_Control: 0000000001000000
+    switchToControl: 0000000001000000
   - linkedController: {fileID: 4728980181231292899}
-    Switch_To_Control: ffffffff00000000
+    switchToControl: ffffffff00000000
 --- !u!4 &1442469216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2551420409256144549, guid: 7a201aa92c568814284037b369d08e56,
@@ -11267,23 +11267,23 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1454166087}
   eventStackHolder: {fileID: 0}
-  SettedLockStates: 
+  lockStates: 
   lockerInstances: []
-  SettedLockIndex: 
-  PositionUpdatedByLocking: 0
+  lockIndexes: 
+  isPositionUpdatedByLocking: 0
   failSafeIndex: 0
-  Logging: 0
-  ReferingInterlocks: []
+  isLogging: 0
+  referringInterlocks: []
   currentUserControl: 0
-  controllingPosition: 0
-  TargeterInstances: []
-  ControlTargetsArray: 
-  UserDirectIndex: -1
-  SignalSideAnimators:
+  syncedControllingPosition: 0
+  targeterInstances: []
+  controlTargets: 
+  userDirectIndex: -1
+  signalSideAnimators:
   - {fileID: 4473286241712138691}
-  signalAnimationParamater: SignalRelayPosition
+  signalAnimationParamName: SignalRelayPosition
   signalLargestLevel: 1
-  Evaluators:
+  evaluators:
   - {fileID: 6794087701146009699}
   - {fileID: 4237041596729278897}
   - {fileID: 5927869355052462285}
@@ -11469,15 +11469,15 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1547974026}
-  logging: 0
+  isLogging: 0
   eventStackHolder: {fileID: 0}
-  From_Locker: {fileID: 4920066874882511089}
-  interlock_Route: {fileID: 2061719700}
-  toLocker_States:
+  fromLocker: {fileID: 4920066874882511089}
+  routeLocker: {fileID: 2061719700}
+  stateLinkers:
   - {fileID: 1868328718}
-  ClosePositionIndex: 0
-  OpenPositionIndexes: 02000000
-  FailSafeCalled: 0
+  closePositionIndex: 0
+  openPositionIndexes: 02000000
+  isFailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
 --- !u!1 &1558424114
@@ -11610,14 +11610,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1581490969}
-  logging: 0
+  isLogging: 0
   eventStackHolder: {fileID: 0}
-  From_Locker: {fileID: 1454166086}
-  interlock_Route: {fileID: 1829162339}
-  toLocker_States: []
-  ClosePositionIndex: 0
-  OpenPositionIndexes: 01000000
-  FailSafeCalled: 0
+  fromLocker: {fileID: 1454166086}
+  routeLocker: {fileID: 1829162339}
+  stateLinkers: []
+  closePositionIndex: 0
+  openPositionIndexes: 01000000
+  isFailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
 --- !u!1001 &1586316654
@@ -11963,13 +11963,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1725361157}
-  m_TargetPoints:
+  targetPoints:
   - {fileID: 1498330035}
-  m_TargetRoute: 00000000
-  Route_Rails: []
+  targetRoutes: 00000000
+  routeRails: []
   eventStackHolder: {fileID: 0}
-  ControlTargetIndex: 
-  m_lockers: []
+  controlTargetIndexes: 
+  lockers: []
   interlocking: {fileID: 643552203}
 --- !u!1001 &1750302169
 PrefabInstance:
@@ -12148,13 +12148,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1829162338}
-  m_TargetPoints:
+  targetPoints:
   - {fileID: 1498330035}
-  m_TargetRoute: 01000000
-  Route_Rails: []
+  targetRoutes: 01000000
+  routeRails: []
   eventStackHolder: {fileID: 0}
-  ControlTargetIndex: 
-  m_lockers: []
+  controlTargetIndexes: 
+  lockers: []
   interlocking: {fileID: 1581490970}
 --- !u!1 &1848272540
 GameObject:
@@ -12236,16 +12236,16 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1848272542}
-  m_TargetPoints:
+  targetPoints:
   - {fileID: 1498330035}
   - {fileID: 2061646812}
-  m_TargetRoute: 0000000001000000
-  Route_Rails:
+  targetRoutes: 0000000001000000
+  routeRails:
   - {fileID: 101212471}
   - {fileID: 1073902266}
   eventStackHolder: {fileID: 0}
-  ControlTargetIndex: 
-  m_lockers: []
+  controlTargetIndexes: 
+  lockers: []
   interlocking: {fileID: 2001885754}
 --- !u!1 &1855077852
 GameObject:
@@ -12288,23 +12288,23 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1855077854}
   eventStackHolder: {fileID: 0}
-  SettedLockStates: 
+  lockStates: 
   lockerInstances: []
-  SettedLockIndex: 
-  PositionUpdatedByLocking: 0
+  lockIndexes: 
+  isPositionUpdatedByLocking: 0
   failSafeIndex: 0
-  Logging: 0
-  ReferingInterlocks: []
+  isLogging: 0
+  referringInterlocks: []
   currentUserControl: 0
-  controllingPosition: 0
-  TargeterInstances: []
-  ControlTargetsArray: 
-  UserDirectIndex: -1
-  SignalSideAnimators:
+  syncedControllingPosition: 0
+  targeterInstances: []
+  controlTargets: 
+  userDirectIndex: -1
+  signalSideAnimators:
   - {fileID: 1149634888}
-  signalAnimationParamater: SignalRelayPosition
+  signalAnimationParamName: SignalRelayPosition
   signalLargestLevel: 1
-  Evaluators:
+  evaluators:
   - {fileID: 6794087701146009699}
   - {fileID: 6791280182035380709}
 --- !u!114 &1855077854
@@ -12429,7 +12429,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1868328717}
   eventStackHolder: {fileID: 0}
   locker: {fileID: 1105354726}
-  MeetPositionIndex: 01000000
+  meetPositionIndexes: 01000000
   interlocking: {fileID: 0}
 --- !u!1 &1913067723 stripped
 GameObject:
@@ -12524,14 +12524,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1942721280}
-  logging: 0
+  isLogging: 0
   eventStackHolder: {fileID: 0}
-  From_Locker: {fileID: 1072270164}
-  interlock_Route: {fileID: 636827583}
-  toLocker_States: []
-  ClosePositionIndex: 0
-  OpenPositionIndexes: 01000000
-  FailSafeCalled: 0
+  fromLocker: {fileID: 1072270164}
+  routeLocker: {fileID: 636827583}
+  stateLinkers: []
+  closePositionIndex: 0
+  openPositionIndexes: 01000000
+  isFailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
 --- !u!1 &1965980986 stripped
@@ -12713,14 +12713,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2001885753}
-  logging: 0
+  isLogging: 0
   eventStackHolder: {fileID: 0}
-  From_Locker: {fileID: 690977682}
-  interlock_Route: {fileID: 1848272543}
-  toLocker_States: []
-  ClosePositionIndex: 0
-  OpenPositionIndexes: 01000000
-  FailSafeCalled: 0
+  fromLocker: {fileID: 690977682}
+  routeLocker: {fileID: 1848272543}
+  stateLinkers: []
+  closePositionIndex: 0
+  openPositionIndexes: 01000000
+  isFailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
 --- !u!1001 &2045108661
@@ -13123,14 +13123,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2061719699}
-  m_TargetPoints:
+  targetPoints:
   - {fileID: 1498330035}
   - {fileID: 2061646812}
-  m_TargetRoute: 0000000000000000
-  Route_Rails: []
+  targetRoutes: 0000000000000000
+  routeRails: []
   eventStackHolder: {fileID: 0}
-  ControlTargetIndex: 
-  m_lockers: []
+  controlTargetIndexes: 
+  lockers: []
   interlocking: {fileID: 1547974027}
 --- !u!1 &2103742556
 GameObject:
@@ -13213,14 +13213,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2103742558}
-  logging: 0
+  isLogging: 0
   eventStackHolder: {fileID: 0}
-  From_Locker: {fileID: 1105354726}
-  interlock_Route: {fileID: 520425864}
-  toLocker_States: []
-  ClosePositionIndex: 0
-  OpenPositionIndexes: 01000000
-  FailSafeCalled: 0
+  fromLocker: {fileID: 1105354726}
+  routeLocker: {fileID: 520425864}
+  stateLinkers: []
+  closePositionIndex: 0
+  openPositionIndexes: 01000000
+  isFailSafeCalled: 0
   affectedInterlockings: []
   affectedLockers: []
 --- !u!114 &137357513818837488
@@ -14233,7 +14233,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_SwitchToControllerMap
+    - Name: switchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
@@ -14247,12 +14247,12 @@ MonoBehaviour:
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 3979830836920148085}
   eventStackHolder: {fileID: 0}
-  switchPosition: 0
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
-  m_controlledLevers: []
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
+  syncedSwitchPosition: 0
+  switchSideAnimators: []
+  switchAnimationParamName: SwitchPosition
+  controlledLevers: []
+  switchPositionNum: 0
+  referringInterlocks: []
 --- !u!114 &3979830836920148085
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -14304,9 +14304,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switchPositionNum: 2
-  Switch_To_ControlMaps:
+  switchToControlMaps:
   - linkedController: {fileID: 1454166086}
-    Switch_To_Control: 0000000001000000
+    switchToControl: 0000000001000000
 --- !u!1001 &4099424761986962798
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14903,15 +14903,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switchPositionNum: 2
-  Switch_To_ControlMaps:
+  switchToControlMaps:
   - linkedController: {fileID: 690977682}
-    Switch_To_Control: 0000000001000000
+    switchToControl: 0000000001000000
   - linkedController: {fileID: 4920066874882511089}
-    Switch_To_Control: 0000000002000000
+    switchToControl: 0000000002000000
   - linkedController: {fileID: 4728980181231292899}
-    Switch_To_Control: ffffffff00000000
+    switchToControl: ffffffff00000000
   - linkedController: {fileID: 1731882305197672279}
-    Switch_To_Control: ffffffff00000000
+    switchToControl: ffffffff00000000
 --- !u!114 &4457645061710611203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14933,7 +14933,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: m_SwitchToControllerMap
+    - Name: switchToControllerMap
       Entry: 7
       Data: 0|System.Int32[][], mscorlib
     - Name: 
@@ -14947,12 +14947,12 @@ MonoBehaviour:
       Data: 
   _udonSharpBackingUdonBehaviour: {fileID: 4457645061710611200}
   eventStackHolder: {fileID: 0}
-  switchPosition: 0
-  SwitchSideAnimator: []
-  switchAnimationParamater: SwitchPosition
-  m_controlledLevers: []
-  SwitchPositionNum: 0
-  ReferingInterlocks: []
+  syncedSwitchPosition: 0
+  switchSideAnimators: []
+  switchAnimationParamName: SwitchPosition
+  controlledLevers: []
+  switchPositionNum: 0
+  referringInterlocks: []
 --- !u!95 &4473286241712138691 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5522470732166479734, guid: 856af4f000569a84682a474d2c189a2f,
@@ -15439,22 +15439,22 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7187805593716076729}
   eventStackHolder: {fileID: 0}
-  SettedLockStates: 
+  lockStates: 
   lockerInstances: []
-  SettedLockIndex: 
-  PositionUpdatedByLocking: 0
+  lockIndexes: 
+  isPositionUpdatedByLocking: 0
   failSafeIndex: 0
-  Logging: 0
-  ReferingInterlocks: []
+  isLogging: 0
+  referringInterlocks: []
   currentUserControl: 0
-  controllingPosition: 0
-  TargeterInstances: []
-  ControlTargetsArray: 
-  UserDirectIndex: -1
-  SignalSideAnimators: []
-  signalAnimationParamater: SignalRelayPosition
+  syncedControllingPosition: 0
+  targeterInstances: []
+  controlTargets: 
+  userDirectIndex: -1
+  signalSideAnimators: []
+  signalAnimationParamName: SignalRelayPosition
   signalLargestLevel: 2
-  Evaluators:
+  evaluators:
   - {fileID: 6815736638202260799}
   - {fileID: 6794087701146009699}
   - {fileID: 6791280182035380709}
@@ -16067,13 +16067,13 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6815736638202260798}
   eventStackHolder: {fileID: 0}
-  senderInstance: []
-  ReceiveSignal: []
-  mode: 1
-  SignalSideAnimators:
+  senderInstances: []
+  receivedSignals: []
+  shouldPrioritizeMaximum: 1
+  signalSideAnimators:
   - {fileID: 6815736638202260795}
-  signalAnimationParamater: SignalRelayPosition
-  SignalMultiplier: 1
+  signalAnimationParamName: SignalRelayPosition
+  signalMultiplier: 1
   childEvaluators: []
 --- !u!114 &7187805593716076729
 MonoBehaviour:
