@@ -3,7 +3,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static frou01.RBUR.SignalIntegrator.Editor.BuildProcessUtility;
+using static frou01.util.editor.BuildProcessUtility;
 
 namespace frou01.RBUR.SignalIntegrator.Editor
 {

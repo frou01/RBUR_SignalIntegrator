@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDK3.Components;
 using VRC.Udon;
-using static frou01.RBUR.SignalIntegrator.Editor.BuildProcessUtility;
+using static frou01.util.editor.BuildProcessUtility;
 
 namespace frou01.RBUR.SignalIntegrator.Editor
 {
